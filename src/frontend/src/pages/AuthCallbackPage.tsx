@@ -2,12 +2,10 @@
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/Card';
 
 const AuthCallbackPage: React.FC = () => {
   const navigate = useNavigate();
-  const { login } = useAuth();
 
   useEffect(() => {
     const handleAuthCallback = async () => {
@@ -24,25 +22,22 @@ const AuthCallbackPage: React.FC = () => {
           // Store tokens and user data in localStorage
           localStorage.setItem('authToken', token);
           localStorage.setItem('userData', JSON.stringify(userData));
-          
-          // Call login to update auth state
-          login();
 
-          // Redirect to dashboard
-          navigate('/dashboard');
+          // Redirect to dashboard (this will trigger AuthContext to reload user)
+          navigate('/dashboard', { replace: true });
         } else {
           // Handle error case
           console.error('Missing token or user data in callback');
-          navigate('/login?error=auth_failed');
+          navigate('/login?error=auth_failed', { replace: true });
         }
       } catch (error) {
         console.error('Error processing auth callback:', error);
-        navigate('/login?error=auth_failed');
+        navigate('/login?error=auth_failed', { replace: true });
       }
     };
 
     handleAuthCallback();
-  }, [login, navigate]);
+  }, [navigate]);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
