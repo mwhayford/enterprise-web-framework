@@ -1,0 +1,222 @@
+# Copyright (c) Core. All Rights Reserved.
+# Licensed under the MIT License. See LICENSE in the project root for license information.
+
+name: PR Checks
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+
+jobs:
+  pr-title:
+    name: Validate PR Title
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.draft == false
+    
+    steps:
+      - name: Check PR title format
+        uses: amannn/action-semantic-pull-request@v5
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          types: |
+            feat
+            fix
+            docs
+            style
+            refactor
+            perf
+            test
+            build
+            ci
+            chore
+            revert
+          scopes: |
+            backend
+            frontend
+            api
+            auth
+            payment
+            search
+            tests
+            ci
+            docs
+            deps
+          requireScope: false
+          subjectPattern: ^[A-Z].+$
+          subjectPatternError: |
+            The subject "{subject}" found in the pull request title "{title}"
+            didn't match the configured pattern. Please ensure that the subject
+            starts with an uppercase character.
+
+  pr-size:
+    name: Check PR Size
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Check PR size
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const pr = context.payload.pull_request;
+            const additions = pr.additions;
+            const deletions = pr.deletions;
+            const total = additions + deletions;
+            
+            let label = '';
+            let message = '';
+            
+            if (total < 100) {
+              label = 'size/XS';
+              message = '✅ Extra Small PR';
+            } else if (total < 300) {
+              label = 'size/S';
+              message = '✅ Small PR';
+            } else if (total < 500) {
+              label = 'size/M';
+              message = '⚠️ Medium PR';
+            } else if (total < 1000) {
+              label = 'size/L';
+              message = '⚠️ Large PR - Consider breaking into smaller PRs';
+            } else {
+              label = 'size/XL';
+              message = '❌ Extra Large PR - Please break into smaller PRs';
+            }
+            
+            // Add label
+            await github.rest.issues.addLabels({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: pr.number,
+              labels: [label]
+            });
+            
+            // Add comment
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: pr.number,
+              body: `${message}\n\nChanges: +${additions} -${deletions} (${total} total)`
+            });
+
+  lint:
+    name: Lint Check
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.draft == false
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: src/frontend/package-lock.json
+      
+      - name: Install frontend dependencies
+        working-directory: src/frontend
+        run: npm ci
+      
+      - name: Run ESLint
+        working-directory: src/frontend
+        run: npm run lint
+      
+      - name: Check formatting
+        working-directory: src/frontend
+        run: npm run format:check
+
+  test-coverage:
+    name: Test Coverage
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.draft == false
+    
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: CoreDb_Test
+        ports:
+          - 5433:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.x'
+      
+      - name: Restore dependencies
+        run: dotnet restore tests/Core.UnitTests/Core.UnitTests.csproj
+      
+      - name: Run tests with coverage
+        run: |
+          dotnet test tests/Core.UnitTests/Core.UnitTests.csproj \
+            --configuration Release \
+            --collect:"XPlat Code Coverage" \
+            --results-directory ./coverage
+      
+      - name: Generate coverage report
+        uses: codecov/codecov-action@v4
+        with:
+          files: ./coverage/**/coverage.cobertura.xml
+          flags: unittests
+          name: codecov-umbrella
+
+  breaking-changes:
+    name: Check Breaking Changes
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.draft == false
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Check for breaking changes
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const pr = context.payload.pull_request;
+            const title = pr.title.toLowerCase();
+            const body = (pr.body || '').toLowerCase();
+            
+            const breakingKeywords = [
+              'breaking',
+              'breaking change',
+              'migration required',
+              'api change',
+              'incompatible'
+            ];
+            
+            const hasBreakingChange = breakingKeywords.some(keyword => 
+              title.includes(keyword) || body.includes(keyword)
+            );
+            
+            if (hasBreakingChange) {
+              await github.rest.issues.addLabels({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: pr.number,
+                labels: ['breaking-change']
+              });
+              
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: pr.number,
+                body: '⚠️ **Breaking Change Detected**\n\nThis PR contains breaking changes. Please ensure:\n- Migration guide is included\n- Version is bumped appropriately\n- All stakeholders are notified'
+              });
+            }
+

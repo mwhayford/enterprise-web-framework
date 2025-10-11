@@ -1,0 +1,253 @@
+# Copyright (c) Core. All Rights Reserved.
+# Licensed under the MIT License. See LICENSE in the project root for license information.
+
+name: CD Pipeline
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy to'
+        required: true
+        type: choice
+        options:
+          - staging
+          - production
+      version:
+        description: 'Version to deploy (e.g., v1.0.0)'
+        required: true
+        type: string
+
+env:
+  DOTNET_VERSION: '9.0.x'
+  NODE_VERSION: '18'
+  AWS_REGION: 'us-east-1'
+  ECR_REPOSITORY_BACKEND: 'core-backend'
+  ECR_REPOSITORY_FRONTEND: 'core-frontend'
+
+jobs:
+  # Build and Push Docker Images
+  build-and-push:
+    name: Build & Push Images
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment }}
+    
+    outputs:
+      backend-image: ${{ steps.push-backend.outputs.image }}
+      frontend-image: ${{ steps.push-frontend.outputs.image }}
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+      
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+      
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      
+      - name: Build and push backend image
+        id: push-backend
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: src/backend/Dockerfile
+          push: true
+          tags: |
+            ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY_BACKEND }}:${{ github.event.inputs.version }}
+            ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY_BACKEND }}:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+      
+      - name: Build and push frontend image
+        id: push-frontend
+        uses: docker/build-push-action@v5
+        with:
+          context: src/frontend
+          file: src/frontend/Dockerfile
+          push: true
+          tags: |
+            ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY_FRONTEND }}:${{ github.event.inputs.version }}
+            ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY_FRONTEND }}:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+  
+  # Deploy to Kubernetes
+  deploy:
+    name: Deploy to ${{ github.event.inputs.environment }}
+    runs-on: ubuntu-latest
+    needs: build-and-push
+    environment: ${{ github.event.inputs.environment }}
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+      
+      - name: Update kubeconfig
+        run: |
+          aws eks update-kubeconfig \
+            --name ${{ secrets.EKS_CLUSTER_NAME }} \
+            --region ${{ env.AWS_REGION }}
+      
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.6.0
+      
+      - name: Deploy infrastructure
+        working-directory: infrastructure/terraform
+        run: |
+          terraform init
+          terraform workspace select ${{ github.event.inputs.environment }} || terraform workspace new ${{ github.event.inputs.environment }}
+          terraform apply -auto-approve \
+            -var="environment=${{ github.event.inputs.environment }}" \
+            -var="backend_image=${{ needs.build-and-push.outputs.backend-image }}" \
+            -var="frontend_image=${{ needs.build-and-push.outputs.frontend-image }}"
+      
+      - name: Deploy to Kubernetes
+        working-directory: infrastructure/kubernetes
+        run: |
+          # Update image tags in Kubernetes manifests
+          kubectl set image deployment/core-backend \
+            core-backend=${{ needs.build-and-push.outputs.backend-image }} \
+            -n core-${{ github.event.inputs.environment }}
+          
+          kubectl set image deployment/core-frontend \
+            core-frontend=${{ needs.build-and-push.outputs.frontend-image }} \
+            -n core-${{ github.event.inputs.environment }}
+          
+          # Wait for rollout to complete
+          kubectl rollout status deployment/core-backend -n core-${{ github.event.inputs.environment }} --timeout=5m
+          kubectl rollout status deployment/core-frontend -n core-${{ github.event.inputs.environment }} --timeout=5m
+      
+      - name: Run database migrations
+        run: |
+          kubectl exec -n core-${{ github.event.inputs.environment }} \
+            deployment/core-backend -- \
+            dotnet ef database update --project Core.Infrastructure --startup-project Core.API
+      
+      - name: Verify deployment
+        run: |
+          echo "🎉 Deployment to ${{ github.event.inputs.environment }} completed!"
+          echo "Version: ${{ github.event.inputs.version }}"
+          
+          # Get service URLs
+          kubectl get svc -n core-${{ github.event.inputs.environment }}
+  
+  # Run smoke tests
+  smoke-tests:
+    name: Smoke Tests
+    runs-on: ubuntu-latest
+    needs: deploy
+    environment: ${{ github.event.inputs.environment }}
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      
+      - name: Install dependencies
+        working-directory: tests/Core.E2ETests
+        run: |
+          npm ci
+          npx playwright install chromium --with-deps
+      
+      - name: Run smoke tests
+        working-directory: tests/Core.E2ETests
+        run: |
+          # Run a subset of critical E2E tests as smoke tests
+          npx playwright test auth.spec.ts navigation.spec.ts
+        env:
+          CI: true
+          BASE_URL: ${{ secrets.APP_URL }}
+      
+      - name: Health check
+        run: |
+          response=$(curl -f ${{ secrets.API_URL }}/health || echo "failed")
+          if [ "$response" = "failed" ]; then
+            echo "❌ Health check failed!"
+            exit 1
+          fi
+          echo "✅ Health check passed!"
+  
+  # Notify deployment status
+  notify:
+    name: Notify Deployment
+    runs-on: ubuntu-latest
+    needs: [deploy, smoke-tests]
+    if: always()
+    
+    steps:
+      - name: Deployment Success
+        if: needs.deploy.result == 'success' && needs.smoke-tests.result == 'success'
+        run: |
+          echo "🎉 Deployment successful!"
+          echo "Environment: ${{ github.event.inputs.environment }}"
+          echo "Version: ${{ github.event.inputs.version }}"
+          # Add notification logic here (Slack, email, etc.)
+      
+      - name: Deployment Failed
+        if: needs.deploy.result == 'failure' || needs.smoke-tests.result == 'failure'
+        run: |
+          echo "❌ Deployment failed!"
+          echo "Environment: ${{ github.event.inputs.environment }}"
+          echo "Version: ${{ github.event.inputs.version }}"
+          # Add notification logic here (Slack, email, etc.)
+          exit 1
+  
+  # Rollback capability
+  rollback:
+    name: Rollback
+    runs-on: ubuntu-latest
+    needs: [deploy, smoke-tests]
+    if: failure()
+    environment: ${{ github.event.inputs.environment }}
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+      
+      - name: Update kubeconfig
+        run: |
+          aws eks update-kubeconfig \
+            --name ${{ secrets.EKS_CLUSTER_NAME }} \
+            --region ${{ env.AWS_REGION }}
+      
+      - name: Rollback deployment
+        run: |
+          echo "🔄 Rolling back deployment..."
+          
+          kubectl rollout undo deployment/core-backend -n core-${{ github.event.inputs.environment }}
+          kubectl rollout undo deployment/core-frontend -n core-${{ github.event.inputs.environment }}
+          
+          kubectl rollout status deployment/core-backend -n core-${{ github.event.inputs.environment }} --timeout=5m
+          kubectl rollout status deployment/core-frontend -n core-${{ github.event.inputs.environment }} --timeout=5m
+          
+          echo "✅ Rollback completed!"
+
