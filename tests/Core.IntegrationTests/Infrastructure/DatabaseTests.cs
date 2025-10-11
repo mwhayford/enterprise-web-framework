@@ -47,10 +47,10 @@ public class DatabaseTests : IntegrationTestBase
         // Arrange
         var amount = Money.Create(100.50m, "USD");
         var payment = new Payment(
-            Guid.NewGuid().ToString(),
+            Guid.NewGuid(),
             amount,
-            "Test Payment",
-            "pm_test123");
+            PaymentMethodType.Card,
+            "Test Payment");
 
         // Act
         DbContext!.Payments.Add(payment);
@@ -73,14 +73,14 @@ public class DatabaseTests : IntegrationTestBase
     public async Task Database_ShouldQueryMultiplePayments()
     {
         // Arrange
-        var userId = Guid.NewGuid().ToString();
+        var userId = Guid.NewGuid();
         var amount1 = Money.Create(50m, "USD");
         var amount2 = Money.Create(100m, "USD");
         var amount3 = Money.Create(150m, "EUR");
 
-        var payment1 = new Payment(userId, amount1, "Payment 1", "pm_1");
-        var payment2 = new Payment(userId, amount2, "Payment 2", "pm_2");
-        var payment3 = new Payment(userId, amount3, "Payment 3", "pm_3");
+        var payment1 = new Payment(userId, amount1, PaymentMethodType.Card, "Payment 1");
+        var payment2 = new Payment(userId, amount2, PaymentMethodType.Card, "Payment 2");
+        var payment3 = new Payment(userId, amount3, PaymentMethodType.Card, "Payment 3");
 
         payment2.Succeed();
 
@@ -110,15 +110,13 @@ public class DatabaseTests : IntegrationTestBase
     public async Task Database_ShouldPersistSubscription()
     {
         // Arrange
-        var userId = Guid.NewGuid().ToString();
+        var userId = Guid.NewGuid();
         var amount = Money.Create(29.99m, "USD");
         var subscription = new Subscription(
             userId,
-            "sub_test123",
             "plan_premium",
             amount,
-            DateTime.UtcNow,
-            DateTime.UtcNow.AddMonths(1));
+            "cus_test123");
 
         // Act
         DbContext!.Subscriptions.Add(subscription);
@@ -143,14 +141,15 @@ public class DatabaseTests : IntegrationTestBase
     public async Task Database_ShouldPersistPaymentMethod()
     {
         // Arrange
-        var userId = Guid.NewGuid().ToString();
+        var userId = Guid.NewGuid();
         var paymentMethod = new PaymentMethod(
             userId,
-            "pm_test123",
             PaymentMethodType.Card,
+            "pm_test123",
+            "4242",
+            "Visa",
+            null,
             true);
-
-        paymentMethod.UpdateDetails("4242", "Visa", null);
 
         // Act
         DbContext!.PaymentMethods.Add(paymentMethod);
@@ -177,9 +176,9 @@ public class DatabaseTests : IntegrationTestBase
     public async Task Database_ShouldRollbackTransaction_OnError()
     {
         // Arrange
-        var userId = Guid.NewGuid().ToString();
+        var userId = Guid.NewGuid();
         var amount = Money.Create(100m, "USD");
-        var payment = new Payment(userId, amount, "Test Payment", "pm_test");
+        var payment = new Payment(userId, amount, PaymentMethodType.Card, "Test Payment");
 
         // Act
         using (var transaction = await DbContext!.Database.BeginTransactionAsync())
