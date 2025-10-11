@@ -14,6 +14,7 @@ using Testcontainers.PostgreSql;
 using Testcontainers.Redis;
 
 namespace Core.IntegrationTests.Infrastructure;
+
 /// <summary>
 /// Base class for integration tests that provides common infrastructure setup.
 /// </summary>

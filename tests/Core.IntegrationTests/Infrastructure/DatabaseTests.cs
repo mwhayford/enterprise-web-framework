@@ -12,6 +12,7 @@ using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
 
 namespace Core.IntegrationTests.Infrastructure;
+
 /// <summary>
 /// Integration tests for database operations.
 /// </summary>

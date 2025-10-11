@@ -11,6 +11,7 @@ using StackExchange.Redis;
 using Testcontainers.Redis;
 
 namespace Core.IntegrationTests.Infrastructure;
+
 /// <summary>
 /// Integration tests for Redis caching operations.
 /// </summary>
