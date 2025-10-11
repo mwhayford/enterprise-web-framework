@@ -137,8 +137,9 @@ builder.Services.AddAuthentication(options =>
 })
 .AddGoogle(options =>
 {
-    options.ClientId = builder.Configuration["Google:ClientId"]!;
-    options.ClientSecret = builder.Configuration["Google:ClientSecret"]!;
+    options.ClientId = builder.Configuration["Authentication:Google:ClientId"]!;
+    options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"]!;
+    options.CallbackPath = "/signin-google"; // This is the default, but making it explicit
 });
 
 // Configure Authorization
