@@ -2,8 +2,6 @@
 // Copyright (c) Core. All rights reserved.
 // </copyright>
 
-namespace Core.IntegrationTests.Infrastructure;
-
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,6 +11,7 @@ using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
 
+namespace Core.IntegrationTests.Infrastructure;
 /// <summary>
 /// Integration tests for database operations.
 /// </summary>
@@ -216,4 +215,3 @@ public class DatabaseTests : IntegrationTestBase
         subscriptionCount.Should().Be(0);
     }
 }
-

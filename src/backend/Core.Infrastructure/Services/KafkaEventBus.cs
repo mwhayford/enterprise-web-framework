@@ -2,10 +2,10 @@
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 using System.Text.Json;
 using Confluent.Kafka;
+using Core.Application.Interfaces;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Core.Application.Interfaces;
 
 namespace Core.Infrastructure.Services;
 
@@ -31,7 +31,8 @@ public class KafkaEventBus : IEventBus, IHostedService
         _settings = settings.Value;
     }
 
-    public async Task PublishAsync<T>(T @event, string? topic = null) where T : class
+    public async Task PublishAsync<T>(T @event, string? topic = null)
+        where T : class
     {
         try
         {
@@ -59,7 +60,8 @@ public class KafkaEventBus : IEventBus, IHostedService
         }
     }
 
-    public async Task SubscribeAsync<T>(string topic, Func<T, Task> handler) where T : class
+    public Task SubscribeAsync<T>(string topic, Func<T, Task> handler)
+        where T : class
     {
         var eventType = typeof(T).Name;
         var handlerWrapper = new Func<string, Task>(async message =>
@@ -85,6 +87,7 @@ public class KafkaEventBus : IEventBus, IHostedService
 
         _handlers[topic].Add(handlerWrapper);
         _logger.LogInformation("Subscribed to topic {Topic} for event type {EventType}", topic, eventType);
+        return Task.CompletedTask;
     }
 
     public async Task StartAsync(CancellationToken cancellationToken = default)
@@ -165,9 +168,14 @@ public class KafkaEventBus : IEventBus, IHostedService
 public class KafkaSettings
 {
     public string BootstrapServers { get; set; } = "localhost:9092";
+
     public string GroupId { get; set; } = "core-api-group";
+
     public string SecurityProtocol { get; set; } = "PLAINTEXT";
+
     public string SaslMechanism { get; set; } = string.Empty;
+
     public string SaslUsername { get; set; } = string.Empty;
+
     public string SaslPassword { get; set; } = string.Empty;
 }

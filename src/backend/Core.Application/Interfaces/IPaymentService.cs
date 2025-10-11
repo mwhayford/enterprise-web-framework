@@ -21,13 +21,19 @@ public interface IPaymentService
         string? paymentMethodId = null);
 
     Task<bool> RefundPaymentAsync(Guid paymentId, Money? amount = null);
+
     Task<bool> CancelPaymentAsync(Guid paymentId);
+
     Task<Payment?> GetPaymentAsync(Guid paymentId);
+
     Task<IEnumerable<Payment>> GetUserPaymentsAsync(Guid userId, int page = 1, int pageSize = 20);
-    
+
     // Subscription methods
     Task<Core.Domain.Entities.Subscription?> GetSubscriptionAsync(Guid subscriptionId);
+
     Task<IEnumerable<Core.Domain.Entities.Subscription>> GetUserSubscriptionsAsync(Guid userId, int page = 1, int pageSize = 20);
+
     Task<bool> CancelSubscriptionAsync(Guid subscriptionId);
+
     Task<bool> UpdateSubscriptionAsync(Guid subscriptionId, string planId, Money amount);
 }

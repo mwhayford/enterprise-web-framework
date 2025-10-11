@@ -1,3 +1,5 @@
+// Copyright (c) Core. All rights reserved.
+
 using AutoFixture;
 using Core.Application.Commands;
 using Core.Application.Handlers;
@@ -12,9 +14,9 @@ namespace Core.UnitTests.Application.Commands;
 [TestFixture]
 public class CreateSubscriptionCommandHandlerTests
 {
-    private Mock<IPaymentService> _paymentServiceMock;
-    private CreateSubscriptionCommandHandler _handler;
-    private IFixture _fixture;
+    private Mock<IPaymentService> _paymentServiceMock = null!;
+    private CreateSubscriptionCommandHandler _handler = null!;
+    private IFixture _fixture = null!;
 
     [SetUp]
     public void SetUp()

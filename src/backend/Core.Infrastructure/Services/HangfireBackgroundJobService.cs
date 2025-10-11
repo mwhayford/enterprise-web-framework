@@ -1,8 +1,8 @@
 // Copyright (c) Core. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 using System.Linq.Expressions;
-using Hangfire;
 using Core.Application.Interfaces;
+using Hangfire;
 
 namespace Core.Infrastructure.Services;
 
@@ -61,6 +61,7 @@ public class HangfireBackgroundJobService : IBackgroundJobService
         return BackgroundJob.Delete(jobId);
     }
 
+    [Obsolete]
     public void Trigger(string recurringJobId)
     {
         RecurringJob.Trigger(recurringJobId);

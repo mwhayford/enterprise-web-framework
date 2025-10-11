@@ -1,10 +1,10 @@
 // Copyright (c) Core. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
+using Core.Application.DTOs;
+using Core.Application.Interfaces;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Nest;
-using Core.Application.Interfaces;
-using Core.Application.DTOs;
 
 namespace Core.Infrastructure.Services;
 
@@ -25,11 +25,12 @@ public class ElasticsearchService : ISearchService
     }
 
     public async Task<SearchResultDto<T>> SearchAsync<T>(
-        string query, 
-        string index, 
-        int page = 1, 
+        string query,
+        string index,
+        int page = 1,
         int pageSize = 20,
-        Dictionary<string, object>? filters = null) where T : class
+        Dictionary<string, object>? filters = null)
+        where T : class
     {
         try
         {
@@ -70,7 +71,8 @@ public class ElasticsearchService : ISearchService
         }
     }
 
-    public async Task IndexDocumentAsync<T>(T document, string index, string? id = null) where T : class
+    public async Task IndexDocumentAsync<T>(T document, string index, string? id = null)
+        where T : class
     {
         try
         {
@@ -91,7 +93,8 @@ public class ElasticsearchService : ISearchService
         }
     }
 
-    public async Task IndexDocumentsAsync<T>(IEnumerable<T> documents, string index) where T : class
+    public async Task IndexDocumentsAsync<T>(IEnumerable<T> documents, string index)
+        where T : class
     {
         try
         {
@@ -190,7 +193,8 @@ public class ElasticsearchService : ISearchService
         }
     }
 
-    public async Task UpdateDocumentAsync<T>(T document, string index, string id) where T : class
+    public async Task UpdateDocumentAsync<T>(T document, string index, string id)
+        where T : class
     {
         try
         {
@@ -240,8 +244,8 @@ public class ElasticsearchService : ISearchService
             }
         }
 
-        return queries.Any() 
-            ? new BoolQuery { Must = queries } 
+        return queries.Any()
+            ? new BoolQuery { Must = queries }
             : new MatchAllQuery();
     }
 }
@@ -249,7 +253,10 @@ public class ElasticsearchService : ISearchService
 public class ElasticsearchSettings
 {
     public string Url { get; set; } = "http://localhost:9200";
+
     public string DefaultIndex { get; set; } = "core-index";
+
     public string Username { get; set; } = string.Empty;
+
     public string Password { get; set; } = string.Empty;
 }

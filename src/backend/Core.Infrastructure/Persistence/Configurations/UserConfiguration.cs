@@ -1,8 +1,8 @@
 // Copyright (c) Core. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
+using Core.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Core.Domain.Entities;
 
 namespace Core.Infrastructure.Persistence.Configurations;
 

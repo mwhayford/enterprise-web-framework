@@ -1,4 +1,6 @@
-﻿namespace Core.UnitTests;
+﻿// Copyright (c) Core. All rights reserved.
+
+namespace Core.UnitTests;
 
 public class Tests
 {

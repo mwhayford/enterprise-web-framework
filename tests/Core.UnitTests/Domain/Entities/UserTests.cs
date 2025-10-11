@@ -1,3 +1,5 @@
+// Copyright (c) Core. All rights reserved.
+
 using Core.Domain.Entities;
 using Core.Domain.Events;
 using Core.Domain.ValueObjects;
@@ -254,6 +256,7 @@ public class UserTests
         // Arrange
         var user1 = new User("John", "Doe", Email.Create("john.doe@example.com"));
         var user2 = new User("Jane", "Smith", Email.Create("jane.smith@example.com"));
+
         // Note: In a real scenario, you'd need to set the same ID, but since ID is generated in constructor,
         // this test demonstrates the concept
 

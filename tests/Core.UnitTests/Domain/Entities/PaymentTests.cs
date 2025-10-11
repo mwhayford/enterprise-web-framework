@@ -1,3 +1,5 @@
+// Copyright (c) Core. All rights reserved.
+
 using Core.Domain.Entities;
 using Core.Domain.Events;
 using Core.Domain.ValueObjects;
@@ -267,6 +269,7 @@ public class PaymentTests
         // Arrange
         var payment1 = new Payment(Guid.NewGuid(), Money.Create(100m, "USD"), PaymentMethodType.Card, "Test");
         var payment2 = new Payment(Guid.NewGuid(), Money.Create(200m, "USD"), PaymentMethodType.Ach, "Test2");
+
         // Note: In a real scenario, you'd need to set the same ID, but since ID is generated in constructor,
         // this test demonstrates the concept
 

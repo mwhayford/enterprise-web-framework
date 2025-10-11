@@ -8,18 +8,30 @@ namespace Core.Domain.Entities;
 public class Subscription : BaseEntity
 {
     public Guid UserId { get; private set; }
+
     public string PlanId { get; private set; }
+
     public Money Amount { get; private set; }
+
     public SubscriptionStatus Status { get; private set; }
+
     public string? StripeSubscriptionId { get; private set; }
+
     public string? StripeCustomerId { get; private set; }
+
     public DateTime? CurrentPeriodStart { get; private set; }
+
     public DateTime? CurrentPeriodEnd { get; private set; }
+
     public DateTime? CanceledAt { get; private set; }
+
     public DateTime? TrialStart { get; private set; }
+
     public DateTime? TrialEnd { get; private set; }
 
-    private Subscription() { } // For EF Core
+    private Subscription()
+    {
+    } // For EF Core
 
     public Subscription(
         Guid userId,
@@ -113,6 +125,8 @@ public class Subscription : BaseEntity
     }
 
     public bool IsActive => Status == SubscriptionStatus.Active || Status == SubscriptionStatus.Trialing;
+
     public bool IsCanceled => Status == SubscriptionStatus.Canceled;
+
     public bool IsPastDue => Status == SubscriptionStatus.PastDue;
 }

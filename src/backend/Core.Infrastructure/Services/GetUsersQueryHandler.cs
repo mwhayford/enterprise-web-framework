@@ -1,11 +1,11 @@
 // Copyright (c) Core. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
-using MediatR;
-using Core.Application.Queries;
 using Core.Application.DTOs;
-using Microsoft.EntityFrameworkCore;
-using Core.Infrastructure.Persistence;
+using Core.Application.Queries;
 using Core.Infrastructure.Identity;
+using Core.Infrastructure.Persistence;
+using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace Core.Infrastructure.Services;
 
@@ -26,7 +26,7 @@ public class GetUsersQueryHandler : IRequestHandler<GetUsersQuery, PaginatedResu
         if (!string.IsNullOrWhiteSpace(request.SearchTerm))
         {
             var searchTerm = request.SearchTerm.ToLower();
-            query = query.Where(u => 
+            query = query.Where(u =>
                 u.FirstName!.ToLower().Contains(searchTerm) ||
                 u.LastName!.ToLower().Contains(searchTerm) ||
                 u.Email!.ToLower().Contains(searchTerm));
@@ -47,9 +47,9 @@ public class GetUsersQueryHandler : IRequestHandler<GetUsersQuery, PaginatedResu
             .Select(u => new UserDto
             {
                 Id = Guid.Parse(u.Id),
-                FirstName = u.FirstName ?? "",
-                LastName = u.LastName ?? "",
-                Email = u.Email ?? "",
+                FirstName = u.FirstName ?? string.Empty,
+                LastName = u.LastName ?? string.Empty,
+                Email = u.Email ?? string.Empty,
                 ProfilePictureUrl = u.AvatarUrl,
                 IsActive = u.LockoutEnd == null,
                 CreatedAt = u.CreatedAt,

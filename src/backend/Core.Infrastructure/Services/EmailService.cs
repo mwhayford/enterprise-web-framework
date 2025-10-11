@@ -1,7 +1,7 @@
 // Copyright (c) Core. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
-using Microsoft.Extensions.Logging;
 using Core.Application.Interfaces;
+using Microsoft.Extensions.Logging;
 
 namespace Core.Infrastructure.Services;
 
@@ -21,44 +21,46 @@ public class EmailService
     public async Task SendWelcomeEmailAsync(string email, string firstName)
     {
         _logger.LogInformation("Sending welcome email to {Email}", email);
-        
+
         // Simulate email sending
         await Task.Delay(1000);
-        
+
         _metricsService.RecordEmailSent("welcome");
         _logger.LogInformation("Welcome email sent to {Email}", email);
     }
 
     public async Task SendPaymentConfirmationEmailAsync(string email, decimal amount, string currency)
     {
-        _logger.LogInformation("Sending payment confirmation email to {Email} for {Amount} {Currency}", 
+        _logger.LogInformation(
+            "Sending payment confirmation email to {Email} for {Amount} {Currency}",
             email, amount, currency);
-        
+
         // Simulate email sending
         await Task.Delay(1000);
-        
+
         _metricsService.RecordEmailSent("payment_confirmation");
         _logger.LogInformation("Payment confirmation email sent to {Email}", email);
     }
 
     public async Task SendSubscriptionReminderEmailAsync(string email, string planName, DateTime renewalDate)
     {
-        _logger.LogInformation("Sending subscription reminder email to {Email} for plan {PlanName}", 
+        _logger.LogInformation(
+            "Sending subscription reminder email to {Email} for plan {PlanName}",
             email, planName);
-        
+
         // Simulate email sending
         await Task.Delay(1000);
-        
+
         _logger.LogInformation("Subscription reminder email sent to {Email}", email);
     }
 
     public async Task SendPasswordResetEmailAsync(string email, string resetToken)
     {
         _logger.LogInformation("Sending password reset email to {Email}", email);
-        
+
         // Simulate email sending
         await Task.Delay(1000);
-        
+
         _logger.LogInformation("Password reset email sent to {Email}", email);
     }
 }

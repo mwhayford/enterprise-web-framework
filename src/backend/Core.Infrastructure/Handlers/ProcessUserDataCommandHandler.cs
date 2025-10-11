@@ -1,9 +1,9 @@
 // Copyright (c) Core. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
-using MediatR;
 using Core.Application.Commands;
 using Core.Application.Interfaces;
 using Core.Infrastructure.Services;
+using MediatR;
 
 namespace Core.Infrastructure.Handlers;
 
@@ -19,9 +19,9 @@ public class ProcessUserDataCommandHandler : IRequestHandler<ProcessUserDataComm
     public async Task Handle(ProcessUserDataCommand request, CancellationToken cancellationToken)
     {
         // Enqueue the data processing as a background job
-        _backgroundJobService.Enqueue<DataProcessingService>(service => 
+        _backgroundJobService.Enqueue<DataProcessingService>(service =>
             service.ProcessUserDataAsync(request.UserId));
-        
+
         await Task.CompletedTask;
     }
 }

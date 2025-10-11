@@ -1,3 +1,5 @@
+// Copyright (c) Core. All rights reserved.
+
 using Core.Domain.ValueObjects;
 using FluentAssertions;
 

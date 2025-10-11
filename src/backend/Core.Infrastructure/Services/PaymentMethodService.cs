@@ -1,10 +1,10 @@
 // Copyright (c) Core. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
-using Microsoft.EntityFrameworkCore;
 using Core.Application.Interfaces;
 using Core.Domain.Entities;
 using Core.Domain.ValueObjects;
 using Core.Infrastructure.Persistence;
+using Microsoft.EntityFrameworkCore;
 
 namespace Core.Infrastructure.Services;
 
@@ -72,7 +72,9 @@ public class PaymentMethodService : IPaymentMethodService
     {
         var paymentMethod = await _context.PaymentMethods.FindAsync(paymentMethodId);
         if (paymentMethod == null)
+        {
             return false;
+        }
 
         paymentMethod.Deactivate();
         await _context.SaveChangesAsync();
@@ -83,7 +85,9 @@ public class PaymentMethodService : IPaymentMethodService
     {
         var paymentMethod = await _context.PaymentMethods.FindAsync(paymentMethodId);
         if (paymentMethod == null)
+        {
             return false;
+        }
 
         // Unset other default payment methods for this user
         var existingDefaults = await _context.PaymentMethods
@@ -105,7 +109,9 @@ public class PaymentMethodService : IPaymentMethodService
     {
         var paymentMethod = await _context.PaymentMethods.FindAsync(paymentMethodId);
         if (paymentMethod == null)
+        {
             return false;
+        }
 
         paymentMethod.UpdateDetails(lastFourDigits, brand, bankName);
         await _context.SaveChangesAsync();

@@ -1,3 +1,5 @@
+// Copyright (c) Core. All rights reserved.
+
 using AutoFixture;
 using Core.Application.Commands;
 using Core.Application.Handlers;
@@ -12,9 +14,9 @@ namespace Core.UnitTests.Application.Commands;
 [TestFixture]
 public class ProcessPaymentCommandHandlerTests
 {
-    private Mock<IPaymentService> _paymentServiceMock;
-    private ProcessPaymentCommandHandler _handler;
-    private IFixture _fixture;
+    private Mock<IPaymentService> _paymentServiceMock = null!;
+    private ProcessPaymentCommandHandler _handler = null!;
+    private IFixture _fixture = null!;
 
     [SetUp]
     public void SetUp()
@@ -295,6 +297,7 @@ public class ProcessPaymentCommandHandlerTests
 
         // Assert
         result.Should().NotBeNull();
+
         // Note: The actual cancellation token handling would depend on the service implementation
     }
 }

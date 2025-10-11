@@ -1,10 +1,10 @@
 // Copyright (c) Core. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
 using Core.Application.Commands;
 using Core.Application.Queries;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Core.API.Controllers;
 
@@ -56,9 +56,9 @@ public class UsersController : ControllerBase
     [Authorize(Roles = "Admin")]
     public async Task<IActionResult> GetUsers([FromQuery] int page = 1, [FromQuery] int pageSize = 20, [FromQuery] string? searchTerm = null, [FromQuery] bool? isActive = null)
     {
-        var users = await _mediator.Send(new GetUsersQuery 
-        { 
-            Page = page, 
+        var users = await _mediator.Send(new GetUsersQuery
+        {
+            Page = page,
             PageSize = pageSize,
             SearchTerm = searchTerm,
             IsActive = isActive
@@ -75,6 +75,7 @@ public class UsersController : ControllerBase
         {
             return NotFound();
         }
+
         return Ok(user);
     }
 
@@ -87,6 +88,7 @@ public class UsersController : ControllerBase
         {
             return NotFound();
         }
+
         return Ok(new { Message = "User deactivated successfully" });
     }
 
@@ -99,6 +101,7 @@ public class UsersController : ControllerBase
         {
             return NotFound();
         }
+
         return Ok(new { Message = "User activated successfully" });
     }
 }

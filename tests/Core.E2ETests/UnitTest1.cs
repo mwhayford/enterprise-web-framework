@@ -1,4 +1,6 @@
-﻿namespace Core.E2ETests;
+﻿// Copyright (c) Core. All rights reserved.
+
+namespace Core.E2ETests;
 
 public class Tests
 {

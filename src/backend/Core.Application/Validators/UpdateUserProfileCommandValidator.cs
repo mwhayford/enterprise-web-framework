@@ -1,7 +1,7 @@
 // Copyright (c) Core. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
-using FluentValidation;
 using Core.Application.Commands;
+using FluentValidation;
 
 namespace Core.Application.Validators;
 
@@ -34,7 +34,9 @@ public class UpdateUserProfileCommandValidator : AbstractValidator<UpdateUserPro
     private static bool BeValidUrl(string? url)
     {
         if (string.IsNullOrEmpty(url))
+        {
             return true;
+        }
 
         return Uri.TryCreate(url, UriKind.Absolute, out var result) &&
                (result.Scheme == Uri.UriSchemeHttp || result.Scheme == Uri.UriSchemeHttps);

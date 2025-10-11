@@ -1,9 +1,9 @@
 // Copyright (c) Core. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
 using Core.Application.Commands;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Core.API.Controllers;
 
@@ -34,23 +34,23 @@ public class PaymentMethodsController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetPaymentMethods()
+    public Task<IActionResult> GetPaymentMethods()
     {
         // This would need a GetPaymentMethodsQuery implementation
-        return Ok(new { Message = "Get payment methods endpoint - to be implemented" });
+        return Task.FromResult<IActionResult>(Ok(new { Message = "Get payment methods endpoint - to be implemented" }));
     }
 
     [HttpDelete("{paymentMethodId}")]
-    public async Task<IActionResult> DeletePaymentMethod(Guid paymentMethodId)
+    public Task<IActionResult> DeletePaymentMethod(Guid paymentMethodId)
     {
         // This would need a DeletePaymentMethodCommand implementation
-        return Ok(new { Message = "Delete payment method endpoint - to be implemented" });
+        return Task.FromResult<IActionResult>(Ok(new { Message = "Delete payment method endpoint - to be implemented" }));
     }
 
     [HttpPut("{paymentMethodId}/set-default")]
-    public async Task<IActionResult> SetDefaultPaymentMethod(Guid paymentMethodId)
+    public Task<IActionResult> SetDefaultPaymentMethod(Guid paymentMethodId)
     {
         // This would need a SetDefaultPaymentMethodCommand implementation
-        return Ok(new { Message = "Set default payment method endpoint - to be implemented" });
+        return Task.FromResult<IActionResult>(Ok(new { Message = "Set default payment method endpoint - to be implemented" }));
     }
 }

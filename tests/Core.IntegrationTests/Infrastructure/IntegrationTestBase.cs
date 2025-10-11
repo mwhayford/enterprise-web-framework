@@ -2,10 +2,9 @@
 // Copyright (c) Core. All rights reserved.
 // </copyright>
 
-namespace Core.IntegrationTests.Infrastructure;
-
 using System;
 using System.Threading.Tasks;
+using Core.Infrastructure.Persistence;
 using DotNet.Testcontainers.Builders;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -13,8 +12,8 @@ using NUnit.Framework;
 using Respawn;
 using Testcontainers.PostgreSql;
 using Testcontainers.Redis;
-using Core.Infrastructure.Persistence;
 
+namespace Core.IntegrationTests.Infrastructure;
 /// <summary>
 /// Base class for integration tests that provides common infrastructure setup.
 /// </summary>
@@ -156,4 +155,3 @@ public abstract class IntegrationTestBase
             options.UseNpgsql(GetPostgresConnectionString()));
     }
 }
-

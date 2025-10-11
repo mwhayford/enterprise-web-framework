@@ -28,8 +28,29 @@ csharp_new_line_before_members_in_anonymous_types = true
 csharp_indent_case_contents = true
 csharp_indent_switch_labels = true
 
-# Suppress SA1636 (file header copyright mismatch) - our copyright format is correct
+# StyleCop Analyzer Configuration
+
+# SA1101: Prefix local calls with this - Not required in modern C#
+dotnet_diagnostic.SA1101.severity = none
+
+# SA1309: Field names should not begin with underscore - Allow underscore prefix for private fields (common convention)
+dotnet_naming_rule.private_fields_with_underscore.severity = none
+dotnet_diagnostic.SA1309.severity = none
+
+# SA1413: Use trailing comma in multi-line initializers - Optional, not enforcing
+dotnet_diagnostic.SA1413.severity = none
+
+# SA1636: File header copyright mismatch - Our copyright format is correct
 dotnet_diagnostic.SA1636.severity = none
+
+# SA0001: XML comment analysis disabled - Not using XML docs for all members
+dotnet_diagnostic.SA0001.severity = none
+
+# SA1402: File may only contain a single type - Allow multiple types for small nested classes
+dotnet_diagnostic.SA1402.severity = suggestion
+
+# SA1649: File name should match first type name - Not enforcing for nested/helper classes
+dotnet_diagnostic.SA1649.severity = suggestion
 
 # JSON files
 [*.json]

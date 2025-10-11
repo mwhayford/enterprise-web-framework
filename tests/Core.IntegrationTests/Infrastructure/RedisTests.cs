@@ -2,8 +2,6 @@
 // Copyright (c) Core. All rights reserved.
 // </copyright>
 
-namespace Core.IntegrationTests.Infrastructure;
-
 using System;
 using System.Threading.Tasks;
 using DotNet.Testcontainers.Builders;
@@ -12,6 +10,7 @@ using NUnit.Framework;
 using StackExchange.Redis;
 using Testcontainers.Redis;
 
+namespace Core.IntegrationTests.Infrastructure;
 /// <summary>
 /// Integration tests for Redis caching operations.
 /// </summary>
@@ -241,4 +240,3 @@ public class RedisTests
         value3.Should().Be(7);
     }
 }
-

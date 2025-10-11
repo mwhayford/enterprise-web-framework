@@ -1,18 +1,18 @@
 // Copyright (c) Core. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
-using Microsoft.AspNetCore.Mvc;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
+using Core.Application.Commands;
+using Core.Infrastructure.Identity;
+using MediatR;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
-using System.Security.Claims;
-using System.IdentityModel.Tokens.Jwt;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
-using System.Text;
-using Core.Application.Commands;
-using Core.Infrastructure.Identity;
-using MediatR;
 
 namespace Core.API.Controllers;
 
@@ -47,7 +47,7 @@ public class AuthController : ControllerBase
     public async Task<IActionResult> GoogleCallback()
     {
         var result = await HttpContext.AuthenticateAsync(GoogleDefaults.AuthenticationScheme);
-        
+
         if (!result.Succeeded)
         {
             _logger.LogWarning("Google authentication failed");
@@ -85,7 +85,7 @@ public class AuthController : ControllerBase
             // Redirect to frontend with token and user data
             var frontendUrl = _configuration["Frontend:BaseUrl"] ?? "http://localhost:5173";
             var redirectUrl = $"{frontendUrl}/auth-callback?token={token}&user={Uri.EscapeDataString(System.Text.Json.JsonSerializer.Serialize(user))}";
-            
+
             return Redirect(redirectUrl);
         }
         catch (Exception ex)
@@ -130,8 +130,8 @@ public class AuthController : ControllerBase
         {
             new Claim(ClaimTypes.NameIdentifier, userId.ToString()),
             new Claim(ClaimTypes.Email, email),
-            new Claim(ClaimTypes.GivenName, firstName ?? ""),
-            new Claim(ClaimTypes.Surname, lastName ?? ""),
+            new Claim(ClaimTypes.GivenName, firstName ?? string.Empty),
+            new Claim(ClaimTypes.Surname, lastName ?? string.Empty),
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
             new Claim(JwtRegisteredClaimNames.Iat, DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString(), ClaimValueTypes.Integer64)
         };
@@ -141,8 +141,7 @@ public class AuthController : ControllerBase
             audience: _configuration["Jwt:Audience"],
             claims: claims,
             expires: DateTime.UtcNow.AddHours(1),
-            signingCredentials: credentials
-        );
+            signingCredentials: credentials);
 
         return new JwtSecurityTokenHandler().WriteToken(token);
     }

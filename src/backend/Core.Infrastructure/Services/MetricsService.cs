@@ -1,8 +1,8 @@
 // Copyright (c) Core. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 using System.Diagnostics.Metrics;
-using Microsoft.Extensions.Logging;
 using Core.Application.Interfaces;
+using Microsoft.Extensions.Logging;
 
 namespace Core.Infrastructure.Services;
 
@@ -21,27 +21,27 @@ public class MetricsService : IMetricsService
     {
         _logger = logger;
         _meter = new Meter("Core.API", "1.0.0");
-        
+
         _userRegistrations = _meter.CreateCounter<long>(
             "core_user_registrations_total",
             "Total number of user registrations");
-            
+
         _paymentsProcessed = _meter.CreateCounter<long>(
             "core_payments_processed_total",
             "Total number of payments processed");
-            
+
         _subscriptionsCreated = _meter.CreateCounter<long>(
             "core_subscriptions_created_total",
             "Total number of subscriptions created");
-            
+
         _emailsSent = _meter.CreateCounter<long>(
             "core_emails_sent_total",
             "Total number of emails sent");
-            
+
         _paymentProcessingTime = _meter.CreateHistogram<double>(
             "core_payment_processing_duration_seconds",
             "Time spent processing payments");
-            
+
         _userRegistrationTime = _meter.CreateHistogram<double>(
             "core_user_registration_duration_seconds",
             "Time spent registering users");

@@ -1,13 +1,14 @@
 // Copyright (c) Core. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
-using MediatR;
 using Core.Application.Commands;
 using Core.Application.DTOs;
 using Core.Application.Interfaces;
+using MediatR;
 
 namespace Core.Application.Handlers;
 
-public class SearchCommandHandler<T> : IRequestHandler<SearchCommand<T>, SearchResultDto<T>> where T : class
+public class SearchCommandHandler<T> : IRequestHandler<SearchCommand<T>, SearchResultDto<T>>
+    where T : class
 {
     private readonly ISearchService _searchService;
 

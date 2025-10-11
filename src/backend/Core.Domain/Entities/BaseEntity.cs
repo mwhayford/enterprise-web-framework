@@ -7,7 +7,9 @@ namespace Core.Domain.Entities;
 public abstract class BaseEntity : IEntity, IAggregateRoot
 {
     public Guid Id { get; protected set; }
+
     public DateTime CreatedAt { get; protected set; }
+
     public DateTime UpdatedAt { get; protected set; }
 
     private readonly List<IDomainEvent> _domainEvents = new();

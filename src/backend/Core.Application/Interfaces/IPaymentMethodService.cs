@@ -17,8 +17,12 @@ public interface IPaymentMethodService
         bool isDefault = false);
 
     Task<PaymentMethod?> GetPaymentMethodAsync(Guid paymentMethodId);
+
     Task<IEnumerable<PaymentMethod>> GetUserPaymentMethodsAsync(Guid userId);
+
     Task<bool> DeletePaymentMethodAsync(Guid paymentMethodId);
+
     Task<bool> SetDefaultPaymentMethodAsync(Guid paymentMethodId);
+
     Task<bool> UpdatePaymentMethodAsync(Guid paymentMethodId, string? lastFourDigits = null, string? brand = null, string? bankName = null);
 }

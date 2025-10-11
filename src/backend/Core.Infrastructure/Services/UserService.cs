@@ -1,15 +1,15 @@
 // Copyright (c) Core. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
-using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Identity;
+using Core.Application.Commands;
 using Core.Application.Interfaces;
 using Core.Domain.Entities;
-using Core.Domain.ValueObjects;
 using Core.Domain.Events;
-using Core.Infrastructure.Persistence;
+using Core.Domain.ValueObjects;
 using Core.Infrastructure.Identity;
+using Core.Infrastructure.Persistence;
 using MediatR;
-using Core.Application.Commands;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace Core.Infrastructure.Services;
 
@@ -38,6 +38,7 @@ public class UserService : IUserService
         string? profilePictureUrl = null)
     {
         var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+
         // Check if user already exists
         var existingUser = await _userManager.FindByEmailAsync(email.Value);
         if (existingUser != null)
@@ -52,7 +53,7 @@ public class UserService : IUserService
                 existingUser.UpdatedAt = DateTime.UtcNow;
                 await _userManager.UpdateAsync(existingUser);
             }
-            
+
             // Convert ApplicationUser to Domain User
             return new User(
                 existingUser.FirstName ?? firstName,
@@ -123,7 +124,10 @@ public class UserService : IUserService
     public async Task<User?> GetUserByIdAsync(Guid userId)
     {
         var applicationUser = await _userManager.FindByIdAsync(userId.ToString());
-        if (applicationUser == null) return null;
+        if (applicationUser == null)
+        {
+            return null;
+        }
 
         return ConvertToDomainUser(applicationUser);
     }
@@ -131,7 +135,10 @@ public class UserService : IUserService
     public async Task<User?> GetUserByEmailAsync(Email email)
     {
         var applicationUser = await _userManager.FindByEmailAsync(email.Value);
-        if (applicationUser == null) return null;
+        if (applicationUser == null)
+        {
+            return null;
+        }
 
         return ConvertToDomainUser(applicationUser);
     }
@@ -140,7 +147,10 @@ public class UserService : IUserService
     {
         var applicationUser = await _context.Users
             .FirstOrDefaultAsync(u => u.GoogleId == googleId);
-        if (applicationUser == null) return null;
+        if (applicationUser == null)
+        {
+            return null;
+        }
 
         return ConvertToDomainUser(applicationUser);
     }
@@ -149,7 +159,9 @@ public class UserService : IUserService
     {
         var applicationUser = await _userManager.FindByIdAsync(userId.ToString());
         if (applicationUser == null)
+        {
             throw new ArgumentException("User not found", nameof(userId));
+        }
 
         applicationUser.FirstName = firstName;
         applicationUser.LastName = lastName;
@@ -180,7 +192,9 @@ public class UserService : IUserService
     {
         var applicationUser = await _userManager.FindByIdAsync(userId.ToString());
         if (applicationUser == null)
+        {
             return false;
+        }
 
         applicationUser.LockoutEnabled = true;
         applicationUser.LockoutEnd = DateTimeOffset.MaxValue;
@@ -194,7 +208,9 @@ public class UserService : IUserService
     {
         var applicationUser = await _userManager.FindByIdAsync(userId.ToString());
         if (applicationUser == null)
+        {
             return false;
+        }
 
         applicationUser.LockoutEnabled = false;
         applicationUser.LockoutEnd = null;
@@ -207,8 +223,8 @@ public class UserService : IUserService
     private User ConvertToDomainUser(ApplicationUser applicationUser)
     {
         return new User(
-            applicationUser.FirstName ?? "",
-            applicationUser.LastName ?? "",
+            applicationUser.FirstName ?? string.Empty,
+            applicationUser.LastName ?? string.Empty,
             Core.Domain.ValueObjects.Email.Create(applicationUser.Email!),
             applicationUser.GoogleId,
             applicationUser.AvatarUrl);

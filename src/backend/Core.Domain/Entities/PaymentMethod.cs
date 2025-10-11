@@ -7,15 +7,24 @@ namespace Core.Domain.Entities;
 public class PaymentMethod : BaseEntity
 {
     public Guid UserId { get; private set; }
+
     public PaymentMethodType Type { get; private set; }
+
     public string? StripePaymentMethodId { get; private set; }
+
     public string? LastFourDigits { get; private set; }
+
     public string? Brand { get; private set; }
+
     public string? BankName { get; private set; }
+
     public bool IsDefault { get; private set; }
+
     public bool IsActive { get; private set; }
 
-    private PaymentMethod() { } // For EF Core
+    private PaymentMethod()
+    {
+    } // For EF Core
 
     public PaymentMethod(
         Guid userId,
@@ -71,11 +80,20 @@ public class PaymentMethod : BaseEntity
     public void UpdateDetails(string? lastFourDigits, string? brand, string? bankName)
     {
         if (!string.IsNullOrEmpty(lastFourDigits))
+        {
             LastFourDigits = lastFourDigits;
+        }
+
         if (!string.IsNullOrEmpty(brand))
+        {
             Brand = brand;
+        }
+
         if (!string.IsNullOrEmpty(bankName))
+        {
             BankName = bankName;
+        }
+
         UpdateTimestamp();
     }
 

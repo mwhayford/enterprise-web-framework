@@ -13,7 +13,8 @@ public class EventPublisher : IEventPublisher
         _eventBus = eventBus;
     }
 
-    public async Task PublishAsync<T>(T @event, string? topic = null) where T : class
+    public async Task PublishAsync<T>(T @event, string? topic = null)
+        where T : class
     {
         await _eventBus.PublishAsync(@event, topic);
     }

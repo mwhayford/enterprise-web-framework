@@ -1,17 +1,17 @@
 // Copyright (c) Core. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
-using Microsoft.AspNetCore.Identity;
-using Stripe;
+using Core.Application.Commands;
 using Core.Application.Interfaces;
 using Core.Domain.Entities;
-using Core.Domain.ValueObjects;
 using Core.Domain.Events;
-using Core.Infrastructure.Persistence;
+using Core.Domain.ValueObjects;
 using Core.Infrastructure.Identity;
+using Core.Infrastructure.Persistence;
 using MediatR;
-using Core.Application.Commands;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using Stripe;
 using StripeSubscription = Stripe.Subscription;
 
 namespace Core.Infrastructure.ExternalServices;
@@ -70,7 +70,7 @@ public class StripePaymentService : IPaymentService
             if (paymentIntent.Status == "succeeded")
             {
                 payment.Succeed();
-                
+
                 // Publish payment processed event
                 await _eventPublisher.PublishAsync(new PaymentProcessedEvent
                 {
@@ -102,7 +102,7 @@ public class StripePaymentService : IPaymentService
             else
             {
                 payment.Fail($"Payment failed with status: {paymentIntent.Status}");
-                
+
                 // Publish payment failed event
                 await _eventPublisher.PublishAsync(new PaymentFailedEvent
                 {
@@ -115,12 +115,12 @@ public class StripePaymentService : IPaymentService
             }
 
             await _context.SaveChangesAsync();
-            
+
             // Record metrics
             stopwatch.Stop();
             _metricsService.RecordPaymentProcessed(payment.Status.ToString());
             _metricsService.RecordPaymentProcessingTime(stopwatch.Elapsed);
-            
+
             return payment;
         }
         catch (StripeException ex)
@@ -128,12 +128,12 @@ public class StripePaymentService : IPaymentService
             _logger.LogError(ex, "Stripe payment processing failed for payment {PaymentId}", payment.Id);
             payment.Fail($"Stripe error: {ex.Message}");
             await _context.SaveChangesAsync();
-            
+
             // Record metrics for failed payment
             stopwatch.Stop();
             _metricsService.RecordPaymentProcessed(payment.Status.ToString());
             _metricsService.RecordPaymentProcessingTime(stopwatch.Elapsed);
-            
+
             return payment;
         }
     }
@@ -205,7 +205,9 @@ public class StripePaymentService : IPaymentService
     {
         var payment = await _context.Payments.FindAsync(paymentId);
         if (payment == null || string.IsNullOrEmpty(payment.StripeChargeId))
+        {
             return false;
+        }
 
         try
         {
@@ -245,7 +247,9 @@ public class StripePaymentService : IPaymentService
     {
         var payment = await _context.Payments.FindAsync(paymentId);
         if (payment == null)
+        {
             return false;
+        }
 
         payment.Cancel();
         await _context.SaveChangesAsync();
@@ -286,7 +290,9 @@ public class StripePaymentService : IPaymentService
     {
         var subscription = await _context.Subscriptions.FindAsync(subscriptionId);
         if (subscription == null || string.IsNullOrEmpty(subscription.StripeSubscriptionId))
+        {
             return false;
+        }
 
         try
         {
@@ -308,7 +314,9 @@ public class StripePaymentService : IPaymentService
     {
         var subscription = await _context.Subscriptions.FindAsync(subscriptionId);
         if (subscription == null || string.IsNullOrEmpty(subscription.StripeSubscriptionId))
+        {
             return false;
+        }
 
         try
         {
@@ -346,7 +354,9 @@ public class StripePaymentService : IPaymentService
     {
         var user = await _userManager.FindByIdAsync(userId.ToString());
         if (user == null)
+        {
             throw new ArgumentException("User not found", nameof(userId));
+        }
 
         var customerService = new CustomerService();
         var customers = await customerService.ListAsync(new CustomerListOptions

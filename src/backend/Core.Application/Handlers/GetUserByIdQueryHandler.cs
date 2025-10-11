@@ -1,10 +1,10 @@
 // Copyright (c) Core. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
-using MediatR;
-using Core.Application.Queries;
 using Core.Application.DTOs;
 using Core.Application.Interfaces;
 using Core.Application.Mappings;
+using Core.Application.Queries;
+using MediatR;
 
 namespace Core.Application.Handlers;
 
