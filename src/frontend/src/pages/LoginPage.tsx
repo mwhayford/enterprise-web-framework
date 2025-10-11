@@ -8,7 +8,7 @@ const LoginPage: React.FC = () => {
 
   const handleGoogleLogin = () => {
     // Redirect to backend Google OAuth endpoint
-    window.location.href = `${import.meta.env.VITE_API_BASE_URL || 'https://localhost:7001/api'}/auth/google`;
+    window.location.href = `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5111'}/api/auth/google`;
   };
 
   return (
