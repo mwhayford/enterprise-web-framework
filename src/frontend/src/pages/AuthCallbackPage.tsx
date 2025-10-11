@@ -19,9 +19,9 @@ const AuthCallbackPage: React.FC = () => {
           // Parse user data
           const userData = JSON.parse(decodeURIComponent(user));
           
-          // Store tokens and user data in localStorage
-          localStorage.setItem('authToken', token);
-          localStorage.setItem('userData', JSON.stringify(userData));
+          // Store tokens and user data in localStorage (using correct keys)
+          localStorage.setItem('auth_token', token);
+          localStorage.setItem('user', JSON.stringify(userData));
 
           // Redirect to dashboard (this will trigger AuthContext to reload user)
           navigate('/dashboard', { replace: true });
