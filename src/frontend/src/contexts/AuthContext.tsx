@@ -38,13 +38,32 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const initializeAuth = async () => {
       try {
         if (apiService.isAuthenticated()) {
-          const userData = await apiService.getCurrentUser();
-          setUser(userData);
+          // First try to get user from localStorage
+          const storedUser = localStorage.getItem('user');
+          if (storedUser) {
+            setUser(JSON.parse(storedUser));
+            setIsLoading(false);
+            
+            // Then fetch fresh user data in the background
+            try {
+              const userData = await apiService.getCurrentUser();
+              setUser(userData);
+            } catch (error) {
+              console.error('Failed to refresh user data:', error);
+              // Keep using the stored user data
+            }
+          } else {
+            // No stored user, fetch from API
+            const userData = await apiService.getCurrentUser();
+            setUser(userData);
+            setIsLoading(false);
+          }
+        } else {
+          setIsLoading(false);
         }
       } catch (error) {
         console.error('Failed to initialize auth:', error);
         apiService.removeAuthToken();
-      } finally {
         setIsLoading(false);
       }
     };
