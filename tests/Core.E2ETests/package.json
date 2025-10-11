@@ -1,0 +1,27 @@
+{
+  "name": "core.e2etests",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "playwright test",
+    "test:headed": "playwright test --headed",
+    "test:debug": "playwright test --debug",
+    "test:ui": "playwright test --ui",
+    "test:auth": "playwright test auth.spec.ts",
+    "test:search": "playwright test search.spec.ts",
+    "test:payment": "playwright test payment.spec.ts",
+    "test:subscription": "playwright test subscription.spec.ts",
+    "test:navigation": "playwright test navigation.spec.ts",
+    "report": "playwright show-report",
+    "codegen": "playwright codegen http://localhost:3001"
+  },
+  "keywords": ["e2e", "testing", "playwright"],
+  "author": "Core Team",
+  "license": "MIT",
+  "devDependencies": {
+    "@playwright/test": "^1.56.0",
+    "@types/node": "^24.7.1",
+    "typescript": "^5.9.3"
+  }
+}
