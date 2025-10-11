@@ -25,7 +25,13 @@ public class User : BaseEntity
         ProfilePictureUrl = profilePictureUrl;
         IsActive = true;
 
-        AddDomainEvent(new UserRegisteredEvent(Id, email.Value, firstName, lastName));
+        AddDomainEvent(new UserCreatedEvent
+        {
+            UserId = Id,
+            Email = email.Value,
+            FirstName = firstName,
+            LastName = lastName
+        });
     }
 
     public void UpdateProfile(string firstName, string lastName, string? profilePictureUrl = null)

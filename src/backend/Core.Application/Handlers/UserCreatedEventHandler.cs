@@ -1,0 +1,30 @@
+using MediatR;
+using Microsoft.Extensions.Logging;
+using Core.Domain.Events;
+
+namespace Core.Application.Handlers;
+
+public class UserCreatedEventHandler : INotificationHandler<UserCreatedEvent>
+{
+    private readonly ILogger<UserCreatedEventHandler> _logger;
+
+    public UserCreatedEventHandler(ILogger<UserCreatedEventHandler> logger)
+    {
+        _logger = logger;
+    }
+
+    public async Task Handle(UserCreatedEvent notification, CancellationToken cancellationToken)
+    {
+        _logger.LogInformation("Handling UserCreatedEvent for user {UserId} with email {Email}", 
+            notification.UserId, notification.Email);
+
+        // Here you can add business logic like:
+        // - Send welcome email
+        // - Create user profile
+        // - Initialize user settings
+        // - Update analytics
+        // - Index user in search
+
+        await Task.CompletedTask;
+    }
+}

@@ -1,0 +1,19 @@
+using Core.Domain.Interfaces;
+using MediatR;
+
+namespace Core.Domain.Events;
+
+public abstract record BaseEvent : IDomainEvent, INotification
+{
+    public Guid Id { get; init; } = Guid.NewGuid();
+    public DateTime OccurredOn { get; init; } = DateTime.UtcNow;
+    public DateTime Timestamp { get; init; } = DateTime.UtcNow;
+    public string EventType { get; init; } = string.Empty;
+    public string? CorrelationId { get; init; }
+    public string? CausationId { get; init; }
+
+    protected BaseEvent()
+    {
+        EventType = GetType().Name;
+    }
+}

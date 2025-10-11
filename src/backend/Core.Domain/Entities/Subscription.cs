@@ -46,7 +46,15 @@ public class Subscription : BaseEntity
         CurrentPeriodEnd = currentPeriodEnd;
         UpdateTimestamp();
 
-        AddDomainEvent(new SubscriptionCreatedEvent(Id, UserId, PlanId, Amount, Status, StripeSubscriptionId!));
+        AddDomainEvent(new SubscriptionCreatedEvent
+        {
+            SubscriptionId = Id,
+            UserId = UserId,
+            PlanId = PlanId,
+            Amount = Amount.Amount,
+            Currency = Amount.Currency,
+            Status = Status.ToString()
+        });
     }
 
     public void StartTrial(DateTime trialStart, DateTime trialEnd)

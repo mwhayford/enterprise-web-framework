@@ -16,6 +16,8 @@ using Core.Infrastructure.ExternalServices;
 using Core.Application.Mappings;
 using Stripe;
 using Nest;
+using Confluent.Kafka;
+using Core.Infrastructure.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -122,6 +124,51 @@ builder.Services.AddSingleton<IElasticClient>(provider =>
     return new ElasticClient(connectionSettings);
 });
 
+// Configure Kafka
+builder.Services.Configure<KafkaSettings>(
+    builder.Configuration.GetSection("Kafka"));
+
+builder.Services.AddSingleton<IProducer<Null, string>>(provider =>
+{
+    var settings = provider.GetRequiredService<IOptions<KafkaSettings>>().Value;
+    var config = new ProducerConfig
+    {
+        BootstrapServers = settings.BootstrapServers,
+        SecurityProtocol = Enum.Parse<SecurityProtocol>(settings.SecurityProtocol, true)
+    };
+
+    if (!string.IsNullOrEmpty(settings.SaslMechanism))
+    {
+        config.SaslMechanism = Enum.Parse<SaslMechanism>(settings.SaslMechanism, true);
+        config.SaslUsername = settings.SaslUsername;
+        config.SaslPassword = settings.SaslPassword;
+    }
+
+    return new ProducerBuilder<Null, string>(config).Build();
+});
+
+builder.Services.AddSingleton<IConsumer<Null, string>>(provider =>
+{
+    var settings = provider.GetRequiredService<IOptions<KafkaSettings>>().Value;
+    var config = new ConsumerConfig
+    {
+        BootstrapServers = settings.BootstrapServers,
+        GroupId = settings.GroupId,
+        AutoOffsetReset = AutoOffsetReset.Earliest,
+        EnableAutoCommit = false,
+        SecurityProtocol = Enum.Parse<SecurityProtocol>(settings.SecurityProtocol, true)
+    };
+
+    if (!string.IsNullOrEmpty(settings.SaslMechanism))
+    {
+        config.SaslMechanism = Enum.Parse<SaslMechanism>(settings.SaslMechanism, true);
+        config.SaslUsername = settings.SaslUsername;
+        config.SaslPassword = settings.SaslPassword;
+    }
+
+    return new ConsumerBuilder<Null, string>(config).Build();
+});
+
 // Register application services
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IPaymentService, StripePaymentService>();
@@ -129,6 +176,9 @@ builder.Services.AddScoped<IPaymentMethodService, Core.Infrastructure.Services.P
 builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 builder.Services.AddScoped<IDateTime, DateTimeService>();
 builder.Services.AddScoped<ISearchService, ElasticsearchService>();
+builder.Services.AddScoped<IEventBus, KafkaEventBus>();
+builder.Services.AddScoped<IEventPublisher, EventPublisher>();
+builder.Services.AddHostedService<KafkaEventBus>();
 
 // Configure Swagger/OpenAPI
 builder.Services.AddEndpointsApiExplorer();

@@ -51,7 +51,15 @@ public class Payment : BaseEntity
         ProcessedAt = DateTime.UtcNow;
         UpdateTimestamp();
 
-        AddDomainEvent(new PaymentProcessedEvent(Id, UserId, Amount, Status, StripePaymentIntentId!));
+        AddDomainEvent(new PaymentProcessedEvent
+        {
+            PaymentId = Id,
+            UserId = UserId,
+            Amount = Amount.Amount,
+            Currency = Amount.Currency,
+            Status = Status.ToString(),
+            PaymentMethodId = StripePaymentIntentId ?? string.Empty
+        });
     }
 
     public void Fail(string failureReason)
@@ -61,7 +69,14 @@ public class Payment : BaseEntity
         ProcessedAt = DateTime.UtcNow;
         UpdateTimestamp();
 
-        AddDomainEvent(new PaymentProcessedEvent(Id, UserId, Amount, Status, StripePaymentIntentId!));
+        AddDomainEvent(new PaymentFailedEvent
+        {
+            PaymentId = Id,
+            UserId = UserId,
+            Amount = Amount.Amount,
+            Currency = Amount.Currency,
+            FailureReason = failureReason
+        });
     }
 
     public void Cancel()

@@ -5,6 +5,7 @@ using Stripe;
 using Core.Application.Interfaces;
 using Core.Domain.Entities;
 using Core.Domain.ValueObjects;
+using Core.Domain.Events;
 using Core.Infrastructure.Persistence;
 using Core.Infrastructure.Identity;
 using StripeSubscription = Stripe.Subscription;
@@ -16,12 +17,14 @@ public class StripePaymentService : IPaymentService
     private readonly ApplicationDbContext _context;
     private readonly ILogger<StripePaymentService> _logger;
     private readonly UserManager<ApplicationUser> _userManager;
+    private readonly IEventPublisher _eventPublisher;
 
-    public StripePaymentService(ApplicationDbContext context, ILogger<StripePaymentService> logger, UserManager<ApplicationUser> userManager)
+    public StripePaymentService(ApplicationDbContext context, ILogger<StripePaymentService> logger, UserManager<ApplicationUser> userManager, IEventPublisher eventPublisher)
     {
         _context = context;
         _logger = logger;
         _userManager = userManager;
+        _eventPublisher = eventPublisher;
     }
 
     public async Task<Payment> ProcessPaymentAsync(
@@ -58,6 +61,17 @@ public class StripePaymentService : IPaymentService
             if (paymentIntent.Status == "succeeded")
             {
                 payment.Succeed();
+                
+                // Publish payment processed event
+                await _eventPublisher.PublishAsync(new PaymentProcessedEvent
+                {
+                    PaymentId = payment.Id,
+                    UserId = userId,
+                    Amount = amount.Amount,
+                    Currency = amount.Currency,
+                    Status = payment.Status.ToString(),
+                    PaymentMethodId = paymentMethodId ?? string.Empty
+                });
             }
             else if (paymentIntent.Status == "requires_action")
             {
@@ -66,6 +80,16 @@ public class StripePaymentService : IPaymentService
             else
             {
                 payment.Fail($"Payment failed with status: {paymentIntent.Status}");
+                
+                // Publish payment failed event
+                await _eventPublisher.PublishAsync(new PaymentFailedEvent
+                {
+                    PaymentId = payment.Id,
+                    UserId = userId,
+                    Amount = amount.Amount,
+                    Currency = amount.Currency,
+                    FailureReason = $"Payment failed with status: {paymentIntent.Status}"
+                });
             }
 
             await _context.SaveChangesAsync();

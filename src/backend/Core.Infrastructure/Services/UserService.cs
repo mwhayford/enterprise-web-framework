@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Core.Application.Interfaces;
 using Core.Domain.Entities;
 using Core.Domain.ValueObjects;
+using Core.Domain.Events;
 using Core.Infrastructure.Persistence;
 using Core.Infrastructure.Identity;
 
@@ -12,11 +13,13 @@ public class UserService : IUserService
 {
     private readonly ApplicationDbContext _context;
     private readonly UserManager<ApplicationUser> _userManager;
+    private readonly IEventPublisher _eventPublisher;
 
-    public UserService(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
+    public UserService(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IEventPublisher eventPublisher)
     {
         _context = context;
         _userManager = userManager;
+        _eventPublisher = eventPublisher;
     }
 
     public async Task<User> RegisterUserAsync(
@@ -71,12 +74,23 @@ public class UserService : IUserService
         }
 
         // Convert ApplicationUser to Domain User
-        return new User(
+        var domainUser = new User(
             applicationUser.FirstName ?? firstName,
             applicationUser.LastName ?? lastName,
             email,
             applicationUser.GoogleId,
             applicationUser.AvatarUrl);
+
+        // Publish user created event
+        await _eventPublisher.PublishAsync(new UserCreatedEvent
+        {
+            UserId = domainUser.Id,
+            Email = domainUser.Email.Value,
+            FirstName = domainUser.FirstName,
+            LastName = domainUser.LastName
+        });
+
+        return domainUser;
     }
 
     public async Task<User?> GetUserByIdAsync(Guid userId)
