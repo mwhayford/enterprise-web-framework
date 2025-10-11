@@ -33,8 +33,8 @@ jobs:
     environment: ${{ github.event.inputs.environment }}
     
     outputs:
-      backend-image: ${{ steps.push-backend.outputs.image }}
-      frontend-image: ${{ steps.push-frontend.outputs.image }}
+      backend-image: ${{ steps.set-outputs.outputs.backend-image }}
+      frontend-image: ${{ steps.set-outputs.outputs.frontend-image }}
     
     steps:
       - name: Checkout code
@@ -79,6 +79,12 @@ jobs:
             ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY_FRONTEND }}:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
+      
+      - name: Set image outputs
+        id: set-outputs
+        run: |
+          echo "backend-image=${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY_BACKEND }}:${{ github.event.inputs.version }}" >> $GITHUB_OUTPUT
+          echo "frontend-image=${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY_FRONTEND }}:${{ github.event.inputs.version }}" >> $GITHUB_OUTPUT
   
   # Deploy to Kubernetes
   deploy:
