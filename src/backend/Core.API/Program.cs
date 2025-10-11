@@ -103,7 +103,8 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 StripeConfiguration.ApiKey = builder.Configuration["Stripe:SecretKey"];
 
 // Configure MediatR
-builder.Services.AddMediatR(cfg => {
+builder.Services.AddMediatR(cfg =>
+{
     cfg.RegisterServicesFromAssembly(typeof(Core.Application.Commands.RegisterUserCommand).Assembly);
 });
 
@@ -173,7 +174,7 @@ builder.Services.AddSingleton<IProducer<Null, string>>(provider =>
     var config = new ProducerConfig
     {
         BootstrapServers = settings.BootstrapServers,
-        SecurityProtocol = Enum.Parse<SecurityProtocol>(settings.SecurityProtocol, true)
+        SecurityProtocol = Enum.Parse<SecurityProtocol>(settings.SecurityProtocol, true),
     };
 
     if (!string.IsNullOrEmpty(settings.SaslMechanism))
@@ -213,7 +214,10 @@ builder.Services.AddHangfire(configuration => configuration
     .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
     .UseSimpleAssemblyNameTypeSerializer()
     .UseRecommendedSerializerSettings()
-    .UsePostgreSqlStorage(builder.Configuration.GetConnectionString("DefaultConnection")));
+    .UsePostgreSqlStorage(options =>
+    {
+        options.UseNpgsqlConnection(builder.Configuration.GetConnectionString("DefaultConnection")!);
+    }));
 
 builder.Services.AddHangfireServer(options =>
 {
@@ -254,9 +258,9 @@ builder.Services.AddSwaggerGen(c =>
         Name = "Authorization",
         In = ParameterLocation.Header,
         Type = SecuritySchemeType.ApiKey,
-        Scheme = "Bearer"
+        Scheme = "Bearer",
     });
-    
+
     c.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
         {
@@ -265,11 +269,11 @@ builder.Services.AddSwaggerGen(c =>
                 Reference = new OpenApiReference
                 {
                     Type = ReferenceType.SecurityScheme,
-                    Id = "Bearer"
-                }
+                    Id = "Bearer",
+                },
             },
             Array.Empty<string>()
-        }
+        },
     });
 });
 
@@ -307,7 +311,7 @@ app.UseAuthorization();
 // Configure Hangfire Dashboard
 app.UseHangfireDashboard("/hangfire", new DashboardOptions
 {
-    Authorization = new[] { new HangfireAuthorizationFilter() }
+    Authorization = new[] { new HangfireAuthorizationFilter() },
 });
 
 app.MapControllers();
@@ -330,7 +334,7 @@ app.MapGet("/metrics", async context =>
                    "http_request_duration_seconds_bucket{le=\"+Inf\"} 1\n" +
                    "http_request_duration_seconds_sum 0.1\n" +
                    "http_request_duration_seconds_count 1\n";
-    
+
     context.Response.ContentType = "text/plain; version=0.0.4; charset=utf-8";
     await context.Response.WriteAsync(response);
 });
