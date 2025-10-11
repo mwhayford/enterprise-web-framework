@@ -1,0 +1,32 @@
+# Copyright (c) Core. All Rights Reserved.
+# Licensed under the MIT License. See LICENSE in the project root for license information.
+
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: core-staging
+
+bases:
+- ../../base
+
+nameSuffix: -staging
+
+commonLabels:
+  environment: staging
+
+patchesStrategicMerge:
+- deployment-patch.yaml
+- configmap-patch.yaml
+
+replicas:
+- name: core-backend
+  count: 2
+- name: core-frontend
+  count: 2
+
+images:
+- name: ECR_REGISTRY/core-backend
+  newTag: staging
+- name: ECR_REGISTRY/core-frontend
+  newTag: staging
+

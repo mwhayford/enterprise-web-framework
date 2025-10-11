@@ -1,0 +1,20 @@
+# Copyright (c) Core. All Rights Reserved.
+# Licensed under the MIT License. See LICENSE in the project root for license information.
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: core-frontend
+  namespace: core
+  labels:
+    app: core-frontend
+spec:
+  type: ClusterIP
+  ports:
+  - name: http
+    port: 80
+    targetPort: http
+    protocol: TCP
+  selector:
+    app: core-frontend
+

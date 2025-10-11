@@ -1,0 +1,29 @@
+# Copyright (c) Core. All Rights Reserved.
+# Licensed under the MIT License. See LICENSE in the project root for license information.
+
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: core
+
+resources:
+- namespace.yaml
+- configmap.yaml
+- secrets.yaml
+- backend-deployment.yaml
+- backend-service.yaml
+- frontend-deployment.yaml
+- frontend-service.yaml
+- ingress.yaml
+- hpa.yaml
+
+commonLabels:
+  app.kubernetes.io/name: core
+  app.kubernetes.io/managed-by: kustomize
+
+images:
+- name: ECR_REGISTRY/core-backend
+  newTag: latest
+- name: ECR_REGISTRY/core-frontend
+  newTag: latest
+
