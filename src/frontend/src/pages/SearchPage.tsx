@@ -1,4 +1,4 @@
-// Copyright (c) Core. All Rights Reserved.
+// Copyright (c) Core. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';

@@ -1,4 +1,4 @@
-// Copyright (c) Core. All Rights Reserved.
+// Copyright (c) Core. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 import axios from 'axios';
 import type { AxiosInstance } from 'axios';
