@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  # Development overrides
+  backend:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.backend
+      target: build  # Use build stage for development
+    volumes:
+      - ../src/backend:/app/src
+      - /app/bin
+      - /app/obj
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:8080
+    command: ["dotnet", "watch", "run", "--project", "Core.API/Core.API.csproj", "--urls", "http://0.0.0.0:8080"]
+
+  frontend:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.frontend
+      target: build  # Use build stage for development
+    volumes:
+      - ../src/frontend:/app/src
+      - /app/node_modules
+    environment:
+      - VITE_API_BASE_URL=http://localhost:7001/api
+    command: ["npm", "run", "dev", "--", "--host", "0.0.0.0", "--port", "3000"]
