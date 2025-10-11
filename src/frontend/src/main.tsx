@@ -1,3 +1,5 @@
+// Copyright (c) Core. All Rights Reserved.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'

@@ -1,3 +1,5 @@
+// Copyright (c) Core. All Rights Reserved.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import searchService from '../services/searchService';
@@ -93,6 +95,7 @@ const SearchPage: React.FC = () => {
                 <select
                   value={index}
                   onChange={(e) => handleIndexChange(e.target.value)}
+                  aria-label="Search index"
                   className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 >
                   <option value="core-index">All Content</option>

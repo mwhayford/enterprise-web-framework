@@ -1,3 +1,5 @@
+// Copyright (c) Core. All Rights Reserved.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
 import React, { useState, useEffect } from 'react';
 import { Button } from '../ui/Button';
 import { paymentService } from '../../services/paymentService';

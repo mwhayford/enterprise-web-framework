@@ -1,3 +1,5 @@
+// Copyright (c) Core. All Rights Reserved.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
 using System.Linq.Expressions;
 using Hangfire;
 using Core.Application.Interfaces;

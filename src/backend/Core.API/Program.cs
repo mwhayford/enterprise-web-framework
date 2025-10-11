@@ -1,31 +1,33 @@
-using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authentication.Google;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
-using Microsoft.Extensions.Options;
+// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
 using System.Text;
-using Serilog;
-using FluentValidation;
-using Core.Infrastructure.Persistence;
-using Core.Infrastructure.Identity;
-using Core.Application.Interfaces;
-using Core.Infrastructure.Services;
-using Core.Infrastructure.ExternalServices;
-using Core.Application.Mappings;
-using Stripe;
-using Nest;
 using Confluent.Kafka;
+using Core.API.Filters;
+using Core.Application.Interfaces;
+using Core.Application.Mappings;
+using Core.Infrastructure.ExternalServices;
+using Core.Infrastructure.Identity;
+using Core.Infrastructure.Persistence;
+using Core.Infrastructure.Services;
+using FluentValidation;
 using Hangfire;
 using Hangfire.PostgreSql;
-using Core.Infrastructure.Services;
-using Core.API.Filters;
+using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using Nest;
 using OpenTelemetry;
-using OpenTelemetry.Trace;
-using OpenTelemetry.Metrics;
 using OpenTelemetry.Logs;
+using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
+using Serilog;
+using Stripe;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -131,7 +133,7 @@ builder.Services.AddAuthentication(options =>
         ValidateIssuerSigningKey = true,
         ValidIssuer = builder.Configuration["Jwt:Issuer"],
         ValidAudience = builder.Configuration["Jwt:Audience"],
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!)),
     };
 })
 .AddGoogle(options =>
@@ -193,7 +195,7 @@ builder.Services.AddSingleton<IConsumer<Null, string>>(provider =>
         GroupId = settings.GroupId,
         AutoOffsetReset = AutoOffsetReset.Earliest,
         EnableAutoCommit = false,
-        SecurityProtocol = Enum.Parse<SecurityProtocol>(settings.SecurityProtocol, true)
+        SecurityProtocol = Enum.Parse<SecurityProtocol>(settings.SecurityProtocol, true),
     };
 
     if (!string.IsNullOrEmpty(settings.SaslMechanism))
@@ -239,13 +241,13 @@ builder.Services.AddHostedService<KafkaEventBus>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
-    c.SwaggerDoc("v1", new OpenApiInfo 
-    { 
-        Title = "Core API", 
+    c.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "Core API",
         Version = "v1",
-        Description = "Enterprise Web Application Framework API"
+        Description = "Enterprise Web Application Framework API",
     });
-    
+
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",

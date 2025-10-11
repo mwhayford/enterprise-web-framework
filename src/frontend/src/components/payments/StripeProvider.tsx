@@ -1,3 +1,5 @@
+// Copyright (c) Core. All Rights Reserved.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
 import React from 'react';
 import { Elements } from '@stripe/react-stripe-js';
 import { stripePromise, STRIPE_CONFIG } from '../../config/stripe';

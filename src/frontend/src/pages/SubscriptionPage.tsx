@@ -1,3 +1,5 @@
+// Copyright (c) Core. All Rights Reserved.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
 import React, { useState } from 'react';
 import { StripeProvider } from '../components/payments/StripeProvider';
 import { SubscriptionForm } from '../components/payments/SubscriptionForm';

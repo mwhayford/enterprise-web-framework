@@ -1,3 +1,5 @@
+// Copyright (c) Core. All Rights Reserved.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
 import { loadStripe } from '@stripe/stripe-js';
 
 // For development, we'll use Stripe's test publishable key
