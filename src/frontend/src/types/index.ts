@@ -125,3 +125,39 @@ export interface CreateSubscriptionRequest {
   planId: string;
   paymentMethodId: string;
 }
+
+// Payment form types
+export interface PaymentFormData {
+  amount: number;
+  currency: string;
+  description?: string;
+  paymentMethodType: PaymentMethodType;
+}
+
+export interface SubscriptionFormData {
+  planId: string;
+  amount: number;
+  currency: string;
+  paymentMethodType: PaymentMethodType;
+}
+
+// Stripe Elements types
+export interface StripeCardElement {
+  mount(domElement: string | HTMLElement): void;
+  unmount(): void;
+  destroy(): void;
+  on(event: string, handler: (event: any) => void): void;
+  focus(): void;
+  blur(): void;
+  clear(): void;
+}
+
+export interface StripePaymentElement {
+  mount(domElement: string | HTMLElement): void;
+  unmount(): void;
+  destroy(): void;
+  on(event: string, handler: (event: any) => void): void;
+  focus(): void;
+  blur(): void;
+  clear(): void;
+}

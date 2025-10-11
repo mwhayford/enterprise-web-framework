@@ -209,6 +209,81 @@ public class StripePaymentService : IPaymentService
             .ToListAsync();
     }
 
+    public async Task<Core.Domain.Entities.Subscription?> GetSubscriptionAsync(Guid subscriptionId)
+    {
+        return await _context.Subscriptions.FindAsync(subscriptionId);
+    }
+
+    public async Task<IEnumerable<Core.Domain.Entities.Subscription>> GetUserSubscriptionsAsync(Guid userId, int page = 1, int pageSize = 20)
+    {
+        return await _context.Subscriptions
+            .Where(s => s.UserId == userId)
+            .OrderByDescending(s => s.CreatedAt)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
+    }
+
+    public async Task<bool> CancelSubscriptionAsync(Guid subscriptionId)
+    {
+        var subscription = await _context.Subscriptions.FindAsync(subscriptionId);
+        if (subscription == null || string.IsNullOrEmpty(subscription.StripeSubscriptionId))
+            return false;
+
+        try
+        {
+            var subscriptionService = new Stripe.SubscriptionService();
+            await subscriptionService.CancelAsync(subscription.StripeSubscriptionId);
+
+            subscription.Cancel(DateTime.UtcNow);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+        catch (StripeException ex)
+        {
+            _logger.LogError(ex, "Stripe subscription cancellation failed for subscription {SubscriptionId}", subscriptionId);
+            return false;
+        }
+    }
+
+    public async Task<bool> UpdateSubscriptionAsync(Guid subscriptionId, string planId, Money amount)
+    {
+        var subscription = await _context.Subscriptions.FindAsync(subscriptionId);
+        if (subscription == null || string.IsNullOrEmpty(subscription.StripeSubscriptionId))
+            return false;
+
+        try
+        {
+            var subscriptionService = new Stripe.SubscriptionService();
+            var stripeSubscription = await subscriptionService.GetAsync(subscription.StripeSubscriptionId);
+
+            // Update the subscription items
+            var subscriptionItemService = new Stripe.SubscriptionItemService();
+            var items = await subscriptionItemService.ListAsync(new Stripe.SubscriptionItemListOptions
+            {
+                Subscription = stripeSubscription.Id
+            });
+
+            if (items.Data.Any())
+            {
+                await subscriptionItemService.UpdateAsync(items.Data.First().Id, new Stripe.SubscriptionItemUpdateOptions
+                {
+                    Price = planId
+                });
+            }
+
+            // Update local subscription
+            subscription.UpdatePlan(planId, amount);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+        catch (StripeException ex)
+        {
+            _logger.LogError(ex, "Stripe subscription update failed for subscription {SubscriptionId}", subscriptionId);
+            return false;
+        }
+    }
+
     private async Task<string> GetOrCreateStripeCustomerAsync(Guid userId)
     {
         var user = await _userManager.FindByIdAsync(userId.ToString());

@@ -2,9 +2,11 @@ import React from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
+import { useNavigate } from 'react-router-dom';
 
 const DashboardPage: React.FC = () => {
   const { user, logout } = useAuth();
+  const navigate = useNavigate();
 
   if (!user) {
     return null;
@@ -69,10 +71,25 @@ const DashboardPage: React.FC = () => {
               <CardTitle>Payments</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-muted-foreground text-sm">View and manage your payment history</p>
-              <Button variant="ghost" className="mt-4 p-0">
-                View Payments →
-              </Button>
+              <p className="text-muted-foreground text-sm">Make payments and view payment history</p>
+              <div className="mt-4 space-y-2">
+                <Button 
+                  variant="primary" 
+                  size="sm" 
+                  className="w-full"
+                  onClick={() => navigate('/payment')}
+                >
+                  Make Payment
+                </Button>
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  className="w-full"
+                  onClick={() => navigate('/payment-methods')}
+                >
+                  Payment Methods →
+                </Button>
+              </div>
             </CardContent>
           </Card>
 
@@ -82,9 +99,23 @@ const DashboardPage: React.FC = () => {
             </CardHeader>
             <CardContent>
               <p className="text-muted-foreground text-sm">Manage your active subscriptions</p>
-              <Button variant="ghost" className="mt-4 p-0">
-                View Subscriptions →
-              </Button>
+              <div className="mt-4 space-y-2">
+                <Button 
+                  variant="primary" 
+                  size="sm" 
+                  className="w-full"
+                  onClick={() => navigate('/subscription')}
+                >
+                  Subscribe
+                </Button>
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  className="w-full"
+                >
+                  View Subscriptions →
+                </Button>
+              </div>
             </CardContent>
           </Card>
         </div>

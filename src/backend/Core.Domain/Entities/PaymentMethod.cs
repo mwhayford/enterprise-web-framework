@@ -21,7 +21,8 @@ public class PaymentMethod : BaseEntity
         string? stripePaymentMethodId = null,
         string? lastFourDigits = null,
         string? brand = null,
-        string? bankName = null)
+        string? bankName = null,
+        bool isDefault = false)
         : base()
     {
         UserId = userId;
@@ -30,7 +31,7 @@ public class PaymentMethod : BaseEntity
         LastFourDigits = lastFourDigits;
         Brand = brand;
         BankName = bankName;
-        IsDefault = false;
+        IsDefault = isDefault;
         IsActive = true;
     }
 
@@ -56,6 +57,23 @@ public class PaymentMethod : BaseEntity
     public void Activate()
     {
         IsActive = true;
+        UpdateTimestamp();
+    }
+
+    public void SetDefault(bool isDefault)
+    {
+        IsDefault = isDefault;
+        UpdateTimestamp();
+    }
+
+    public void UpdateDetails(string? lastFourDigits, string? brand, string? bankName)
+    {
+        if (!string.IsNullOrEmpty(lastFourDigits))
+            LastFourDigits = lastFourDigits;
+        if (!string.IsNullOrEmpty(brand))
+            Brand = brand;
+        if (!string.IsNullOrEmpty(bankName))
+            BankName = bankName;
         UpdateTimestamp();
     }
 

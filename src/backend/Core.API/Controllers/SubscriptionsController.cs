@@ -31,10 +31,16 @@ public class SubscriptionsController : ControllerBase
         return Ok(subscription);
     }
 
-    [HttpGet]
-    public async Task<IActionResult> GetSubscriptions()
-    {
-        // This would need a GetSubscriptionsQuery implementation
-        return Ok(new { Message = "Get subscriptions endpoint - to be implemented" });
-    }
+        [HttpGet]
+        public async Task<IActionResult> GetSubscriptions()
+        {
+            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userId) || !Guid.TryParse(userId, out var userGuid))
+            {
+                return Unauthorized();
+            }
+
+            // This would need a GetSubscriptionsQuery implementation
+            return Ok(new { Message = "Get subscriptions endpoint - to be implemented", UserId = userGuid });
+        }
 }

@@ -105,6 +105,7 @@ builder.Services.AddAuthorization();
 // Register application services
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IPaymentService, StripePaymentService>();
+builder.Services.AddScoped<IPaymentMethodService, Core.Infrastructure.Services.PaymentMethodService>();
 builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 builder.Services.AddScoped<IDateTime, DateTimeService>();
 
@@ -176,6 +177,9 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+// Add health check endpoint
+app.MapGet("/health", () => new { Status = "Healthy", Timestamp = DateTime.UtcNow });
 
 // Ensure database is created
 using (var scope = app.Services.CreateScope())

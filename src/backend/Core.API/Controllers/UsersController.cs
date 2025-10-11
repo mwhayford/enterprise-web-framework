@@ -52,9 +52,51 @@ public class UsersController : ControllerBase
 
     [HttpGet]
     [Authorize(Roles = "Admin")]
-    public async Task<IActionResult> GetUsers([FromQuery] int page = 1, [FromQuery] int pageSize = 20)
+    public async Task<IActionResult> GetUsers([FromQuery] int page = 1, [FromQuery] int pageSize = 20, [FromQuery] string? searchTerm = null, [FromQuery] bool? isActive = null)
     {
-        // This would need a GetUsersQuery implementation
-        return Ok(new { Message = "Admin endpoint - to be implemented" });
+        var users = await _mediator.Send(new GetUsersQuery 
+        { 
+            Page = page, 
+            PageSize = pageSize,
+            SearchTerm = searchTerm,
+            IsActive = isActive
+        });
+        return Ok(users);
+    }
+
+    [HttpGet("{userId}")]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> GetUserById(Guid userId)
+    {
+        var user = await _mediator.Send(new GetUserByIdQuery { UserId = userId });
+        if (user == null)
+        {
+            return NotFound();
+        }
+        return Ok(user);
+    }
+
+    [HttpPut("{userId}/deactivate")]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> DeactivateUser(Guid userId)
+    {
+        var result = await _mediator.Send(new DeactivateUserCommand { UserId = userId });
+        if (!result)
+        {
+            return NotFound();
+        }
+        return Ok(new { Message = "User deactivated successfully" });
+    }
+
+    [HttpPut("{userId}/activate")]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> ActivateUser(Guid userId)
+    {
+        var result = await _mediator.Send(new ActivateUserCommand { UserId = userId });
+        if (!result)
+        {
+            return NotFound();
+        }
+        return Ok(new { Message = "User activated successfully" });
     }
 }

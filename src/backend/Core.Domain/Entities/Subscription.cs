@@ -95,6 +95,13 @@ public class Subscription : BaseEntity
         UpdateTimestamp();
     }
 
+    public void UpdatePlan(string planId, Money amount)
+    {
+        PlanId = planId;
+        Amount = amount;
+        UpdateTimestamp();
+    }
+
     public bool IsActive => Status == SubscriptionStatus.Active || Status == SubscriptionStatus.Trialing;
     public bool IsCanceled => Status == SubscriptionStatus.Canceled;
     public bool IsPastDue => Status == SubscriptionStatus.PastDue;

@@ -4,6 +4,11 @@ import { AuthProvider, useAuth } from './contexts/AuthContext';
 import LoginPage from './pages/LoginPage';
 import DashboardPage from './pages/DashboardPage';
 import AuthCallbackPage from './pages/AuthCallbackPage';
+import { PaymentPage } from './pages/PaymentPage';
+import { SubscriptionPage } from './pages/SubscriptionPage';
+import { PaymentMethodsPage } from './pages/PaymentMethodsPage';
+import { PaymentSuccessPage } from './pages/PaymentSuccessPage';
+import { SubscriptionSuccessPage } from './pages/SubscriptionSuccessPage';
 
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { isAuthenticated, isLoading } = useAuth();
@@ -53,6 +58,46 @@ const AppRoutes: React.FC = () => {
         element={
           <ProtectedRoute>
             <DashboardPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/payment"
+        element={
+          <ProtectedRoute>
+            <PaymentPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/subscription"
+        element={
+          <ProtectedRoute>
+            <SubscriptionPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/payment-methods"
+        element={
+          <ProtectedRoute>
+            <PaymentMethodsPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/payment-success"
+        element={
+          <ProtectedRoute>
+            <PaymentSuccessPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/subscription-success"
+        element={
+          <ProtectedRoute>
+            <SubscriptionSuccessPage />
           </ProtectedRoute>
         }
       />
