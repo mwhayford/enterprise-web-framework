@@ -12,7 +12,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
     }
 
-    public new DbSet<User> Users { get; set; }
+    // Users are managed by ASP.NET Core Identity via base class
     public DbSet<Payment> Payments { get; set; }
     public DbSet<Subscription> Subscriptions { get; set; }
     public DbSet<PaymentMethod> PaymentMethods { get; set; }
@@ -21,7 +21,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         base.OnModelCreating(modelBuilder);
 
-        modelBuilder.ApplyConfiguration(new UserConfiguration());
+        // User configuration is handled by ASP.NET Core Identity
         modelBuilder.ApplyConfiguration(new PaymentConfiguration());
         modelBuilder.ApplyConfiguration(new SubscriptionConfiguration());
         modelBuilder.ApplyConfiguration(new PaymentMethodConfiguration());

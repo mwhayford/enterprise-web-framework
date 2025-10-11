@@ -1,10 +1,12 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Identity;
 using Stripe;
 using Core.Application.Interfaces;
 using Core.Domain.Entities;
 using Core.Domain.ValueObjects;
 using Core.Infrastructure.Persistence;
+using Core.Infrastructure.Identity;
 using StripeSubscription = Stripe.Subscription;
 
 namespace Core.Infrastructure.ExternalServices;
@@ -13,11 +15,13 @@ public class StripePaymentService : IPaymentService
 {
     private readonly ApplicationDbContext _context;
     private readonly ILogger<StripePaymentService> _logger;
+    private readonly UserManager<ApplicationUser> _userManager;
 
-    public StripePaymentService(ApplicationDbContext context, ILogger<StripePaymentService> logger)
+    public StripePaymentService(ApplicationDbContext context, ILogger<StripePaymentService> logger, UserManager<ApplicationUser> userManager)
     {
         _context = context;
         _logger = logger;
+        _userManager = userManager;
     }
 
     public async Task<Payment> ProcessPaymentAsync(
@@ -207,14 +211,14 @@ public class StripePaymentService : IPaymentService
 
     private async Task<string> GetOrCreateStripeCustomerAsync(Guid userId)
     {
-        var user = await _context.Users.FindAsync(userId);
+        var user = await _userManager.FindByIdAsync(userId.ToString());
         if (user == null)
             throw new ArgumentException("User not found", nameof(userId));
 
         var customerService = new CustomerService();
         var customers = await customerService.ListAsync(new CustomerListOptions
         {
-            Email = user.Email.Value,
+            Email = user.Email!,
             Limit = 1
         });
 
@@ -225,8 +229,8 @@ public class StripePaymentService : IPaymentService
 
         var customer = await customerService.CreateAsync(new CustomerCreateOptions
         {
-            Email = user.Email.Value,
-            Name = user.FullName,
+            Email = user.Email!,
+            Name = $"{user.FirstName} {user.LastName}",
             Metadata = new Dictionary<string, string>
             {
                 { "user_id", userId.ToString() }

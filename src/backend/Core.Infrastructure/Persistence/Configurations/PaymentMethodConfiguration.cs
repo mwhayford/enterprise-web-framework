@@ -49,9 +49,6 @@ public class PaymentMethodConfiguration : IEntityTypeConfiguration<PaymentMethod
         builder.HasIndex(pm => pm.IsDefault);
         builder.HasIndex(pm => pm.IsActive);
 
-        builder.HasOne<User>()
-            .WithMany()
-            .HasForeignKey(pm => pm.UserId)
-            .OnDelete(DeleteBehavior.Cascade);
+        // User relationship is handled by ASP.NET Core Identity
     }
 }

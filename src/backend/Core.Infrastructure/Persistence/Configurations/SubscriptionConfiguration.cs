@@ -51,9 +51,6 @@ public class SubscriptionConfiguration : IEntityTypeConfiguration<Subscription>
         builder.HasIndex(s => s.Status);
         builder.HasIndex(s => s.CreatedAt);
 
-        builder.HasOne<User>()
-            .WithMany()
-            .HasForeignKey(s => s.UserId)
-            .OnDelete(DeleteBehavior.Cascade);
+        // User relationship is handled by ASP.NET Core Identity
     }
 }

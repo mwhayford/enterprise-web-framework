@@ -3,11 +3,13 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Core.Application.Commands;
+using Core.Infrastructure.Identity;
 using MediatR;
 
 namespace Core.API.Controllers;
@@ -19,12 +21,14 @@ public class AuthController : ControllerBase
     private readonly IMediator _mediator;
     private readonly IConfiguration _configuration;
     private readonly ILogger<AuthController> _logger;
+    private readonly UserManager<ApplicationUser> _userManager;
 
-    public AuthController(IMediator mediator, IConfiguration configuration, ILogger<AuthController> logger)
+    public AuthController(IMediator mediator, IConfiguration configuration, ILogger<AuthController> logger, UserManager<ApplicationUser> userManager)
     {
         _mediator = mediator;
         _configuration = configuration;
         _logger = logger;
+        _userManager = userManager;
     }
 
     [HttpGet("google")]
@@ -76,11 +80,11 @@ public class AuthController : ControllerBase
             // Generate JWT token
             var token = GenerateJwtToken(user.Id, email, firstName, lastName);
 
-            return Ok(new
-            {
-                Token = token,
-                User = user
-            });
+            // Redirect to frontend with token and user data
+            var frontendUrl = _configuration["Frontend:BaseUrl"] ?? "http://localhost:5173";
+            var redirectUrl = $"{frontendUrl}/auth-callback?token={token}&user={Uri.EscapeDataString(System.Text.Json.JsonSerializer.Serialize(user))}";
+            
+            return Redirect(redirectUrl);
         }
         catch (Exception ex)
         {

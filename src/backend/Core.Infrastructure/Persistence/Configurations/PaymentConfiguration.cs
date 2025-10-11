@@ -57,9 +57,6 @@ public class PaymentConfiguration : IEntityTypeConfiguration<Payment>
         builder.HasIndex(p => p.Status);
         builder.HasIndex(p => p.CreatedAt);
 
-        builder.HasOne<User>()
-            .WithMany()
-            .HasForeignKey(p => p.UserId)
-            .OnDelete(DeleteBehavior.Cascade);
+        // User relationship is handled by ASP.NET Core Identity
     }
 }

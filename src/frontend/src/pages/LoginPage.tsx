@@ -1,10 +1,13 @@
 import React from 'react';
-import { useAuth } from '../contexts/AuthContext';
 import { Button } from '../components/ui/Button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/Card';
 
 const LoginPage: React.FC = () => {
-  const { login } = useAuth();
+
+  const handleGoogleLogin = () => {
+    // Redirect to backend Google OAuth endpoint
+    window.location.href = `${import.meta.env.VITE_API_BASE_URL || 'https://localhost:7001/api'}/auth/google`;
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
@@ -27,7 +30,7 @@ const LoginPage: React.FC = () => {
           </CardHeader>
           <CardContent className="space-y-4">
             <Button
-              onClick={login}
+              onClick={handleGoogleLogin}
               className="w-full"
               size="lg"
             >

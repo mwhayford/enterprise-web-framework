@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import LoginPage from './pages/LoginPage';
 import DashboardPage from './pages/DashboardPage';
+import AuthCallbackPage from './pages/AuthCallbackPage';
 
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { isAuthenticated, isLoading } = useAuth();
@@ -42,6 +43,10 @@ const AppRoutes: React.FC = () => {
             <LoginPage />
           </PublicRoute>
         }
+      />
+      <Route
+        path="/auth-callback"
+        element={<AuthCallbackPage />}
       />
       <Route
         path="/dashboard"
