@@ -17,13 +17,15 @@ public class UserService : IUserService
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly IEventPublisher _eventPublisher;
     private readonly IMediator _mediator;
+    private readonly IMetricsService _metricsService;
 
-    public UserService(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IEventPublisher eventPublisher, IMediator mediator)
+    public UserService(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IEventPublisher eventPublisher, IMediator mediator, IMetricsService metricsService)
     {
         _context = context;
         _userManager = userManager;
         _eventPublisher = eventPublisher;
         _mediator = mediator;
+        _metricsService = metricsService;
     }
 
     public async Task<User> RegisterUserAsync(
@@ -33,6 +35,7 @@ public class UserService : IUserService
         string? googleId = null,
         string? profilePictureUrl = null)
     {
+        var stopwatch = System.Diagnostics.Stopwatch.StartNew();
         // Check if user already exists
         var existingUser = await _userManager.FindByEmailAsync(email.Value);
         if (existingUser != null)
@@ -106,6 +109,11 @@ public class UserService : IUserService
         {
             UserId = domainUser.Id
         });
+
+        // Record metrics
+        stopwatch.Stop();
+        _metricsService.RecordUserRegistration();
+        _metricsService.RecordUserRegistrationTime(stopwatch.Elapsed);
 
         return domainUser;
     }

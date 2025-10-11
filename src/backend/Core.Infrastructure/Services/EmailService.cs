@@ -7,11 +7,13 @@ public class EmailService
 {
     private readonly ILogger<EmailService> _logger;
     private readonly IBackgroundJobService _backgroundJobService;
+    private readonly IMetricsService _metricsService;
 
-    public EmailService(ILogger<EmailService> logger, IBackgroundJobService backgroundJobService)
+    public EmailService(ILogger<EmailService> logger, IBackgroundJobService backgroundJobService, IMetricsService metricsService)
     {
         _logger = logger;
         _backgroundJobService = backgroundJobService;
+        _metricsService = metricsService;
     }
 
     public async Task SendWelcomeEmailAsync(string email, string firstName)
@@ -21,6 +23,7 @@ public class EmailService
         // Simulate email sending
         await Task.Delay(1000);
         
+        _metricsService.RecordEmailSent("welcome");
         _logger.LogInformation("Welcome email sent to {Email}", email);
     }
 
@@ -32,6 +35,7 @@ public class EmailService
         // Simulate email sending
         await Task.Delay(1000);
         
+        _metricsService.RecordEmailSent("payment_confirmation");
         _logger.LogInformation("Payment confirmation email sent to {Email}", email);
     }
 

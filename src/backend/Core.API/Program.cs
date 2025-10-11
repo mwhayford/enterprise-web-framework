@@ -21,6 +21,11 @@ using Hangfire;
 using Hangfire.PostgreSql;
 using Core.Infrastructure.Services;
 using Core.API.Filters;
+using OpenTelemetry;
+using OpenTelemetry.Trace;
+using OpenTelemetry.Metrics;
+using OpenTelemetry.Logs;
+using OpenTelemetry.Resources;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -33,6 +38,35 @@ Log.Logger = new LoggerConfiguration()
     .CreateLogger();
 
 builder.Host.UseSerilog();
+
+// Configure OpenTelemetry
+var serviceName = builder.Configuration["OpenTelemetry:ServiceName"] ?? "Core.API";
+var serviceVersion = builder.Configuration["OpenTelemetry:ServiceVersion"] ?? "1.0.0";
+
+builder.Services.AddOpenTelemetry()
+    .WithTracing(tracerProviderBuilder =>
+    {
+        tracerProviderBuilder
+            .SetResourceBuilder(ResourceBuilder.CreateDefault()
+                .AddService(serviceName, serviceVersion))
+            .AddAspNetCoreInstrumentation()
+            .AddEntityFrameworkCoreInstrumentation()
+            .AddHttpClientInstrumentation()
+            .AddJaegerExporter(options =>
+            {
+                options.Endpoint = new Uri(builder.Configuration["OpenTelemetry:JaegerEndpoint"] ?? "http://localhost:14268/api/traces");
+            });
+    })
+    .WithMetrics(metricsProviderBuilder =>
+    {
+        metricsProviderBuilder
+            .SetResourceBuilder(ResourceBuilder.CreateDefault()
+                .AddService(serviceName, serviceVersion))
+            .AddAspNetCoreInstrumentation()
+            .AddRuntimeInstrumentation()
+            .AddHttpClientInstrumentation()
+            .AddPrometheusExporter();
+    });
 
 // Add services to the container
 builder.Services.AddControllers();
@@ -198,6 +232,7 @@ builder.Services.AddScoped<IBackgroundJobService, HangfireBackgroundJobService>(
 builder.Services.AddScoped<EmailService>();
 builder.Services.AddScoped<DataProcessingService>();
 builder.Services.AddScoped<RecurringJobsService>();
+builder.Services.AddScoped<IMetricsService, MetricsService>();
 builder.Services.AddHostedService<KafkaEventBus>();
 
 // Configure Swagger/OpenAPI
@@ -277,6 +312,9 @@ app.MapControllers();
 
 // Add health check endpoint
 app.MapGet("/health", () => new { Status = "Healthy", Timestamp = DateTime.UtcNow });
+
+// Add Prometheus metrics endpoint
+app.MapPrometheusScrapingEndpoint();
 
 // Ensure database is created
 using (var scope = app.Services.CreateScope())

@@ -21,14 +21,16 @@ public class StripePaymentService : IPaymentService
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly IEventPublisher _eventPublisher;
     private readonly IMediator _mediator;
+    private readonly IMetricsService _metricsService;
 
-    public StripePaymentService(ApplicationDbContext context, ILogger<StripePaymentService> logger, UserManager<ApplicationUser> userManager, IEventPublisher eventPublisher, IMediator mediator)
+    public StripePaymentService(ApplicationDbContext context, ILogger<StripePaymentService> logger, UserManager<ApplicationUser> userManager, IEventPublisher eventPublisher, IMediator mediator, IMetricsService metricsService)
     {
         _context = context;
         _logger = logger;
         _userManager = userManager;
         _eventPublisher = eventPublisher;
         _mediator = mediator;
+        _metricsService = metricsService;
     }
 
     public async Task<Payment> ProcessPaymentAsync(
@@ -38,6 +40,7 @@ public class StripePaymentService : IPaymentService
         string? paymentMethodId = null,
         string? description = null)
     {
+        var stopwatch = System.Diagnostics.Stopwatch.StartNew();
         var payment = new Payment(userId, amount, paymentMethodType, description);
         _context.Payments.Add(payment);
 
@@ -110,6 +113,12 @@ public class StripePaymentService : IPaymentService
             }
 
             await _context.SaveChangesAsync();
+            
+            // Record metrics
+            stopwatch.Stop();
+            _metricsService.RecordPaymentProcessed(payment.Status.ToString());
+            _metricsService.RecordPaymentProcessingTime(stopwatch.Elapsed);
+            
             return payment;
         }
         catch (StripeException ex)
@@ -117,6 +126,12 @@ public class StripePaymentService : IPaymentService
             _logger.LogError(ex, "Stripe payment processing failed for payment {PaymentId}", payment.Id);
             payment.Fail($"Stripe error: {ex.Message}");
             await _context.SaveChangesAsync();
+            
+            // Record metrics for failed payment
+            stopwatch.Stop();
+            _metricsService.RecordPaymentProcessed(payment.Status.ToString());
+            _metricsService.RecordPaymentProcessingTime(stopwatch.Elapsed);
+            
             return payment;
         }
     }
