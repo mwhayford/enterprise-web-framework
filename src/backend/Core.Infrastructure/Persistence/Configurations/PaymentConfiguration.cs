@@ -14,11 +14,17 @@ public class PaymentConfiguration : IEntityTypeConfiguration<Payment>
         builder.Property(p => p.UserId)
             .IsRequired();
 
-        builder.Property(p => p.Amount)
-            .IsRequired()
-            .HasConversion(
-                v => new { Amount = v.Amount, Currency = v.Currency },
-                v => Core.Domain.ValueObjects.Money.Create(v.Amount, v.Currency));
+        builder.OwnsOne(p => p.Amount, moneyBuilder =>
+        {
+            moneyBuilder.Property(m => m.Amount)
+                .HasColumnName("Amount")
+                .HasColumnType("decimal(18,2)")
+                .IsRequired();
+            moneyBuilder.Property(m => m.Currency)
+                .HasColumnName("Currency")
+                .HasMaxLength(3)
+                .IsRequired();
+        });
 
         builder.Property(p => p.Status)
             .IsRequired()

@@ -18,11 +18,17 @@ public class SubscriptionConfiguration : IEntityTypeConfiguration<Subscription>
             .IsRequired()
             .HasMaxLength(100);
 
-        builder.Property(s => s.Amount)
-            .IsRequired()
-            .HasConversion(
-                v => new { Amount = v.Amount, Currency = v.Currency },
-                v => Core.Domain.ValueObjects.Money.Create(v.Amount, v.Currency));
+        builder.OwnsOne(s => s.Amount, moneyBuilder =>
+        {
+            moneyBuilder.Property(m => m.Amount)
+                .HasColumnName("Amount")
+                .HasColumnType("decimal(18,2)")
+                .IsRequired();
+            moneyBuilder.Property(m => m.Currency)
+                .HasColumnName("Currency")
+                .HasMaxLength(3)
+                .IsRequired();
+        });
 
         builder.Property(s => s.Status)
             .IsRequired()
