@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Microsoft.Extensions.Options;
 using System.Text;
 using Serilog;
 using FluentValidation;
@@ -14,6 +15,7 @@ using Core.Infrastructure.Services;
 using Core.Infrastructure.ExternalServices;
 using Core.Application.Mappings;
 using Stripe;
+using Nest;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -102,12 +104,31 @@ builder.Services.AddAuthentication(options =>
 // Configure Authorization
 builder.Services.AddAuthorization();
 
+// Configure Elasticsearch
+builder.Services.Configure<ElasticsearchSettings>(
+    builder.Configuration.GetSection("Elasticsearch"));
+
+builder.Services.AddSingleton<IElasticClient>(provider =>
+{
+    var settings = provider.GetRequiredService<IOptions<ElasticsearchSettings>>().Value;
+    var connectionSettings = new ConnectionSettings(new Uri(settings.Url))
+        .DefaultIndex(settings.DefaultIndex);
+
+    if (!string.IsNullOrEmpty(settings.Username) && !string.IsNullOrEmpty(settings.Password))
+    {
+        connectionSettings.BasicAuthentication(settings.Username, settings.Password);
+    }
+
+    return new ElasticClient(connectionSettings);
+});
+
 // Register application services
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IPaymentService, StripePaymentService>();
 builder.Services.AddScoped<IPaymentMethodService, Core.Infrastructure.Services.PaymentMethodService>();
 builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 builder.Services.AddScoped<IDateTime, DateTimeService>();
+builder.Services.AddScoped<ISearchService, ElasticsearchService>();
 
 // Configure Swagger/OpenAPI
 builder.Services.AddEndpointsApiExplorer();

@@ -118,6 +118,25 @@ const DashboardPage: React.FC = () => {
               </div>
             </CardContent>
           </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Search</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-muted-foreground text-sm">Search across all content</p>
+              <div className="mt-4">
+                <Button 
+                  variant="primary" 
+                  size="sm" 
+                  className="w-full"
+                  onClick={() => navigate('/search')}
+                >
+                  Search Content →
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
         </div>
       </main>
     </div>

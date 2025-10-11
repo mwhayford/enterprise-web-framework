@@ -55,10 +55,14 @@ services:
       - Stripe__SecretKey=sk_test_your_stripe_secret_key
       - Stripe__PublishableKey=pk_test_your_stripe_publishable_key
       - Frontend__BaseUrl=http://localhost:3001
+      - Elasticsearch__Url=http://elasticsearch:9200
+      - Elasticsearch__DefaultIndex=core-index
     depends_on:
       postgres:
         condition: service_healthy
       redis:
+        condition: service_healthy
+      elasticsearch:
         condition: service_healthy
     networks:
       - core-network
@@ -89,9 +93,31 @@ services:
       timeout: 10s
       retries: 3
 
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.11.0
+    container_name: core-elasticsearch
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+    networks:
+      - core-network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:9200/_cluster/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+
 volumes:
   postgres_data:
   redis_data:
+  elasticsearch_data:
 
 networks:
   core-network:

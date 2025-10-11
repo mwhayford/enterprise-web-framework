@@ -9,6 +9,7 @@ import { SubscriptionPage } from './pages/SubscriptionPage';
 import { PaymentMethodsPage } from './pages/PaymentMethodsPage';
 import { PaymentSuccessPage } from './pages/PaymentSuccessPage';
 import { SubscriptionSuccessPage } from './pages/SubscriptionSuccessPage';
+import SearchPage from './pages/SearchPage';
 
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { isAuthenticated, isLoading } = useAuth();
@@ -98,6 +99,14 @@ const AppRoutes: React.FC = () => {
         element={
           <ProtectedRoute>
             <SubscriptionSuccessPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/search"
+        element={
+          <ProtectedRoute>
+            <SearchPage />
           </ProtectedRoute>
         }
       />

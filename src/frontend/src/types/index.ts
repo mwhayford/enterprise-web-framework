@@ -114,6 +114,17 @@ export interface ErrorResponse {
   errors?: Record<string, string[]>;
 }
 
+export interface SearchResult<T> {
+  documents: T[];
+  totalHits: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
+  maxScore: number;
+  took: number;
+  aggregations: Record<string, any>;
+}
+
 export interface CreatePaymentRequest {
   amount: number;
   currency: string;

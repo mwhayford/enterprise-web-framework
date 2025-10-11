@@ -109,6 +109,34 @@ class ApiService {
   isAuthenticated(): boolean {
     return !!localStorage.getItem('auth_token');
   }
+
+  // Search endpoints
+  async search<T = any>(query: string, index: string, page: number, pageSize: number): Promise<T> {
+    const response = await this.api.get('/search', {
+      params: { query, index, page, pageSize }
+    });
+    return response.data;
+  }
+
+  async searchUsers(query: string, page: number, pageSize: number): Promise<any> {
+    const response = await this.api.get('/search/users', {
+      params: { query, page, pageSize }
+    });
+    return response.data;
+  }
+
+  async searchPayments(query: string, page: number, pageSize: number): Promise<any> {
+    const response = await this.api.get('/search/payments', {
+      params: { query, page, pageSize }
+    });
+    return response.data;
+  }
+
+  async indexDocument(document: any, index: string, id?: string): Promise<void> {
+    await this.api.post('/search/index', document, {
+      params: { index, id }
+    });
+  }
 }
 
 export const apiService = new ApiService();
