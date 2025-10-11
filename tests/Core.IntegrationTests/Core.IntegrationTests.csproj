@@ -21,10 +21,10 @@
     <PackageReference Include="NUnit3TestAdapter" Version="4.6.0" />
     <PackageReference Include="Respawn" Version="6.2.1" />
     <PackageReference Include="StackExchange.Redis" Version="2.8.16" />
-    <PackageReference Include="Testcontainers.Elasticsearch" Version="3.11.0" />
-    <PackageReference Include="Testcontainers.Kafka" Version="3.11.0" />
-    <PackageReference Include="Testcontainers.PostgreSql" Version="3.11.0" />
-    <PackageReference Include="Testcontainers.Redis" Version="3.11.0" />
+    <PackageReference Include="Testcontainers.Elasticsearch" Version="4.0.0" />
+    <PackageReference Include="Testcontainers.Kafka" Version="4.0.0" />
+    <PackageReference Include="Testcontainers.PostgreSql" Version="4.0.0" />
+    <PackageReference Include="Testcontainers.Redis" Version="4.0.0" />
   </ItemGroup>
 
   <ItemGroup>
