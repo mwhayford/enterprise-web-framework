@@ -1,0 +1,40 @@
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+using MediatR;
+using Core.Application.Commands;
+
+namespace Core.API.Controllers;
+
+[ApiController]
+[Route("api/[controller]")]
+[Authorize]
+public class BackgroundJobsController : ControllerBase
+{
+    private readonly IMediator _mediator;
+
+    public BackgroundJobsController(IMediator mediator)
+    {
+        _mediator = mediator;
+    }
+
+    [HttpPost("send-welcome-email")]
+    public async Task<ActionResult> SendWelcomeEmail([FromBody] SendWelcomeEmailCommand command)
+    {
+        await _mediator.Send(command);
+        return Ok(new { message = "Welcome email queued for sending" });
+    }
+
+    [HttpPost("send-payment-confirmation-email")]
+    public async Task<ActionResult> SendPaymentConfirmationEmail([FromBody] SendPaymentConfirmationEmailCommand command)
+    {
+        await _mediator.Send(command);
+        return Ok(new { message = "Payment confirmation email queued for sending" });
+    }
+
+    [HttpPost("process-user-data")]
+    public async Task<ActionResult> ProcessUserData([FromBody] ProcessUserDataCommand command)
+    {
+        await _mediator.Send(command);
+        return Ok(new { message = "User data processing queued" });
+    }
+}

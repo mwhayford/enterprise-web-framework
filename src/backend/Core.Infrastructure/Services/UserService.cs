@@ -6,6 +6,8 @@ using Core.Domain.ValueObjects;
 using Core.Domain.Events;
 using Core.Infrastructure.Persistence;
 using Core.Infrastructure.Identity;
+using MediatR;
+using Core.Application.Commands;
 
 namespace Core.Infrastructure.Services;
 
@@ -14,12 +16,14 @@ public class UserService : IUserService
     private readonly ApplicationDbContext _context;
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly IEventPublisher _eventPublisher;
+    private readonly IMediator _mediator;
 
-    public UserService(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IEventPublisher eventPublisher)
+    public UserService(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IEventPublisher eventPublisher, IMediator mediator)
     {
         _context = context;
         _userManager = userManager;
         _eventPublisher = eventPublisher;
+        _mediator = mediator;
     }
 
     public async Task<User> RegisterUserAsync(
@@ -88,6 +92,19 @@ public class UserService : IUserService
             Email = domainUser.Email.Value,
             FirstName = domainUser.FirstName,
             LastName = domainUser.LastName
+        });
+
+        // Queue welcome email as background job
+        await _mediator.Send(new SendWelcomeEmailCommand
+        {
+            Email = domainUser.Email.Value,
+            FirstName = domainUser.FirstName
+        });
+
+        // Queue user data processing as background job
+        await _mediator.Send(new ProcessUserDataCommand
+        {
+            UserId = domainUser.Id
         });
 
         return domainUser;

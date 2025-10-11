@@ -1,0 +1,25 @@
+using MediatR;
+using Core.Application.Commands;
+using Core.Application.Interfaces;
+using Core.Infrastructure.Services;
+
+namespace Core.Infrastructure.Handlers;
+
+public class SendPaymentConfirmationEmailCommandHandler : IRequestHandler<SendPaymentConfirmationEmailCommand>
+{
+    private readonly IBackgroundJobService _backgroundJobService;
+
+    public SendPaymentConfirmationEmailCommandHandler(IBackgroundJobService backgroundJobService)
+    {
+        _backgroundJobService = backgroundJobService;
+    }
+
+    public async Task Handle(SendPaymentConfirmationEmailCommand request, CancellationToken cancellationToken)
+    {
+        // Enqueue the email sending as a background job
+        _backgroundJobService.Enqueue<EmailService>(service => 
+            service.SendPaymentConfirmationEmailAsync(request.Email, request.Amount, request.Currency));
+        
+        await Task.CompletedTask;
+    }
+}

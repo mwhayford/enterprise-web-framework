@@ -17,7 +17,10 @@ using Core.Application.Mappings;
 using Stripe;
 using Nest;
 using Confluent.Kafka;
+using Hangfire;
+using Hangfire.PostgreSql;
 using Core.Infrastructure.Services;
+using Core.API.Filters;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -169,6 +172,19 @@ builder.Services.AddSingleton<IConsumer<Null, string>>(provider =>
     return new ConsumerBuilder<Null, string>(config).Build();
 });
 
+// Configure Hangfire
+builder.Services.AddHangfire(configuration => configuration
+    .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
+    .UseSimpleAssemblyNameTypeSerializer()
+    .UseRecommendedSerializerSettings()
+    .UsePostgreSqlStorage(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddHangfireServer(options =>
+{
+    options.Queues = new[] { "default", "emails", "data-processing" };
+    options.WorkerCount = Environment.ProcessorCount * 5;
+});
+
 // Register application services
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IPaymentService, StripePaymentService>();
@@ -178,6 +194,10 @@ builder.Services.AddScoped<IDateTime, DateTimeService>();
 builder.Services.AddScoped<ISearchService, ElasticsearchService>();
 builder.Services.AddScoped<IEventBus, KafkaEventBus>();
 builder.Services.AddScoped<IEventPublisher, EventPublisher>();
+builder.Services.AddScoped<IBackgroundJobService, HangfireBackgroundJobService>();
+builder.Services.AddScoped<EmailService>();
+builder.Services.AddScoped<DataProcessingService>();
+builder.Services.AddScoped<RecurringJobsService>();
 builder.Services.AddHostedService<KafkaEventBus>();
 
 // Configure Swagger/OpenAPI
@@ -247,6 +267,12 @@ app.UseCors("AllowReactApp");
 app.UseAuthentication();
 app.UseAuthorization();
 
+// Configure Hangfire Dashboard
+app.UseHangfireDashboard("/hangfire", new DashboardOptions
+{
+    Authorization = new[] { new HangfireAuthorizationFilter() }
+});
+
 app.MapControllers();
 
 // Add health check endpoint
@@ -257,6 +283,13 @@ using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
     context.Database.EnsureCreated();
+}
+
+// Configure recurring jobs
+using (var scope = app.Services.CreateScope())
+{
+    var recurringJobsService = scope.ServiceProvider.GetRequiredService<RecurringJobsService>();
+    recurringJobsService.ConfigureRecurringJobs();
 }
 
 app.Run();

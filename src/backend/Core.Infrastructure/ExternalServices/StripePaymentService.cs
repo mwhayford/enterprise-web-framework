@@ -8,6 +8,8 @@ using Core.Domain.ValueObjects;
 using Core.Domain.Events;
 using Core.Infrastructure.Persistence;
 using Core.Infrastructure.Identity;
+using MediatR;
+using Core.Application.Commands;
 using StripeSubscription = Stripe.Subscription;
 
 namespace Core.Infrastructure.ExternalServices;
@@ -18,13 +20,15 @@ public class StripePaymentService : IPaymentService
     private readonly ILogger<StripePaymentService> _logger;
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly IEventPublisher _eventPublisher;
+    private readonly IMediator _mediator;
 
-    public StripePaymentService(ApplicationDbContext context, ILogger<StripePaymentService> logger, UserManager<ApplicationUser> userManager, IEventPublisher eventPublisher)
+    public StripePaymentService(ApplicationDbContext context, ILogger<StripePaymentService> logger, UserManager<ApplicationUser> userManager, IEventPublisher eventPublisher, IMediator mediator)
     {
         _context = context;
         _logger = logger;
         _userManager = userManager;
         _eventPublisher = eventPublisher;
+        _mediator = mediator;
     }
 
     public async Task<Payment> ProcessPaymentAsync(
@@ -72,6 +76,19 @@ public class StripePaymentService : IPaymentService
                     Status = payment.Status.ToString(),
                     PaymentMethodId = paymentMethodId ?? string.Empty
                 });
+
+                // Get user email for confirmation email
+                var user = await _userManager.FindByIdAsync(userId.ToString());
+                if (user != null)
+                {
+                    // Queue payment confirmation email as background job
+                    await _mediator.Send(new SendPaymentConfirmationEmailCommand
+                    {
+                        Email = user.Email!,
+                        Amount = amount.Amount,
+                        Currency = amount.Currency
+                    });
+                }
             }
             else if (paymentIntent.Status == "requires_action")
             {
