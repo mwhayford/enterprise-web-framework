@@ -20,6 +20,11 @@ public class ProcessPaymentCommandHandler : IRequestHandler<ProcessPaymentComman
 
     public async Task<PaymentDto> Handle(ProcessPaymentCommand request, CancellationToken cancellationToken)
     {
+        if (request.UserId == Guid.Empty)
+        {
+            throw new ArgumentException("User ID cannot be empty", nameof(request.UserId));
+        }
+
         var amount = Money.Create(request.Amount, request.Currency);
         var payment = await _paymentService.ProcessPaymentAsync(
             request.UserId,

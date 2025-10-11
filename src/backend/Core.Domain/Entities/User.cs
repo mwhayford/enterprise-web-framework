@@ -28,6 +28,18 @@ public class User : BaseEntity
     public User(string firstName, string lastName, Email email, string? googleId = null, string? profilePictureUrl = null)
         : base()
     {
+        if (string.IsNullOrWhiteSpace(firstName))
+        {
+            throw new ArgumentException("First name cannot be null or empty", nameof(firstName));
+        }
+
+        if (string.IsNullOrWhiteSpace(lastName))
+        {
+            throw new ArgumentException("Last name cannot be null or empty", nameof(lastName));
+        }
+
+        ArgumentNullException.ThrowIfNull(email);
+
         FirstName = firstName;
         LastName = lastName;
         Email = email;

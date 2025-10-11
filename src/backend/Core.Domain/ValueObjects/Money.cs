@@ -51,5 +51,19 @@ public record Money
         return Create(left.Amount - right.Amount, left.Currency);
     }
 
-    public override string ToString() => $"{Amount:C} {Currency}";
+    public override string ToString()
+    {
+        var symbol = Currency switch
+        {
+            "USD" => "$",
+            "EUR" => "€",
+            "GBP" => "£",
+            "JPY" => "¥",
+            "CAD" => "C$",
+            "AUD" => "A$",
+            _ => Currency
+        };
+
+        return $"{symbol}{Amount:F2} {Currency}";
+    }
 }

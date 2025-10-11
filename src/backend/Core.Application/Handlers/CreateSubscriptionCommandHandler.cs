@@ -20,6 +20,16 @@ public class CreateSubscriptionCommandHandler : IRequestHandler<CreateSubscripti
 
     public async Task<SubscriptionDto> Handle(CreateSubscriptionCommand request, CancellationToken cancellationToken)
     {
+        if (request.UserId == Guid.Empty)
+        {
+            throw new ArgumentException("User ID cannot be empty", nameof(request.UserId));
+        }
+
+        if (string.IsNullOrWhiteSpace(request.PlanId))
+        {
+            throw new ArgumentException("Plan ID cannot be null or empty", nameof(request.PlanId));
+        }
+
         var amount = Money.Create(request.Amount, request.Currency);
         var payment = await _paymentService.ProcessSubscriptionPaymentAsync(
             request.UserId,
@@ -32,7 +42,7 @@ public class CreateSubscriptionCommandHandler : IRequestHandler<CreateSubscripti
         var subscription = subscriptions.FirstOrDefault();
         if (subscription == null)
         {
-            throw new InvalidOperationException("Subscription was not created successfully");
+            throw new InvalidOperationException("Created subscription not found in user subscriptions");
         }
 
         return subscription.ToDto();

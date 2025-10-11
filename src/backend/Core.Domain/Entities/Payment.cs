@@ -36,6 +36,13 @@ public class Payment : BaseEntity
         string? description = null)
         : base()
     {
+        if (userId == Guid.Empty)
+        {
+            throw new ArgumentException("User ID cannot be empty", nameof(userId));
+        }
+
+        ArgumentNullException.ThrowIfNull(amount);
+
         UserId = userId;
         Amount = amount;
         PaymentMethodType = paymentMethodType;
@@ -76,6 +83,11 @@ public class Payment : BaseEntity
 
     public void Fail(string failureReason)
     {
+        if (string.IsNullOrWhiteSpace(failureReason))
+        {
+            throw new ArgumentException("Failure reason cannot be null or empty", nameof(failureReason));
+        }
+
         Status = PaymentStatus.Failed;
         FailureReason = failureReason;
         ProcessedAt = DateTime.UtcNow;

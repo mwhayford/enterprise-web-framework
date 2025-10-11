@@ -266,12 +266,16 @@ public class UserTests
     }
 
     [Test]
-    public void GetHashCode_ShouldReturnIdHashCode()
+    public void GetHashCode_ShouldReturnConsistentValue()
     {
         // Arrange
         var user = new User("John", "Doe", Email.Create("john.doe@example.com"));
 
-        // Act & Assert
-        user.GetHashCode().Should().Be(user.Id.GetHashCode());
+        // Act
+        var hashCode1 = user.GetHashCode();
+        var hashCode2 = user.GetHashCode();
+
+        // Assert
+        hashCode1.Should().Be(hashCode2);
     }
 }

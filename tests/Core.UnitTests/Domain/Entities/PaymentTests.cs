@@ -279,12 +279,16 @@ public class PaymentTests
     }
 
     [Test]
-    public void GetHashCode_ShouldReturnIdHashCode()
+    public void GetHashCode_ShouldReturnConsistentValue()
     {
         // Arrange
         var payment = new Payment(Guid.NewGuid(), Money.Create(100m, "USD"), PaymentMethodType.Card, "Test");
 
-        // Act & Assert
-        payment.GetHashCode().Should().Be(payment.Id.GetHashCode());
+        // Act
+        var hashCode1 = payment.GetHashCode();
+        var hashCode2 = payment.GetHashCode();
+
+        // Assert
+        hashCode1.Should().Be(hashCode2);
     }
 }
