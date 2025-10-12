@@ -140,6 +140,7 @@ jobs:
     name: E2E Tests
     runs-on: ubuntu-latest
     needs: [backend, frontend]
+    timeout-minutes: 30
     
     steps:
       - name: Checkout code
@@ -202,10 +203,26 @@ jobs:
       
       - name: Run E2E tests
         working-directory: tests/Core.E2ETests
-        run: npm test
+        timeout-minutes: 20
+        run: |
+          echo "Starting Playwright E2E tests..."
+          echo "Test timeout: 20 minutes"
+          echo "Per-test timeout: 60 seconds"
+          npm test -- --reporter=line
         env:
           CI: true
           BASE_URL: http://localhost:3001
+      
+      - name: Show test results if failed
+        if: failure()
+        working-directory: tests/Core.E2ETests
+        run: |
+          echo "=== Test Results Summary ==="
+          if [ -f "test-results/results.json" ]; then
+            cat test-results/results.json | head -100
+          fi
+          echo "=== Container Logs ==="
+          docker logs --tail 100 core-backend-ci || true
       
       - name: Upload Playwright report
         if: always()

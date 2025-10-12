@@ -13,16 +13,23 @@ export default defineConfig({
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
   workers: process.env.CI ? 1 : undefined,
+  timeout: 60 * 1000, // 60 seconds per test
+  expect: {
+    timeout: 10 * 1000, // 10 seconds per assertion
+  },
   reporter: [
     ['html'],
     ['json', { outputFile: 'test-results/results.json' }],
     ['junit', { outputFile: 'test-results/results.xml' }],
+    ['line'],
   ],
   use: {
     baseURL: process.env.BASE_URL || 'http://localhost:3001',
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',
+    actionTimeout: 15 * 1000, // 15 seconds per action
+    navigationTimeout: 30 * 1000, // 30 seconds for page loads
   },
 
   projects: [
