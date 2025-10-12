@@ -50,8 +50,8 @@ services:
       - Jwt__Key=YourSuperSecretKeyThatIsAtLeast32CharactersLong!
       - Jwt__Issuer=Core.API
       - Jwt__Audience=Core.API.Users
-      - Google__ClientId=your-google-client-id
-      - Google__ClientSecret=your-google-client-secret
+      - Authentication__Google__ClientId=your-google-client-id
+      - Authentication__Google__ClientSecret=your-google-client-secret
       - Stripe__SecretKey=sk_test_your_stripe_secret_key
       - Stripe__PublishableKey=pk_test_your_stripe_publishable_key
       - Frontend__BaseUrl=http://localhost:3001

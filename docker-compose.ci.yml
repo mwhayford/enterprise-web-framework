@@ -105,8 +105,8 @@ services:
       - Jwt__Key=YourSuperSecretKeyThatIsAtLeast32CharactersLong!
       - Jwt__Issuer=Core.API
       - Jwt__Audience=Core.API.Users
-      - Google__ClientId=test-google-client-id
-      - Google__ClientSecret=test-google-client-secret
+      - Authentication__Google__ClientId=test-google-client-id
+      - Authentication__Google__ClientSecret=test-google-client-secret
       - StripeSettings__SecretKey=sk_test_dummy_key_for_ci
       - StripeSettings__PublishableKey=pk_test_dummy_key_for_ci
       - StripeSettings__WebhookSecret=whsec_dummy_webhook_secret_for_ci
