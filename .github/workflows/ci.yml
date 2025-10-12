@@ -70,22 +70,16 @@ jobs:
           dotnet-version: ${{ env.DOTNET_VERSION }}
       
       - name: Restore dependencies
-        run: |
-          dotnet restore src/backend/Core.API/Core.API.csproj
-          dotnet restore src/backend/Core.Domain/Core.Domain.csproj
-          dotnet restore src/backend/Core.Application/Core.Application.csproj
-          dotnet restore src/backend/Core.Infrastructure/Core.Infrastructure.csproj
-          dotnet restore tests/Core.UnitTests/Core.UnitTests.csproj
-          dotnet restore tests/Core.IntegrationTests/Core.IntegrationTests.csproj
+        run: dotnet restore src/backend/Core.sln
       
       - name: Build backend
-        run: dotnet build src/backend/Core.API/Core.API.csproj --configuration Release --no-restore
+        run: dotnet build src/backend/Core.sln --configuration Release --no-restore
       
       - name: Run unit tests
         run: dotnet test tests/Core.UnitTests/Core.UnitTests.csproj --configuration Release --no-build --verbosity normal --logger "trx;LogFileName=unit-test-results.trx"
       
       - name: Run integration tests
-        run: dotnet test tests/Core.IntegrationTests/Core.IntegrationTests.csproj --configuration Release --verbosity normal --logger "trx;LogFileName=integration-test-results.trx"
+        run: dotnet test tests/Core.IntegrationTests/Core.IntegrationTests.csproj --configuration Release --no-build --verbosity normal --logger "trx;LogFileName=integration-test-results.trx"
         env:
           ConnectionStrings__DefaultConnection: "Host=localhost;Port=5433;Database=CoreDb_Test;Username=postgres;Password=postgres"
           Redis__Configuration: "localhost:6380"
@@ -217,10 +211,10 @@ jobs:
           dotnet-version: ${{ env.DOTNET_VERSION }}
       
       - name: Restore dependencies
-        run: dotnet restore src/backend/Core.API/Core.API.csproj
+        run: dotnet restore src/backend/Core.sln
       
       - name: Build for analysis
-        run: dotnet build src/backend/Core.API/Core.API.csproj --configuration Release --no-restore
+        run: dotnet build src/backend/Core.sln --configuration Release --no-restore
       
       # Optional: Add SonarCloud or similar analysis here
       # - name: SonarCloud Scan
