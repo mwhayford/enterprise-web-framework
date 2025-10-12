@@ -8,6 +8,7 @@ using Core.Infrastructure.Persistence;
 using DotNet.Testcontainers.Builders;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Npgsql;
 using NUnit.Framework;
 using Respawn;
 using Testcontainers.PostgreSql;
@@ -73,8 +74,10 @@ public abstract class IntegrationTestBase
         await DbContext.Database.MigrateAsync();
 
         // Initialize Respawner for database cleanup between tests
+        await using var connection = new NpgsqlConnection(_postgresContainer.GetConnectionString());
+        await connection.OpenAsync();
         _respawner = await Respawner.CreateAsync(
-            _postgresContainer.GetConnectionString(),
+            connection,
             new RespawnerOptions
             {
                 DbAdapter = DbAdapter.Postgres,
@@ -92,7 +95,9 @@ public abstract class IntegrationTestBase
     {
         if (_respawner != null && _postgresContainer != null)
         {
-            await _respawner.ResetAsync(_postgresContainer.GetConnectionString());
+            await using var connection = new NpgsqlConnection(_postgresContainer.GetConnectionString());
+            await connection.OpenAsync();
+            await _respawner.ResetAsync(connection);
         }
     }
 
