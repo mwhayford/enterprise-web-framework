@@ -11,8 +11,8 @@ export class SearchPage extends BasePage {
   private readonly searchInput = 'input[placeholder*="search"]';
   private readonly searchButton = 'button:has-text("Search")';
   private readonly indexSelect = 'select[aria-label="Search index"]';
-  private readonly resultsContainer = '[class*="results"]';
-  private readonly noResultsMessage = 'text=No results found';
+  private readonly resultsContainer = 'text=Found';
+  private readonly noResultsMessage = 'text=No results found for';
 
   constructor(page: Page) {
     super(page);
