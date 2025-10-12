@@ -8,6 +8,7 @@ import type {
   Subscription,
   CreatePaymentRequest,
   CreateSubscriptionRequest,
+  SearchResult,
 } from '../types';
 
 class ApiService {
@@ -113,28 +114,28 @@ class ApiService {
   }
 
   // Search endpoints
-  async search<T = any>(query: string, index: string, page: number, pageSize: number): Promise<T> {
-    const response = await this.api.get('/search', {
+  async search<T = Record<string, unknown>>(query: string, index: string, page: number, pageSize: number): Promise<SearchResult<T>> {
+    const response = await this.api.get<SearchResult<T>>('/search', {
       params: { query, index, page, pageSize }
     });
     return response.data;
   }
 
-  async searchUsers(query: string, page: number, pageSize: number): Promise<any> {
-    const response = await this.api.get('/search/users', {
+  async searchUsers(query: string, page: number, pageSize: number): Promise<SearchResult<User>> {
+    const response = await this.api.get<SearchResult<User>>('/search/users', {
       params: { query, page, pageSize }
     });
     return response.data;
   }
 
-  async searchPayments(query: string, page: number, pageSize: number): Promise<any> {
-    const response = await this.api.get('/search/payments', {
+  async searchPayments(query: string, page: number, pageSize: number): Promise<SearchResult<Payment>> {
+    const response = await this.api.get<SearchResult<Payment>>('/search/payments', {
       params: { query, page, pageSize }
     });
     return response.data;
   }
 
-  async indexDocument(document: any, index: string, id?: string): Promise<void> {
+  async indexDocument(document: Record<string, unknown>, index: string, id?: string): Promise<void> {
     await this.api.post('/search/index', document, {
       params: { index, id }
     });

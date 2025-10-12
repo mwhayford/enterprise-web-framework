@@ -1,6 +1,6 @@
 // Copyright (c) Core. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import searchService from '../services/searchService';
 import type { SearchResult } from '../types';
@@ -9,13 +9,13 @@ const SearchPage: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [query, setQuery] = useState(searchParams.get('q') || '');
   const [index, setIndex] = useState(searchParams.get('index') || 'core-index');
-  const [results, setResults] = useState<SearchResult<any> | null>(null);
+  const [results, setResults] = useState<SearchResult<Record<string, unknown>> | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [page, setPage] = useState(1);
   const pageSize = 20;
 
-  const search = async (searchQuery: string, searchIndex: string, pageNum: number = 1) => {
+  const search = useCallback(async (searchQuery: string, searchIndex: string, pageNum: number = 1) => {
     if (!searchQuery.trim()) return;
 
     setLoading(true);
@@ -43,7 +43,7 @@ const SearchPage: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [setSearchParams]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -71,7 +71,7 @@ const SearchPage: React.FC = () => {
       setIndex(urlIndex || 'core-index');
       search(urlQuery, urlIndex || 'core-index', urlPage);
     }
-  }, []);
+  }, [search, searchParams]);
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">

@@ -124,7 +124,7 @@ export interface SearchResult<T> {
   totalPages: number;
   maxScore: number;
   took: number;
-  aggregations: Record<string, any>;
+  aggregations: Record<string, Record<string, unknown>>;
 }
 
 export interface CreatePaymentRequest {
@@ -154,12 +154,19 @@ export interface SubscriptionFormData {
   paymentMethodType: PaymentMethodType;
 }
 
+// Stripe event types
+export interface StripeElementChangeEvent {
+  complete: boolean;
+  empty: boolean;
+  error?: { message: string };
+}
+
 // Stripe Elements types
 export interface StripeCardElement {
   mount(domElement: string | HTMLElement): void;
   unmount(): void;
   destroy(): void;
-  on(event: string, handler: (event: any) => void): void;
+  on(event: string, handler: (event: StripeElementChangeEvent) => void): void;
   focus(): void;
   blur(): void;
   clear(): void;
@@ -169,7 +176,7 @@ export interface StripePaymentElement {
   mount(domElement: string | HTMLElement): void;
   unmount(): void;
   destroy(): void;
-  on(event: string, handler: (event: any) => void): void;
+  on(event: string, handler: (event: StripeElementChangeEvent) => void): void;
   focus(): void;
   blur(): void;
   clear(): void;

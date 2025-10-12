@@ -8,13 +8,13 @@ import {
 } from '@stripe/react-stripe-js';
 import { Button } from '../ui/Button';
 import { paymentService } from '../../services/paymentService';
-// import type { PaymentFormData } from '../../types';
+import type { Payment } from '../../types';
 
 interface PaymentFormProps {
   amount: number;
   currency?: string;
   description?: string;
-  onSuccess?: (payment: any) => void;
+  onSuccess?: (payment: Payment) => void;
   onError?: (error: string) => void;
 }
 

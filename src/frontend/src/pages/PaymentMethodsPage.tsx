@@ -4,11 +4,12 @@ import React from 'react';
 import { PaymentMethodsList } from '../components/payments/PaymentMethodsList';
 import { Button } from '../components/ui/Button';
 import { useNavigate } from 'react-router-dom';
+import type { PaymentMethod } from '../types';
 
 export const PaymentMethodsPage: React.FC = () => {
   const navigate = useNavigate();
 
-  const handleSelectPaymentMethod = (paymentMethod: any) => {
+  const handleSelectPaymentMethod = (paymentMethod: PaymentMethod) => {
     console.log('Selected payment method:', paymentMethod);
     // Handle payment method selection logic here
   };

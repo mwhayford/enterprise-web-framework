@@ -1,5 +1,6 @@
 // Copyright (c) Core. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import apiService from './api';
 import type { 
   Payment, 
@@ -9,6 +10,12 @@ import type {
   CreateSubscriptionRequest
 } from '../types';
 
+interface CreatePaymentMethodData {
+  type: string;
+  token?: string;
+  [key: string]: unknown;
+}
+
 export const paymentService = {
   // Payment methods
   async getPaymentMethods(): Promise<PaymentMethod[]> {
@@ -16,7 +23,7 @@ export const paymentService = {
     return [];
   },
 
-  async createPaymentMethod(_paymentMethodData: any): Promise<PaymentMethod> {
+  async createPaymentMethod(_paymentMethodData: CreatePaymentMethodData): Promise<PaymentMethod> {
     // This would need to be implemented in the API service
     throw new Error('Not implemented');
   },

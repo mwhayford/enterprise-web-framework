@@ -1,7 +1,7 @@
 // Copyright (c) Core. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 import apiService from './api';
-import type { SearchResult } from '../types';
+import type { SearchResult, User, Payment } from '../types';
 
 export interface SearchParams {
   query: string;
@@ -11,27 +11,27 @@ export interface SearchParams {
 }
 
 export interface IndexDocumentParams {
-  document: any;
+  document: Record<string, unknown>;
   index?: string;
   id?: string;
 }
 
 class SearchService {
-  async search<T = any>(params: SearchParams): Promise<SearchResult<T>> {
+  async search<T = Record<string, unknown>>(params: SearchParams): Promise<SearchResult<T>> {
     const { query, index = 'core-index', page = 1, pageSize = 20 } = params;
     
     const response = await apiService.search(query, index, page, pageSize);
     return response;
   }
 
-  async searchUsers(params: Omit<SearchParams, 'index'>): Promise<SearchResult<any>> {
+  async searchUsers(params: Omit<SearchParams, 'index'>): Promise<SearchResult<User>> {
     const { query, page = 1, pageSize = 20 } = params;
     
     const response = await apiService.searchUsers(query, page, pageSize);
     return response;
   }
 
-  async searchPayments(params: Omit<SearchParams, 'index'>): Promise<SearchResult<any>> {
+  async searchPayments(params: Omit<SearchParams, 'index'>): Promise<SearchResult<Payment>> {
     const { query, page = 1, pageSize = 20 } = params;
     
     const response = await apiService.searchPayments(query, page, pageSize);

@@ -8,13 +8,13 @@ import {
 } from '@stripe/react-stripe-js';
 import { Button } from '../ui/Button';
 import { paymentService } from '../../services/paymentService';
-// import type { SubscriptionFormData } from '../../types';
+import type { Subscription } from '../../types';
 
 interface SubscriptionFormProps {
   planId: string;
   amount: number;
   currency?: string;
-  onSuccess?: (subscription: any) => void;
+  onSuccess?: (subscription: Subscription) => void;
   onError?: (error: string) => void;
 }
 

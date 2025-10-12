@@ -5,6 +5,7 @@ import { StripeProvider } from '../components/payments/StripeProvider';
 import { PaymentForm } from '../components/payments/PaymentForm';
 import { Button } from '../components/ui/Button';
 import { useNavigate } from 'react-router-dom';
+import type { Payment } from '../types';
 
 export const PaymentPage: React.FC = () => {
   const navigate = useNavigate();
@@ -12,7 +13,7 @@ export const PaymentPage: React.FC = () => {
   const [description, setDescription] = useState('Sample payment');
   // const [isProcessing, setIsProcessing] = useState(false);
 
-  const handlePaymentSuccess = (payment: any) => {
+  const handlePaymentSuccess = (payment: Payment) => {
     console.log('Payment successful:', payment);
     navigate('/payment-success', { 
       state: { 

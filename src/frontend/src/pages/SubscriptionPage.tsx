@@ -5,6 +5,7 @@ import { StripeProvider } from '../components/payments/StripeProvider';
 import { SubscriptionForm } from '../components/payments/SubscriptionForm';
 import { Button } from '../components/ui/Button';
 import { useNavigate } from 'react-router-dom';
+import type { Subscription } from '../types';
 
 const SUBSCRIPTION_PLANS = [
   {
@@ -34,7 +35,7 @@ export const SubscriptionPage: React.FC = () => {
   const navigate = useNavigate();
   const [selectedPlan, setSelectedPlan] = useState(SUBSCRIPTION_PLANS[0]);
 
-  const handleSubscriptionSuccess = (subscription: any) => {
+  const handleSubscriptionSuccess = (subscription: Subscription) => {
     console.log('Subscription successful:', subscription);
     navigate('/subscription-success', { 
       state: { 
