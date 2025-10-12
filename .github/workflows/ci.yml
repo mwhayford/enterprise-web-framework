@@ -153,6 +153,15 @@ jobs:
       - name: Start Docker services
         run: docker compose -f docker-compose.ci.yml up -d
       
+      - name: Wait for containers to initialize
+        run: |
+          echo "Waiting 60 seconds for containers to initialize..."
+          sleep 60
+          echo "=== Container Status ==="
+          docker ps -a
+          echo "=== Backend Container Logs (last 50 lines) ==="
+          docker logs --tail 50 core-backend-ci || true
+      
       - name: Wait for services to be healthy
         run: |
           echo "Waiting for frontend..."
@@ -160,6 +169,14 @@ jobs:
           echo "Waiting for backend..."
           npx wait-on http://localhost:5111/health --timeout 120000
           echo "Services are ready!"
+      
+      - name: Show backend logs if health check fails
+        if: failure()
+        run: |
+          echo "=== Full Backend Container Logs ==="
+          docker logs core-backend-ci || true
+          echo "=== Backend Container Inspect ==="
+          docker inspect core-backend-ci || true
       
       - name: Install E2E test dependencies
         working-directory: tests/Core.E2ETests
