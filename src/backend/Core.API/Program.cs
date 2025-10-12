@@ -345,7 +345,7 @@ try
     using var scope = app.Services.CreateScope();
     var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
     var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    
+
     logger.LogInformation("Starting database initialization...");
     context.Database.EnsureCreated();
     logger.LogInformation("Database initialization completed successfully");
@@ -362,7 +362,7 @@ try
     using var scope = app.Services.CreateScope();
     var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
     var recurringJobsService = scope.ServiceProvider.GetRequiredService<RecurringJobsService>();
-    
+
     logger.LogInformation("Configuring recurring jobs...");
     recurringJobsService.ConfigureRecurringJobs();
     logger.LogInformation("Recurring jobs configured successfully");
