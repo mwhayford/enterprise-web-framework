@@ -64,7 +64,7 @@ jobs:
         id: push-backend
         uses: docker/build-push-action@v5
         with:
-          context: .
+          context: src/backend
           file: src/backend/Dockerfile
           push: true
           tags: |
