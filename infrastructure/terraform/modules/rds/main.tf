@@ -59,8 +59,9 @@ resource "aws_security_group" "rds" {
 
 # Random password
 resource "random_password" "master" {
-  length  = 32
-  special = true
+  length           = 32
+  special          = true
+  override_special = "!#$%&*()-_=+[]{}<>:?"  # Exclude /, @, ", and space
 }
 
 # DB Instance

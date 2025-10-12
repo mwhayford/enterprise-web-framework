@@ -97,7 +97,7 @@ module "rds" {
   allowed_security_groups = [module.eks.cluster_security_group_id]
 
   # Staging configuration - cost optimized
-  engine_version    = "16.1"
+  engine_version    = "16.10"
   instance_class    = "db.t4g.micro"  # Smallest ARM-based instance (~$13/month)
   allocated_storage = 20
   max_allocated_storage = 50
