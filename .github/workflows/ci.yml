@@ -278,9 +278,28 @@ jobs:
         with:
           sarif_file: 'trivy-results.sarif'
       
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+      
+      - name: Restore .NET dependencies
+        run: dotnet restore src/backend/Core.sln
+      
       - name: Check for .NET vulnerabilities
         run: |
           dotnet list src/backend/Core.API/Core.API.csproj package --vulnerable --include-transitive
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: src/frontend/package-lock.json
+      
+      - name: Install npm dependencies
+        working-directory: src/frontend
+        run: npm ci
       
       - name: Check for npm vulnerabilities
         working-directory: src/frontend
