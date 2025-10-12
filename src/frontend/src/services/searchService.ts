@@ -22,7 +22,7 @@ class SearchService {
   ): Promise<SearchResult<T>> {
     const { query, index = 'core-index', page = 1, pageSize = 20 } = params
 
-    const response = await apiService.search(query, index, page, pageSize)
+    const response = await apiService.search<T>(query, index, page, pageSize)
     return response
   }
 

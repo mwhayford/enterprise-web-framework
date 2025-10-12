@@ -5,13 +5,17 @@ import { useSearchParams } from 'react-router-dom'
 import searchService from '../services/searchService'
 import type { SearchResult } from '../types'
 
+interface SearchDocument extends Record<string, unknown> {
+  _score?: number
+}
+
 const SearchPage: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams()
   const [query, setQuery] = useState(searchParams.get('q') || '')
   const [index, setIndex] = useState(searchParams.get('index') || 'core-index')
-  const [results, setResults] = useState<SearchResult<
-    Record<string, unknown>
-  > | null>(null)
+  const [results, setResults] = useState<SearchResult<SearchDocument> | null>(
+    null
+  )
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [page, setPage] = useState(1)
