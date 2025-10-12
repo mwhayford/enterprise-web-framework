@@ -118,6 +118,8 @@ public class DatabaseTests : IntegrationTestBase
             amount,
             "cus_test123");
 
+        subscription.Activate(DateTime.UtcNow, DateTime.UtcNow.AddMonths(1));
+
         // Act
         DbContext!.Subscriptions.Add(subscription);
         await DbContext.SaveChangesAsync();
