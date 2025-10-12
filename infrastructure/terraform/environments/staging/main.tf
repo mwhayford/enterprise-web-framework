@@ -16,7 +16,7 @@ terraform {
   }
 
   backend "s3" {
-    bucket         = "core-terraform-state"
+    bucket         = "core-terraform-state-436399375303"
     key            = "environments/staging/terraform.tfstate"
     region         = "us-east-1"
     encrypt        = true
@@ -51,7 +51,6 @@ module "vpc" {
 
   name_prefix        = local.name_prefix
   vpc_cidr           = var.vpc_cidr
-  availability_zones = var.availability_zones
   cluster_name       = "${local.name_prefix}-eks"
   
   # Cost optimization for staging

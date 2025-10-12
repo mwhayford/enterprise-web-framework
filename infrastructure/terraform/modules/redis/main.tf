@@ -8,6 +8,10 @@ terraform {
       source  = "hashicorp/aws"
       version = "~> 5.0"
     }
+    random = {
+      source  = "hashicorp/random"
+      version = "~> 3.5"
+    }
   }
 }
 
@@ -67,10 +71,17 @@ resource "aws_kms_key" "redis" {
   )
 }
 
+# Random password for auth token (if enabled)
+resource "random_password" "auth_token" {
+  count   = var.auth_token_enabled ? 1 : 0
+  length  = 32
+  special = false  # Redis auth token doesn't support special characters
+}
+
 # ElastiCache Replication Group (Redis Cluster)
 resource "aws_elasticache_replication_group" "main" {
-  replication_group_id       = "${var.name_prefix}-redis"
-  replication_group_description = "Redis cluster for ${var.name_prefix}"
+  replication_group_id = "${var.name_prefix}-redis"
+  description          = "Redis cluster for ${var.name_prefix}"
   
   engine               = "redis"
   engine_version       = var.engine_version
@@ -90,7 +101,7 @@ resource "aws_elasticache_replication_group" "main" {
   at_rest_encryption_enabled = true
   kms_key_id                = aws_kms_key.redis.arn
   transit_encryption_enabled = true
-  auth_token_enabled        = var.auth_token_enabled
+  auth_token                = var.auth_token_enabled ? random_password.auth_token[0].result : null
 
   # Maintenance and Backup
   maintenance_window         = var.maintenance_window

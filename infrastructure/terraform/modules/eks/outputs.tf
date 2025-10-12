@@ -6,6 +6,11 @@ output "cluster_id" {
   value       = aws_eks_cluster.main.id
 }
 
+output "cluster_name" {
+  description = "EKS cluster name"
+  value       = aws_eks_cluster.main.name
+}
+
 output "cluster_arn" {
   description = "EKS cluster ARN"
   value       = aws_eks_cluster.main.arn
@@ -30,6 +35,11 @@ output "cluster_certificate_authority_data" {
 output "oidc_provider_arn" {
   description = "OIDC provider ARN for IRSA"
   value       = aws_iam_openid_connect_provider.eks.arn
+}
+
+output "oidc_provider_url" {
+  description = "OIDC provider URL for IRSA"
+  value       = aws_iam_openid_connect_provider.eks.url
 }
 
 output "node_group_id" {
