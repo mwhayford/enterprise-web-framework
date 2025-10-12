@@ -13,6 +13,7 @@ public class MetricsService : IMetricsService
     private readonly Counter<long> _paymentsProcessed;
     private readonly Counter<long> _subscriptionsCreated;
     private readonly Counter<long> _emailsSent;
+    private readonly Counter<long> _webhooksReceived;
     private readonly Histogram<double> _paymentProcessingTime;
     private readonly Histogram<double> _userRegistrationTime;
     private readonly ILogger<MetricsService> _logger;
@@ -37,6 +38,10 @@ public class MetricsService : IMetricsService
         _emailsSent = _meter.CreateCounter<long>(
             "core_emails_sent_total",
             "Total number of emails sent");
+
+        _webhooksReceived = _meter.CreateCounter<long>(
+            "core_webhooks_received_total",
+            "Total number of webhooks received");
 
         _paymentProcessingTime = _meter.CreateHistogram<double>(
             "core_payment_processing_duration_seconds",
@@ -69,6 +74,12 @@ public class MetricsService : IMetricsService
     {
         _emailsSent.Add(1, new KeyValuePair<string, object?>("email_type", emailType));
         _logger.LogDebug("Recorded email sent metric for type {EmailType}", emailType);
+    }
+
+    public void RecordWebhookReceived(string eventType)
+    {
+        _webhooksReceived.Add(1, new KeyValuePair<string, object?>("event_type", eventType));
+        _logger.LogDebug("Recorded webhook received metric for event {EventType}", eventType);
     }
 
     public void RecordPaymentProcessingTime(TimeSpan duration)

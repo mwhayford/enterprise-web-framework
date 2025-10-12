@@ -12,6 +12,8 @@ public interface IMetricsService
 
     void RecordEmailSent(string emailType);
 
+    void RecordWebhookReceived(string eventType);
+
     void RecordPaymentProcessingTime(TimeSpan duration);
 
     void RecordUserRegistrationTime(TimeSpan duration);
