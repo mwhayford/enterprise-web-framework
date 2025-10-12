@@ -1,45 +1,56 @@
 // Copyright (c) Core. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { AuthProvider, useAuth } from './contexts/AuthContext';
-import LoginPage from './pages/LoginPage';
-import DashboardPage from './pages/DashboardPage';
-import AuthCallbackPage from './pages/AuthCallbackPage';
-import { PaymentPage } from './pages/PaymentPage';
-import { SubscriptionPage } from './pages/SubscriptionPage';
-import { PaymentMethodsPage } from './pages/PaymentMethodsPage';
-import { PaymentSuccessPage } from './pages/PaymentSuccessPage';
-import { SubscriptionSuccessPage } from './pages/SubscriptionSuccessPage';
-import SearchPage from './pages/SearchPage';
+import React from 'react'
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from 'react-router-dom'
+import { AuthProvider, useAuth } from './contexts/AuthContext'
+import LoginPage from './pages/LoginPage'
+import DashboardPage from './pages/DashboardPage'
+import AuthCallbackPage from './pages/AuthCallbackPage'
+import { PaymentPage } from './pages/PaymentPage'
+import { SubscriptionPage } from './pages/SubscriptionPage'
+import { PaymentMethodsPage } from './pages/PaymentMethodsPage'
+import { PaymentSuccessPage } from './pages/PaymentSuccessPage'
+import { SubscriptionSuccessPage } from './pages/SubscriptionSuccessPage'
+import SearchPage from './pages/SearchPage'
 
-const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { isAuthenticated, isLoading } = useAuth();
+const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
+  const { isAuthenticated, isLoading } = useAuth()
 
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
       </div>
-    );
+    )
   }
 
-  return isAuthenticated ? <>{children}</> : <Navigate to="/login" replace />;
-};
+  return isAuthenticated ? <>{children}</> : <Navigate to="/login" replace />
+}
 
 const PublicRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated, isLoading } = useAuth()
 
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
       </div>
-    );
+    )
   }
 
-  return !isAuthenticated ? <>{children}</> : <Navigate to="/dashboard" replace />;
-};
+  return !isAuthenticated ? (
+    <>{children}</>
+  ) : (
+    <Navigate to="/dashboard" replace />
+  )
+}
 
 const AppRoutes: React.FC = () => {
   return (
@@ -52,10 +63,7 @@ const AppRoutes: React.FC = () => {
           </PublicRoute>
         }
       />
-      <Route
-        path="/auth-callback"
-        element={<AuthCallbackPage />}
-      />
+      <Route path="/auth-callback" element={<AuthCallbackPage />} />
       <Route
         path="/dashboard"
         element={
@@ -115,8 +123,8 @@ const AppRoutes: React.FC = () => {
       <Route path="/" element={<Navigate to="/dashboard" replace />} />
       <Route path="*" element={<Navigate to="/dashboard" replace />} />
     </Routes>
-  );
-};
+  )
+}
 
 const App: React.FC = () => {
   return (
@@ -127,7 +135,7 @@ const App: React.FC = () => {
         </div>
       </Router>
     </AuthProvider>
-  );
-};
+  )
+}
 
-export default App;
+export default App

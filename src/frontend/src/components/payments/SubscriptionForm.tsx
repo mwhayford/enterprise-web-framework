@@ -1,21 +1,17 @@
 // Copyright (c) Core. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
-import React, { useState } from 'react';
-import { 
-  PaymentElement, 
-  useStripe, 
-  useElements 
-} from '@stripe/react-stripe-js';
-import { Button } from '../ui/Button';
-import { paymentService } from '../../services/paymentService';
-import type { Subscription } from '../../types';
+import React, { useState } from 'react'
+import { PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js'
+import { Button } from '../ui/Button'
+import { paymentService } from '../../services/paymentService'
+import type { Subscription } from '../../types'
 
 interface SubscriptionFormProps {
-  planId: string;
-  amount: number;
-  currency?: string;
-  onSuccess?: (subscription: Subscription) => void;
-  onError?: (error: string) => void;
+  planId: string
+  amount: number
+  currency?: string
+  onSuccess?: (subscription: Subscription) => void
+  onError?: (error: string) => void
 }
 
 export const SubscriptionForm: React.FC<SubscriptionFormProps> = ({
@@ -25,36 +21,37 @@ export const SubscriptionForm: React.FC<SubscriptionFormProps> = ({
   onSuccess,
   onError,
 }) => {
-  const stripe = useStripe();
-  const elements = useElements();
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const stripe = useStripe()
+  const elements = useElements()
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   const handleSubmit = async (event: React.FormEvent) => {
-    event.preventDefault();
+    event.preventDefault()
 
     if (!stripe || !elements) {
-      return;
+      return
     }
 
-    setIsLoading(true);
-    setError(null);
+    setIsLoading(true)
+    setError(null)
 
     try {
       // Create subscription with Stripe
-      const { error: stripeError, paymentMethod } = await stripe.createPaymentMethod({
-        elements,
-        params: {
-          billing_details: {
-            name: 'Customer Name', // This should come from user context
+      const { error: stripeError, paymentMethod } =
+        await stripe.createPaymentMethod({
+          elements,
+          params: {
+            billing_details: {
+              name: 'Customer Name', // This should come from user context
+            },
           },
-        },
-      });
+        })
 
       if (stripeError) {
-        setError(stripeError.message || 'Payment method creation failed');
-        onError?.(stripeError.message || 'Payment method creation failed');
-        return;
+        setError(stripeError.message || 'Payment method creation failed')
+        onError?.(stripeError.message || 'Payment method creation failed')
+        return
       }
 
       if (paymentMethod) {
@@ -62,18 +59,19 @@ export const SubscriptionForm: React.FC<SubscriptionFormProps> = ({
         const subscription = await paymentService.createSubscription({
           planId,
           paymentMethodId: paymentMethod.id,
-        });
+        })
 
-        onSuccess?.(subscription);
+        onSuccess?.(subscription)
       }
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Subscription creation failed';
-      setError(errorMessage);
-      onError?.(errorMessage);
+      const errorMessage =
+        err instanceof Error ? err.message : 'Subscription creation failed'
+      setError(errorMessage)
+      onError?.(errorMessage)
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
-  };
+  }
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
@@ -81,7 +79,7 @@ export const SubscriptionForm: React.FC<SubscriptionFormProps> = ({
         <h3 className="text-lg font-semibold text-gray-900 mb-4">
           Subscribe to Plan
         </h3>
-        
+
         <div className="mb-4">
           <div className="flex justify-between items-center mb-2">
             <span className="text-sm text-gray-600">Plan</span>
@@ -96,7 +94,7 @@ export const SubscriptionForm: React.FC<SubscriptionFormProps> = ({
         </div>
 
         <div className="mb-6">
-          <PaymentElement 
+          <PaymentElement
             options={{
               layout: 'tabs',
             }}
@@ -115,9 +113,11 @@ export const SubscriptionForm: React.FC<SubscriptionFormProps> = ({
           className="w-full"
           variant="primary"
         >
-          {isLoading ? 'Creating Subscription...' : `Subscribe for ${currency} ${(amount / 100).toFixed(2)}/month`}
+          {isLoading
+            ? 'Creating Subscription...'
+            : `Subscribe for ${currency} ${(amount / 100).toFixed(2)}/month`}
         </Button>
       </div>
     </form>
-  );
-};
+  )
+}

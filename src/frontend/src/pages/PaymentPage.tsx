@@ -1,33 +1,33 @@
 // Copyright (c) Core. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
-import React, { useState } from 'react';
-import { StripeProvider } from '../components/payments/StripeProvider';
-import { PaymentForm } from '../components/payments/PaymentForm';
-import { Button } from '../components/ui/Button';
-import { useNavigate } from 'react-router-dom';
-import type { Payment } from '../types';
+import React, { useState } from 'react'
+import { StripeProvider } from '../components/payments/StripeProvider'
+import { PaymentForm } from '../components/payments/PaymentForm'
+import { Button } from '../components/ui/Button'
+import { useNavigate } from 'react-router-dom'
+import type { Payment } from '../types'
 
 export const PaymentPage: React.FC = () => {
-  const navigate = useNavigate();
-  const [amount, setAmount] = useState(2000); // $20.00 in cents
-  const [description, setDescription] = useState('Sample payment');
+  const navigate = useNavigate()
+  const [amount, setAmount] = useState(2000) // $20.00 in cents
+  const [description, setDescription] = useState('Sample payment')
   // const [isProcessing, setIsProcessing] = useState(false);
 
   const handlePaymentSuccess = (payment: Payment) => {
-    console.log('Payment successful:', payment);
-    navigate('/payment-success', { 
-      state: { 
+    console.log('Payment successful:', payment)
+    navigate('/payment-success', {
+      state: {
         paymentId: payment.id,
         amount: payment.amount,
-        status: payment.status 
-      } 
-    });
-  };
+        status: payment.status,
+      },
+    })
+  }
 
   const handlePaymentError = (error: string) => {
-    console.error('Payment failed:', error);
-    alert(`Payment failed: ${error}`);
-  };
+    console.error('Payment failed:', error)
+    alert(`Payment failed: ${error}`)
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 py-12">
@@ -43,7 +43,7 @@ export const PaymentPage: React.FC = () => {
           <h2 className="text-lg font-semibold text-gray-900 mb-4">
             Payment Details
           </h2>
-          
+
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -52,7 +52,9 @@ export const PaymentPage: React.FC = () => {
               <input
                 type="number"
                 value={amount / 100}
-                onChange={(e) => setAmount(Math.max(0, parseFloat(e.target.value) * 100))}
+                onChange={e =>
+                  setAmount(Math.max(0, parseFloat(e.target.value) * 100))
+                }
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 min="0"
                 step="0.01"
@@ -67,7 +69,7 @@ export const PaymentPage: React.FC = () => {
               <input
                 type="text"
                 value={description}
-                onChange={(e) => setDescription(e.target.value)}
+                onChange={e => setDescription(e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Payment description"
               />
@@ -86,14 +88,11 @@ export const PaymentPage: React.FC = () => {
         </StripeProvider>
 
         <div className="text-center mt-6">
-          <Button
-            variant="secondary"
-            onClick={() => navigate('/dashboard')}
-          >
+          <Button variant="secondary" onClick={() => navigate('/dashboard')}>
             Back to Dashboard
           </Button>
         </div>
       </div>
     </div>
-  );
-};
+  )
+}

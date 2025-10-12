@@ -1,18 +1,18 @@
 // Copyright (c) Core. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
-import React from 'react';
-import { PaymentMethodsList } from '../components/payments/PaymentMethodsList';
-import { Button } from '../components/ui/Button';
-import { useNavigate } from 'react-router-dom';
-import type { PaymentMethod } from '../types';
+import React from 'react'
+import { PaymentMethodsList } from '../components/payments/PaymentMethodsList'
+import { Button } from '../components/ui/Button'
+import { useNavigate } from 'react-router-dom'
+import type { PaymentMethod } from '../types'
 
 export const PaymentMethodsPage: React.FC = () => {
-  const navigate = useNavigate();
+  const navigate = useNavigate()
 
   const handleSelectPaymentMethod = (paymentMethod: PaymentMethod) => {
-    console.log('Selected payment method:', paymentMethod);
+    console.log('Selected payment method:', paymentMethod)
     // Handle payment method selection logic here
-  };
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 py-12">
@@ -32,20 +32,14 @@ export const PaymentMethodsPage: React.FC = () => {
         </div>
 
         <div className="text-center mt-6 space-x-4">
-          <Button
-            variant="secondary"
-            onClick={() => navigate('/dashboard')}
-          >
+          <Button variant="secondary" onClick={() => navigate('/dashboard')}>
             Back to Dashboard
           </Button>
-          <Button
-            variant="primary"
-            onClick={() => navigate('/payment')}
-          >
+          <Button variant="primary" onClick={() => navigate('/payment')}>
             Make a Payment
           </Button>
         </div>
       </div>
     </div>
-  );
-};
+  )
+}

@@ -1,18 +1,18 @@
 // Copyright (c) Core. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
-import React from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { Button } from '../components/ui/Button';
+import React from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
+import { Button } from '../components/ui/Button'
 
 export const PaymentSuccessPage: React.FC = () => {
-  const location = useLocation();
-  const navigate = useNavigate();
-  
+  const location = useLocation()
+  const navigate = useNavigate()
+
   const paymentData = location.state as {
-    paymentId: string;
-    amount: number;
-    status: string;
-  } | null;
+    paymentId: string
+    amount: number
+    status: string
+  } | null
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -20,8 +20,18 @@ export const PaymentSuccessPage: React.FC = () => {
         <div className="bg-white rounded-lg shadow-sm p-8">
           <div className="mb-6">
             <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100 mb-4">
-              <svg className="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              <svg
+                className="h-6 w-6 text-green-600"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M5 13l4 4L19 7"
+                />
               </svg>
             </div>
             <h1 className="text-2xl font-bold text-gray-900 mb-2">
@@ -34,7 +44,9 @@ export const PaymentSuccessPage: React.FC = () => {
 
           {paymentData && (
             <div className="bg-gray-50 rounded-lg p-4 mb-6 text-left">
-              <h3 className="font-semibold text-gray-900 mb-2">Payment Details</h3>
+              <h3 className="font-semibold text-gray-900 mb-2">
+                Payment Details
+              </h3>
               <div className="space-y-1 text-sm text-gray-600">
                 <div className="flex justify-between">
                   <span>Payment ID:</span>
@@ -71,5 +83,5 @@ export const PaymentSuccessPage: React.FC = () => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}

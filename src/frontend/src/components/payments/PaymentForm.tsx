@@ -1,21 +1,17 @@
 // Copyright (c) Core. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
-import React, { useState } from 'react';
-import { 
-  PaymentElement, 
-  useStripe, 
-  useElements 
-} from '@stripe/react-stripe-js';
-import { Button } from '../ui/Button';
-import { paymentService } from '../../services/paymentService';
-import type { Payment } from '../../types';
+import React, { useState } from 'react'
+import { PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js'
+import { Button } from '../ui/Button'
+import { paymentService } from '../../services/paymentService'
+import type { Payment } from '../../types'
 
 interface PaymentFormProps {
-  amount: number;
-  currency?: string;
-  description?: string;
-  onSuccess?: (payment: Payment) => void;
-  onError?: (error: string) => void;
+  amount: number
+  currency?: string
+  description?: string
+  onSuccess?: (payment: Payment) => void
+  onError?: (error: string) => void
 }
 
 export const PaymentForm: React.FC<PaymentFormProps> = ({
@@ -25,38 +21,43 @@ export const PaymentForm: React.FC<PaymentFormProps> = ({
   onSuccess,
   onError,
 }) => {
-  const stripe = useStripe();
-  const elements = useElements();
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const stripe = useStripe()
+  const elements = useElements()
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   const handleSubmit = async (event: React.FormEvent) => {
-    event.preventDefault();
+    event.preventDefault()
 
     if (!stripe || !elements) {
-      return;
+      return
     }
 
-    setIsLoading(true);
-    setError(null);
+    setIsLoading(true)
+    setError(null)
 
     try {
       // Create payment intent
-      const { clientSecret } = await paymentService.createPaymentIntent(amount, currency);
+      const { clientSecret } = await paymentService.createPaymentIntent(
+        amount,
+        currency
+      )
 
       // Confirm payment with Stripe
-      const { error: stripeError, paymentIntent } = await stripe.confirmPayment({
-        elements,
-        clientSecret,
-        confirmParams: {
-          return_url: `${window.location.origin}/payment-success`,
-        },
-        redirect: 'if_required',
-      });
+      const { error: stripeError, paymentIntent } = await stripe.confirmPayment(
+        {
+          elements,
+          clientSecret,
+          confirmParams: {
+            return_url: `${window.location.origin}/payment-success`,
+          },
+          redirect: 'if_required',
+        }
+      )
 
       if (stripeError) {
-        setError(stripeError.message || 'Payment failed');
-        onError?.(stripeError.message || 'Payment failed');
+        setError(stripeError.message || 'Payment failed')
+        onError?.(stripeError.message || 'Payment failed')
       } else if (paymentIntent?.status === 'succeeded') {
         // Create payment record in our system
         const payment = await paymentService.createPayment({
@@ -64,18 +65,18 @@ export const PaymentForm: React.FC<PaymentFormProps> = ({
           currency: paymentIntent.currency,
           paymentMethodId: paymentIntent.payment_method as string,
           description,
-        });
+        })
 
-        onSuccess?.(payment);
+        onSuccess?.(payment)
       }
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Payment failed';
-      setError(errorMessage);
-      onError?.(errorMessage);
+      const errorMessage = err instanceof Error ? err.message : 'Payment failed'
+      setError(errorMessage)
+      onError?.(errorMessage)
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
-  };
+  }
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
@@ -83,7 +84,7 @@ export const PaymentForm: React.FC<PaymentFormProps> = ({
         <h3 className="text-lg font-semibold text-gray-900 mb-4">
           Payment Details
         </h3>
-        
+
         <div className="mb-4">
           <div className="flex justify-between items-center mb-2">
             <span className="text-sm text-gray-600">Amount</span>
@@ -97,7 +98,7 @@ export const PaymentForm: React.FC<PaymentFormProps> = ({
         </div>
 
         <div className="mb-6">
-          <PaymentElement 
+          <PaymentElement
             options={{
               layout: 'tabs',
             }}
@@ -116,9 +117,11 @@ export const PaymentForm: React.FC<PaymentFormProps> = ({
           className="w-full"
           variant="primary"
         >
-          {isLoading ? 'Processing...' : `Pay ${currency} ${(amount / 100).toFixed(2)}`}
+          {isLoading
+            ? 'Processing...'
+            : `Pay ${currency} ${(amount / 100).toFixed(2)}`}
         </Button>
       </div>
     </form>
-  );
-};
+  )
+}

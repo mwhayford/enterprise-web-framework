@@ -1,15 +1,20 @@
 // Copyright (c) Core. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
-import React from 'react';
-import { Button } from '../components/ui/Button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/Card';
+import React from 'react'
+import { Button } from '../components/ui/Button'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '../components/ui/Card'
 
 const LoginPage: React.FC = () => {
-
   const handleGoogleLogin = () => {
     // Redirect to backend Google OAuth endpoint
-    window.location.href = `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5111'}/api/auth/google`;
-  };
+    window.location.href = `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5111'}/api/auth/google`
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
@@ -22,7 +27,7 @@ const LoginPage: React.FC = () => {
             Sign in to your account to continue
           </p>
         </div>
-        
+
         <Card>
           <CardHeader>
             <CardTitle>Sign In</CardTitle>
@@ -31,11 +36,7 @@ const LoginPage: React.FC = () => {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <Button
-              onClick={handleGoogleLogin}
-              className="w-full"
-              size="lg"
-            >
+            <Button onClick={handleGoogleLogin} className="w-full" size="lg">
               <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
                 <path
                   fill="currentColor"
@@ -56,15 +57,16 @@ const LoginPage: React.FC = () => {
               </svg>
               Continue with Google
             </Button>
-            
+
             <div className="text-center text-sm text-gray-500">
-              By signing in, you agree to our Terms of Service and Privacy Policy
+              By signing in, you agree to our Terms of Service and Privacy
+              Policy
             </div>
           </CardContent>
         </Card>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default LoginPage;
+export default LoginPage

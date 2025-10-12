@@ -1,60 +1,68 @@
 // Copyright (c) Core. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
-import React, { useState, useEffect } from 'react';
-import { Button } from '../ui/Button';
-import { paymentService } from '../../services/paymentService';
-import type { PaymentMethod } from '../../types';
+import React, { useState, useEffect } from 'react'
+import { Button } from '../ui/Button'
+import { paymentService } from '../../services/paymentService'
+import type { PaymentMethod } from '../../types'
 
 interface PaymentMethodsListProps {
-  onSelectPaymentMethod?: (paymentMethod: PaymentMethod) => void;
-  showAddButton?: boolean;
+  onSelectPaymentMethod?: (paymentMethod: PaymentMethod) => void
+  showAddButton?: boolean
 }
 
 export const PaymentMethodsList: React.FC<PaymentMethodsListProps> = ({
   onSelectPaymentMethod,
   showAddButton = true,
 }) => {
-  const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    loadPaymentMethods();
-  }, []);
+    loadPaymentMethods()
+  }, [])
 
   const loadPaymentMethods = async () => {
     try {
-      setIsLoading(true);
-      const methods = await paymentService.getPaymentMethods();
-      setPaymentMethods(methods);
+      setIsLoading(true)
+      const methods = await paymentService.getPaymentMethods()
+      setPaymentMethods(methods)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load payment methods');
+      setError(
+        err instanceof Error ? err.message : 'Failed to load payment methods'
+      )
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
-  };
+  }
 
   const handleSetDefault = async (paymentMethodId: string) => {
     try {
-      await paymentService.setDefaultPaymentMethod(paymentMethodId);
-      await loadPaymentMethods(); // Reload to update the UI
+      await paymentService.setDefaultPaymentMethod(paymentMethodId)
+      await loadPaymentMethods() // Reload to update the UI
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to set default payment method');
+      setError(
+        err instanceof Error
+          ? err.message
+          : 'Failed to set default payment method'
+      )
     }
-  };
+  }
 
   const handleDelete = async (paymentMethodId: string) => {
     if (!confirm('Are you sure you want to delete this payment method?')) {
-      return;
+      return
     }
 
     try {
-      await paymentService.deletePaymentMethod(paymentMethodId);
-      await loadPaymentMethods(); // Reload to update the UI
+      await paymentService.deletePaymentMethod(paymentMethodId)
+      await loadPaymentMethods() // Reload to update the UI
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to delete payment method');
+      setError(
+        err instanceof Error ? err.message : 'Failed to delete payment method'
+      )
     }
-  };
+  }
 
   if (isLoading) {
     return (
@@ -64,14 +72,14 @@ export const PaymentMethodsList: React.FC<PaymentMethodsListProps> = ({
           <div className="h-20 bg-gray-200 rounded"></div>
         </div>
       </div>
-    );
+    )
   }
 
   if (error) {
     return (
       <div className="p-4 bg-red-50 border border-red-200 rounded-md">
         <p className="text-sm text-red-600">{error}</p>
-        <Button 
+        <Button
           onClick={loadPaymentMethods}
           variant="secondary"
           className="mt-2"
@@ -79,7 +87,7 @@ export const PaymentMethodsList: React.FC<PaymentMethodsListProps> = ({
           Retry
         </Button>
       </div>
-    );
+    )
   }
 
   return (
@@ -104,7 +112,7 @@ export const PaymentMethodsList: React.FC<PaymentMethodsListProps> = ({
         </div>
       ) : (
         <div className="space-y-3">
-          {paymentMethods.map((method) => (
+          {paymentMethods.map(method => (
             <div
               key={method.id}
               className={`p-4 border rounded-lg cursor-pointer transition-colors ${
@@ -130,15 +138,15 @@ export const PaymentMethodsList: React.FC<PaymentMethodsListProps> = ({
                     {method.type} •••• {method.last4}
                   </p>
                 </div>
-                
+
                 <div className="flex space-x-2">
                   {!method.isActive && (
                     <Button
                       variant="secondary"
                       size="sm"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleSetDefault(method.id);
+                      onClick={e => {
+                        e.stopPropagation()
+                        handleSetDefault(method.id)
                       }}
                     >
                       Set Default
@@ -147,9 +155,9 @@ export const PaymentMethodsList: React.FC<PaymentMethodsListProps> = ({
                   <Button
                     variant="secondary"
                     size="sm"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleDelete(method.id);
+                    onClick={e => {
+                      e.stopPropagation()
+                      handleDelete(method.id)
                     }}
                   >
                     Delete
@@ -161,5 +169,5 @@ export const PaymentMethodsList: React.FC<PaymentMethodsListProps> = ({
         </div>
       )}
     </div>
-  );
-};
+  )
+}
