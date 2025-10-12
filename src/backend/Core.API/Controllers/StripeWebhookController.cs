@@ -57,43 +57,43 @@ public class StripeWebhookController : ControllerBase
             // Handle the event based on its type
             switch (stripeEvent.Type)
             {
-                case Events.PaymentIntentSucceeded:
+                case "payment_intent.succeeded":
                     await HandlePaymentIntentSucceeded(stripeEvent);
                     break;
 
-                case Events.PaymentIntentPaymentFailed:
+                case "payment_intent.payment_failed":
                     await HandlePaymentIntentFailed(stripeEvent);
                     break;
 
-                case Events.ChargeSucceeded:
+                case "charge.succeeded":
                     await HandleChargeSucceeded(stripeEvent);
                     break;
 
-                case Events.ChargeFailed:
+                case "charge.failed":
                     await HandleChargeFailed(stripeEvent);
                     break;
 
-                case Events.InvoicePaid:
+                case "invoice.paid":
                     await HandleInvoicePaid(stripeEvent);
                     break;
 
-                case Events.InvoicePaymentFailed:
+                case "invoice.payment_failed":
                     await HandleInvoicePaymentFailed(stripeEvent);
                     break;
 
-                case Events.CustomerSubscriptionCreated:
+                case "customer.subscription.created":
                     await HandleSubscriptionCreated(stripeEvent);
                     break;
 
-                case Events.CustomerSubscriptionUpdated:
+                case "customer.subscription.updated":
                     await HandleSubscriptionUpdated(stripeEvent);
                     break;
 
-                case Events.CustomerSubscriptionDeleted:
+                case "customer.subscription.deleted":
                     await HandleSubscriptionDeleted(stripeEvent);
                     break;
 
-                case Events.PaymentMethodAttached:
+                case "payment_method.attached":
                     await HandlePaymentMethodAttached(stripeEvent);
                     break;
 
