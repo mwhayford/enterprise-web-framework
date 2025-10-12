@@ -18,6 +18,12 @@ on:
         required: true
         type: string
 
+permissions:
+  contents: read
+  actions: read
+  id-token: write
+  deployments: write
+
 env:
   DOTNET_VERSION: '9.0.x'
   NODE_VERSION: '18'
