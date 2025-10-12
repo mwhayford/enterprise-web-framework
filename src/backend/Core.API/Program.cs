@@ -339,18 +339,41 @@ app.MapGet("/metrics", async context =>
     await context.Response.WriteAsync(response);
 });
 
-// Ensure database is created
-using (var scope = app.Services.CreateScope())
+// Ensure database is created with error handling
+try
 {
+    using var scope = app.Services.CreateScope();
+    var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
     var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    
+    logger.LogInformation("Starting database initialization...");
     context.Database.EnsureCreated();
+    logger.LogInformation("Database initialization completed successfully");
+}
+catch (Exception ex)
+{
+    var logger = app.Services.GetRequiredService<ILogger<Program>>();
+    logger.LogError(ex, "Failed to initialize database. Application will continue but database may not be available.");
 }
 
-// Configure recurring jobs
-using (var scope = app.Services.CreateScope())
+// Configure recurring jobs with error handling
+try
 {
+    using var scope = app.Services.CreateScope();
+    var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
     var recurringJobsService = scope.ServiceProvider.GetRequiredService<RecurringJobsService>();
+    
+    logger.LogInformation("Configuring recurring jobs...");
     recurringJobsService.ConfigureRecurringJobs();
+    logger.LogInformation("Recurring jobs configured successfully");
 }
+catch (Exception ex)
+{
+    var logger = app.Services.GetRequiredService<ILogger<Program>>();
+    logger.LogError(ex, "Failed to configure recurring jobs. Application will continue but background jobs may not run.");
+}
+
+var startupLogger = app.Services.GetRequiredService<ILogger<Program>>();
+startupLogger.LogInformation("Application startup complete. Starting web server...");
 
 app.Run();
