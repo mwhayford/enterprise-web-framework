@@ -33,7 +33,9 @@ public class EmailService
     {
         _logger.LogInformation(
             "Sending payment confirmation email to {Email} for {Amount} {Currency}",
-            email, amount, currency);
+            email,
+            amount,
+            currency);
 
         // Simulate email sending
         await Task.Delay(1000);
@@ -46,7 +48,8 @@ public class EmailService
     {
         _logger.LogInformation(
             "Sending subscription reminder email to {Email} for plan {PlanName}",
-            email, planName);
+            email,
+            planName);
 
         // Simulate email sending
         await Task.Delay(1000);

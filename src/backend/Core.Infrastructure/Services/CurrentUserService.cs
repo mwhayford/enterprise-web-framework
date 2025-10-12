@@ -28,16 +28,16 @@ public class CurrentUserService : ICurrentUserService
 
     public bool IsAuthenticated => _httpContextAccessor.HttpContext?.User?.Identity?.IsAuthenticated ?? false;
 
-    public bool IsInRole(string role)
-    {
-        return _httpContextAccessor.HttpContext?.User?.IsInRole(role) ?? false;
-    }
-
     public IEnumerable<string> Roles
     {
         get
         {
             return _httpContextAccessor.HttpContext?.User?.FindAll(ClaimTypes.Role)?.Select(c => c.Value) ?? Enumerable.Empty<string>();
         }
+    }
+
+    public bool IsInRole(string role)
+    {
+        return _httpContextAccessor.HttpContext?.User?.IsInRole(role) ?? false;
     }
 }

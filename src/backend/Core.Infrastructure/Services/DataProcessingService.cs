@@ -30,7 +30,9 @@ public class DataProcessingService
     {
         _logger.LogInformation(
             "Generating user report for user {UserId} from {FromDate} to {ToDate}",
-            userId, fromDate, toDate);
+            userId,
+            fromDate,
+            toDate);
 
         // Simulate report generation
         await Task.Delay(5000);
