@@ -13,7 +13,7 @@ test.describe('Search Functionality', () => {
   });
 
   test('should display search page with search input and filters', async ({ page }) => {
-    const searchInput = await page.locator('input[type="search"]');
+    const searchInput = await page.locator('input[placeholder*="search"]');
     const indexSelect = await page.locator('select[aria-label="Search index"]');
     const searchButton = await page.locator('button:has-text("Search")');
 
@@ -31,7 +31,7 @@ test.describe('Search Functionality', () => {
   });
 
   test('should perform search and display results', async () => {
-    await searchPage.search('test', 'all');
+    await searchPage.search('test', 'core-index');
     
     // Wait for search results or no results message
     await searchPage.page.waitForTimeout(2000);
@@ -44,7 +44,7 @@ test.describe('Search Functionality', () => {
   });
 
   test('should handle empty search query', async ({ page }) => {
-    await searchPage.search('', 'all');
+    await searchPage.search('', 'core-index');
     
     // Should either show validation message or all results
     await page.waitForTimeout(1000);
@@ -64,7 +64,7 @@ test.describe('Search Functionality', () => {
   });
 
   test('should display pagination controls when results exceed page size', async ({ page }) => {
-    await searchPage.search('test', 'all');
+    await searchPage.search('test', 'core-index');
     await page.waitForTimeout(2000);
     
     // Check for pagination controls (if results are numerous)

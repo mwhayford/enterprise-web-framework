@@ -8,7 +8,7 @@ import { BasePage } from './BasePage';
  * Page Object Model for the Login page.
  */
 export class LoginPage extends BasePage {
-  private readonly googleLoginButton = 'button:has-text("Sign in with Google")';
+  private readonly googleLoginButton = 'button:has-text("Continue with Google")';
   private readonly emailInput = 'input[type="email"]';
   private readonly passwordInput = 'input[type="password"]';
 

@@ -30,7 +30,7 @@ test.describe('Authentication Flow', () => {
     await page.waitForLoadState('networkidle');
     
     // Check if still authenticated (token exists)
-    const token = await page.evaluate(() => localStorage.getItem('token'));
+    const token = await page.evaluate(() => localStorage.getItem('auth_token'));
     expect(token).toBeTruthy();
   });
 

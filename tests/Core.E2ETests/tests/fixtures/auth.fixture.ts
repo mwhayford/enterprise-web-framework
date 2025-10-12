@@ -43,8 +43,12 @@ export const test = base.extend<AuthFixtures>({
         email: 'test@example.com',
         firstName: 'Test',
         lastName: 'User',
+        displayName: 'Test User',
+        isActive: true,
+        createdAt: new Date().toISOString(),
+        lastLoginAt: new Date().toISOString(),
       };
-      localStorage.setItem('token', mockToken);
+      localStorage.setItem('auth_token', mockToken);
       localStorage.setItem('user', JSON.stringify(mockUser));
     });
 

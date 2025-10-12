@@ -9,10 +9,10 @@ import { BasePage } from './BasePage';
  */
 export class DashboardPage extends BasePage {
   private readonly welcomeMessage = 'text=Welcome';
-  private readonly paymentLink = 'a:has-text("Payment")';
-  private readonly subscriptionLink = 'a:has-text("Subscription")';
-  private readonly paymentMethodsLink = 'a:has-text("Payment Methods")';
-  private readonly searchLink = 'a:has-text("Search")';
+  private readonly paymentLink = 'button:has-text("Make Payment")';
+  private readonly subscriptionLink = 'button:has-text("Subscribe")';
+  private readonly paymentMethodsLink = 'button:has-text("Payment Methods")';
+  private readonly searchLink = 'button:has-text("Search Content")';
 
   constructor(page: Page) {
     super(page);

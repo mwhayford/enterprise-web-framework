@@ -8,7 +8,7 @@ import { BasePage } from './BasePage';
  * Page Object Model for the Search page.
  */
 export class SearchPage extends BasePage {
-  private readonly searchInput = 'input[type="search"]';
+  private readonly searchInput = 'input[placeholder*="search"]';
   private readonly searchButton = 'button:has-text("Search")';
   private readonly indexSelect = 'select[aria-label="Search index"]';
   private readonly resultsContainer = '[class*="results"]';
@@ -29,7 +29,7 @@ export class SearchPage extends BasePage {
   /**
    * Perform a search with a query and index.
    */
-  async search(query: string, index: string = 'all'): Promise<void> {
+  async search(query: string, index: string = 'core-index'): Promise<void> {
     await this.page.selectOption(this.indexSelect, index);
     await this.page.fill(this.searchInput, query);
     await this.page.click(this.searchButton);
