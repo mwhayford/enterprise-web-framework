@@ -50,14 +50,18 @@ public class RedisTests
     [TearDown]
     public async Task TearDown()
     {
-        // Flush database between tests
-        if (_redis != null)
+        // Delete test keys individually (FLUSHDB requires admin mode)
+        if (_redis != null && _database != null)
         {
             var endpoints = _redis.GetEndPoints();
             if (endpoints.Length > 0)
             {
                 var server = _redis.GetServer(endpoints[0]);
-                await server.FlushDatabaseAsync();
+                var keys = server.Keys(pattern: "test:*").ToArray();
+                if (keys.Length > 0)
+                {
+                    await _database.KeyDeleteAsync(keys);
+                }
             }
         }
     }
