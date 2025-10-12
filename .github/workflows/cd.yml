@@ -122,14 +122,10 @@ jobs:
           terraform_version: 1.6.0
       
       - name: Deploy infrastructure
-        working-directory: infrastructure/terraform
+        working-directory: infrastructure/terraform/environments/${{ github.event.inputs.environment }}
         run: |
           terraform init
-          terraform workspace select ${{ github.event.inputs.environment }} || terraform workspace new ${{ github.event.inputs.environment }}
-          terraform apply -auto-approve \
-            -var="environment=${{ github.event.inputs.environment }}" \
-            -var="backend_image=${{ needs.build-and-push.outputs.backend-image }}" \
-            -var="frontend_image=${{ needs.build-and-push.outputs.frontend-image }}"
+          terraform apply -auto-approve
       
       - name: Deploy to Kubernetes
         working-directory: infrastructure/kubernetes
