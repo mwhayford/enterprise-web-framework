@@ -164,10 +164,26 @@ jobs:
       
       - name: Wait for services to be healthy
         run: |
-          echo "Waiting for frontend..."
-          npx wait-on http://localhost:3001 --timeout 120000
-          echo "Waiting for backend..."
-          npx wait-on http://localhost:5111/health --timeout 120000
+          echo "Checking backend health directly..."
+          for i in {1..30}; do
+            if curl -f http://localhost:5111/health 2>/dev/null; then
+              echo "Backend is healthy!"
+              break
+            fi
+            echo "Attempt $i: Backend not ready yet, waiting 5 seconds..."
+            sleep 5
+          done
+          
+          echo "Checking frontend..."
+          for i in {1..30}; do
+            if curl -f http://localhost:3001 2>/dev/null; then
+              echo "Frontend is healthy!"
+              break
+            fi
+            echo "Attempt $i: Frontend not ready yet, waiting 5 seconds..."
+            sleep 5
+          done
+          
           echo "Services are ready!"
       
       - name: Show backend logs if health check fails
