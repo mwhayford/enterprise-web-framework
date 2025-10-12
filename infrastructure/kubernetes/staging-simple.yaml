@@ -1,0 +1,180 @@
+# Simplified Staging Deployment for Testing
+# This is a minimal deployment to verify the infrastructure
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: core-staging
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: core-config
+  namespace: core-staging
+data:
+  ASPNETCORE_ENVIRONMENT: "Staging"
+  ASPNETCORE_URLS: "http://+:80"
+  Frontend__BaseUrl: "http://localhost:3000"
+  Elasticsearch__Url: "http://elasticsearch:9200"
+  Elasticsearch__DefaultIndex: "core-index"
+  Kafka__BootstrapServers: "kafka:9092"
+  Kafka__GroupId: "core-api-staging"
+  Redis__InstanceName: "CoreStaging"
+  OpenTelemetry__ServiceName: "Core.API.Staging"
+  OpenTelemetry__ServiceVersion: "1.0.0"
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: core-secrets
+  namespace: core-staging
+type: Opaque
+stringData:
+  # Database connection (AWS RDS)
+  ConnectionStrings__DefaultConnection: "Host=core-staging-db.caawdukqjylw.us-east-1.rds.amazonaws.com;Port=5432;Database=CoreDb;Username=postgres;Password=]HhUzUC3pRm65Jv?ZW1N-EW0+*fbbKDP"
+  
+  # Redis connection (AWS ElastiCache)
+  Redis__Configuration: "master.core-staging-redis.sk7foc.use1.cache.amazonaws.com:6379"
+  
+  # Authentication - using test values for staging
+  Jwt__Key: "YourSuperSecretKeyThatIsAtLeast32CharactersLong!"
+  Jwt__Issuer: "Core.API"
+  Jwt__Audience: "Core.API.Users"
+  Jwt__ExpiryMinutes: "60"
+  
+  # Google OAuth - using test values
+  Authentication__Google__ClientId: "test-client-id"
+  Authentication__Google__ClientSecret: "test-client-secret"
+  
+  # Stripe - using test keys
+  StripeSettings__SecretKey: "sk_test_dummy_key_for_staging"
+  StripeSettings__PublishableKey: "pk_test_dummy_key_for_staging"
+  StripeSettings__WebhookSecret: "whsec_dummy_webhook_secret_for_staging"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: core-backend
+  namespace: core-staging
+  labels:
+    app: core-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: core-backend
+  template:
+    metadata:
+      labels:
+        app: core-backend
+    spec:
+      containers:
+      - name: core-backend
+        image: 436399375303.dkr.ecr.us-east-1.amazonaws.com/core-backend:latest
+        imagePullPolicy: Always
+        ports:
+        - name: http
+          containerPort: 80
+        envFrom:
+        - configMapRef:
+            name: core-config
+        - secretRef:
+            name: core-secrets
+        resources:
+          requests:
+            cpu: 250m
+            memory: 256Mi
+          limits:
+            cpu: 1000m
+            memory: 1Gi
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: http
+          initialDelaySeconds: 60
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: http
+          initialDelaySeconds: 30
+          periodSeconds: 5
+          timeoutSeconds: 3
+          failureThreshold: 3
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: core-backend
+  namespace: core-staging
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+    targetPort: http
+    protocol: TCP
+    name: http
+  selector:
+    app: core-backend
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: core-frontend
+  namespace: core-staging
+  labels:
+    app: core-frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: core-frontend
+  template:
+    metadata:
+      labels:
+        app: core-frontend
+    spec:
+      containers:
+      - name: core-frontend
+        image: 436399375303.dkr.ecr.us-east-1.amazonaws.com/core-frontend:latest
+        imagePullPolicy: Always
+        ports:
+        - name: http
+          containerPort: 80
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: 500m
+            memory: 512Mi
+        livenessProbe:
+          httpGet:
+            path: /
+            port: http
+          initialDelaySeconds: 10
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /
+            port: http
+          initialDelaySeconds: 5
+          periodSeconds: 5
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: core-frontend
+  namespace: core-staging
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+    targetPort: http
+    protocol: TCP
+    name: http
+  selector:
+    app: core-frontend
+
