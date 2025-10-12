@@ -19,7 +19,9 @@ public class PaymentProcessedEventHandler : INotificationHandler<PaymentProcesse
     {
         _logger.LogInformation(
             "Handling PaymentProcessedEvent for payment {PaymentId} of {Amount} {Currency}",
-            notification.PaymentId, notification.Amount, notification.Currency);
+            notification.PaymentId,
+            notification.Amount,
+            notification.Currency);
 
         // Here you can add business logic like:
         // - Send payment confirmation email

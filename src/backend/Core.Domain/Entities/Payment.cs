@@ -7,28 +7,6 @@ namespace Core.Domain.Entities;
 
 public class Payment : BaseEntity
 {
-    public Guid UserId { get; private set; }
-
-    public Money Amount { get; private set; }
-
-    public PaymentStatus Status { get; private set; }
-
-    public PaymentMethodType PaymentMethodType { get; private set; }
-
-    public string? StripePaymentIntentId { get; private set; }
-
-    public string? StripeChargeId { get; private set; }
-
-    public string? Description { get; private set; }
-
-    public string? FailureReason { get; private set; }
-
-    public DateTime? ProcessedAt { get; private set; }
-
-    private Payment()
-    {
-    } // For EF Core
-
     public Payment(
         Guid userId,
         Money amount,
@@ -49,6 +27,29 @@ public class Payment : BaseEntity
         Description = description;
         Status = PaymentStatus.Pending;
     }
+
+    private Payment()
+    {
+        Amount = default!;
+    } // For EF Core
+
+    public Guid UserId { get; private set; }
+
+    public Money Amount { get; private set; }
+
+    public PaymentStatus Status { get; private set; }
+
+    public PaymentMethodType PaymentMethodType { get; private set; }
+
+    public string? StripePaymentIntentId { get; private set; }
+
+    public string? StripeChargeId { get; private set; }
+
+    public string? Description { get; private set; }
+
+    public string? FailureReason { get; private set; }
+
+    public DateTime? ProcessedAt { get; private set; }
 
     public void SetStripePaymentIntentId(string stripePaymentIntentId)
     {

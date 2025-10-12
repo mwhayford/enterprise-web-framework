@@ -7,6 +7,11 @@ namespace Core.Domain.Events;
 
 public abstract record BaseEvent : IDomainEvent, INotification
 {
+    protected BaseEvent()
+    {
+        EventType = GetType().Name;
+    }
+
     public Guid Id { get; init; } = Guid.NewGuid();
 
     public DateTime OccurredOn { get; init; } = DateTime.UtcNow;
@@ -18,9 +23,4 @@ public abstract record BaseEvent : IDomainEvent, INotification
     public string? CorrelationId { get; init; }
 
     public string? CausationId { get; init; }
-
-    protected BaseEvent()
-    {
-        EventType = GetType().Name;
-    }
 }

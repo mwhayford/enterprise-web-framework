@@ -10,12 +10,14 @@ public record Email
         @"^[a-zA-Z0-9_%+-]+(\.[a-zA-Z0-9_%+-]+)*@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*\.[a-zA-Z]{2,}$",
         RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
-    public string Value { get; }
-
     private Email(string value)
     {
         Value = value;
     }
+
+    public string Value { get; }
+
+    public static implicit operator string(Email email) => email.Value;
 
     public static Email Create(string value)
     {
@@ -31,8 +33,6 @@ public record Email
 
         return new Email(value.ToLowerInvariant());
     }
-
-    public static implicit operator string(Email email) => email.Value;
 
     public override string ToString() => Value;
 }

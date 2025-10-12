@@ -19,7 +19,8 @@ public class UserCreatedEventHandler : INotificationHandler<UserCreatedEvent>
     {
         _logger.LogInformation(
             "Handling UserCreatedEvent for user {UserId} with email {Email}",
-            notification.UserId, notification.Email);
+            notification.UserId,
+            notification.Email);
 
         // Here you can add business logic like:
         // - Send welcome email

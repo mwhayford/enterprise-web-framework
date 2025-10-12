@@ -6,16 +6,6 @@ using Core.Domain.Entities;
 
 namespace Core.Application.Mappings;
 
-public class SubscriptionMappingProfile : Profile
-{
-    public SubscriptionMappingProfile()
-    {
-        CreateMap<Subscription, SubscriptionDto>()
-            .ForMember(dest => dest.Amount, opt => opt.MapFrom(src => src.Amount.Amount))
-            .ForMember(dest => dest.Currency, opt => opt.MapFrom(src => src.Amount.Currency));
-    }
-}
-
 public static class SubscriptionExtensions
 {
     public static SubscriptionDto ToDto(this Subscription subscription)
@@ -35,5 +25,15 @@ public static class SubscriptionExtensions
             CanceledAt = subscription.CanceledAt,
             CreatedAt = subscription.CreatedAt
         };
+    }
+}
+
+public class SubscriptionMappingProfile : Profile
+{
+    public SubscriptionMappingProfile()
+    {
+        CreateMap<Subscription, SubscriptionDto>()
+            .ForMember(dest => dest.Amount, opt => opt.MapFrom(src => src.Amount.Amount))
+            .ForMember(dest => dest.Currency, opt => opt.MapFrom(src => src.Amount.Currency));
     }
 }

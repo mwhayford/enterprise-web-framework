@@ -6,15 +6,6 @@ using Core.Domain.Entities;
 
 namespace Core.Application.Mappings;
 
-public class UserMappingProfile : Profile
-{
-    public UserMappingProfile()
-    {
-        CreateMap<User, UserDto>()
-            .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email.Value));
-    }
-}
-
 public static class UserExtensions
 {
     public static UserDto ToDto(this User user)
@@ -30,5 +21,14 @@ public static class UserExtensions
             CreatedAt = user.CreatedAt,
             LastLoginAt = user.LastLoginAt
         };
+    }
+}
+
+public class UserMappingProfile : Profile
+{
+    public UserMappingProfile()
+    {
+        CreateMap<User, UserDto>()
+            .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email.Value));
     }
 }

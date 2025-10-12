@@ -6,15 +6,6 @@ using Core.Domain.Entities;
 
 namespace Core.Application.Mappings;
 
-public class PaymentMethodMappingProfile : Profile
-{
-    public PaymentMethodMappingProfile()
-    {
-        CreateMap<PaymentMethod, PaymentMethodDto>()
-            .ForMember(dest => dest.DisplayName, opt => opt.MapFrom(src => src.DisplayName));
-    }
-}
-
 public static class PaymentMethodExtensions
 {
     public static PaymentMethodDto ToDto(this PaymentMethod paymentMethod)
@@ -34,5 +25,14 @@ public static class PaymentMethodExtensions
             UpdatedAt = paymentMethod.UpdatedAt,
             DisplayName = paymentMethod.DisplayName
         };
+    }
+}
+
+public class PaymentMethodMappingProfile : Profile
+{
+    public PaymentMethodMappingProfile()
+    {
+        CreateMap<PaymentMethod, PaymentMethodDto>()
+            .ForMember(dest => dest.DisplayName, opt => opt.MapFrom(src => src.DisplayName));
     }
 }

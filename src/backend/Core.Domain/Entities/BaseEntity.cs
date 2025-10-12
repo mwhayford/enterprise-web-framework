@@ -6,15 +6,7 @@ namespace Core.Domain.Entities;
 
 public abstract class BaseEntity : IEntity, IAggregateRoot
 {
-    public Guid Id { get; protected set; }
-
-    public DateTime CreatedAt { get; protected set; }
-
-    public DateTime UpdatedAt { get; protected set; }
-
     private readonly List<IDomainEvent> _domainEvents = new();
-
-    public IReadOnlyCollection<IDomainEvent> DomainEvents => _domainEvents.AsReadOnly();
 
     protected BaseEntity()
     {
@@ -29,6 +21,14 @@ public abstract class BaseEntity : IEntity, IAggregateRoot
         CreatedAt = DateTime.UtcNow;
         UpdatedAt = DateTime.UtcNow;
     }
+
+    public Guid Id { get; protected set; }
+
+    public DateTime CreatedAt { get; protected set; }
+
+    public DateTime UpdatedAt { get; protected set; }
+
+    public IReadOnlyCollection<IDomainEvent> DomainEvents => _domainEvents.AsReadOnly();
 
     public void AddDomainEvent(IDomainEvent domainEvent)
     {

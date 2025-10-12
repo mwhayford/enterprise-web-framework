@@ -7,6 +7,26 @@ namespace Core.Domain.Entities;
 
 public class Subscription : BaseEntity
 {
+    public Subscription(
+        Guid userId,
+        string planId,
+        Money amount,
+        string? stripeCustomerId = null)
+        : base()
+    {
+        UserId = userId;
+        PlanId = planId;
+        Amount = amount;
+        StripeCustomerId = stripeCustomerId;
+        Status = SubscriptionStatus.Incomplete;
+    }
+
+    private Subscription()
+    {
+        PlanId = default!;
+        Amount = default!;
+    } // For EF Core
+
     public Guid UserId { get; private set; }
 
     public string PlanId { get; private set; }
@@ -29,23 +49,11 @@ public class Subscription : BaseEntity
 
     public DateTime? TrialEnd { get; private set; }
 
-    private Subscription()
-    {
-    } // For EF Core
+    public bool IsActive => Status == SubscriptionStatus.Active || Status == SubscriptionStatus.Trialing;
 
-    public Subscription(
-        Guid userId,
-        string planId,
-        Money amount,
-        string? stripeCustomerId = null)
-        : base()
-    {
-        UserId = userId;
-        PlanId = planId;
-        Amount = amount;
-        StripeCustomerId = stripeCustomerId;
-        Status = SubscriptionStatus.Incomplete;
-    }
+    public bool IsCanceled => Status == SubscriptionStatus.Canceled;
+
+    public bool IsPastDue => Status == SubscriptionStatus.PastDue;
 
     public void SetStripeSubscriptionId(string stripeSubscriptionId)
     {
@@ -123,10 +131,4 @@ public class Subscription : BaseEntity
         Amount = amount;
         UpdateTimestamp();
     }
-
-    public bool IsActive => Status == SubscriptionStatus.Active || Status == SubscriptionStatus.Trialing;
-
-    public bool IsCanceled => Status == SubscriptionStatus.Canceled;
-
-    public bool IsPastDue => Status == SubscriptionStatus.PastDue;
 }

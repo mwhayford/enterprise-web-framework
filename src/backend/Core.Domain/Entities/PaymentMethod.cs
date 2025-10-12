@@ -6,26 +6,6 @@ namespace Core.Domain.Entities;
 
 public class PaymentMethod : BaseEntity
 {
-    public Guid UserId { get; private set; }
-
-    public PaymentMethodType Type { get; private set; }
-
-    public string? StripePaymentMethodId { get; private set; }
-
-    public string? LastFourDigits { get; private set; }
-
-    public string? Brand { get; private set; }
-
-    public string? BankName { get; private set; }
-
-    public bool IsDefault { get; private set; }
-
-    public bool IsActive { get; private set; }
-
-    private PaymentMethod()
-    {
-    } // For EF Core
-
     public PaymentMethod(
         Guid userId,
         PaymentMethodType type,
@@ -44,6 +24,39 @@ public class PaymentMethod : BaseEntity
         BankName = bankName;
         IsDefault = isDefault;
         IsActive = true;
+    }
+
+    private PaymentMethod()
+    {
+    } // For EF Core
+
+    public Guid UserId { get; private set; }
+
+    public PaymentMethodType Type { get; private set; }
+
+    public string? StripePaymentMethodId { get; private set; }
+
+    public string? LastFourDigits { get; private set; }
+
+    public string? Brand { get; private set; }
+
+    public string? BankName { get; private set; }
+
+    public bool IsDefault { get; private set; }
+
+    public bool IsActive { get; private set; }
+
+    public string DisplayName
+    {
+        get
+        {
+            return Type switch
+            {
+                PaymentMethodType.Card => $"{Brand} •••• {LastFourDigits}",
+                PaymentMethodType.Ach => $"{BankName} •••• {LastFourDigits}",
+                _ => $"{Type} •••• {LastFourDigits}"
+            };
+        }
     }
 
     public void SetAsDefault()
@@ -95,18 +108,5 @@ public class PaymentMethod : BaseEntity
         }
 
         UpdateTimestamp();
-    }
-
-    public string DisplayName
-    {
-        get
-        {
-            return Type switch
-            {
-                PaymentMethodType.Card => $"{Brand} •••• {LastFourDigits}",
-                PaymentMethodType.Ach => $"{BankName} •••• {LastFourDigits}",
-                _ => $"{Type} •••• {LastFourDigits}"
-            };
-        }
     }
 }
