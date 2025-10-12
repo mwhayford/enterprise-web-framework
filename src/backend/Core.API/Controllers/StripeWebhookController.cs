@@ -33,7 +33,7 @@ public class StripeWebhookController : ControllerBase
         _logger = logger;
         _eventPublisher = eventPublisher;
         _metricsService = metricsService;
-        _webhookSecret = configuration["StripeSettings:WebhookSecret"] 
+        _webhookSecret = configuration["StripeSettings:WebhookSecret"]
             ?? throw new InvalidOperationException("Stripe webhook secret is not configured");
     }
 
@@ -41,18 +41,19 @@ public class StripeWebhookController : ControllerBase
     public async Task<IActionResult> HandleWebhook()
     {
         var json = await new StreamReader(HttpContext.Request.Body).ReadToEndAsync();
-        
+
         try
         {
             var signatureHeader = Request.Headers["Stripe-Signature"].ToString();
             var stripeEvent = EventUtility.ConstructEvent(
                 json,
                 signatureHeader,
-                _webhookSecret
-            );
+                _webhookSecret);
 
-            _logger.LogInformation("Received Stripe webhook event: {EventType} with ID: {EventId}", 
-                stripeEvent.Type, stripeEvent.Id);
+            _logger.LogInformation(
+                "Received Stripe webhook event: {EventType} with ID: {EventId}",
+                stripeEvent.Type,
+                stripeEvent.Id);
 
             // Handle the event based on its type
             switch (stripeEvent.Type)
@@ -122,7 +123,10 @@ public class StripeWebhookController : ControllerBase
     private async Task HandlePaymentIntentSucceeded(Event stripeEvent)
     {
         var paymentIntent = stripeEvent.Data.Object as PaymentIntent;
-        if (paymentIntent == null) return;
+        if (paymentIntent == null)
+        {
+            return;
+        }
 
         _logger.LogInformation("Payment intent succeeded: {PaymentIntentId}", paymentIntent.Id);
 
@@ -157,7 +161,10 @@ public class StripeWebhookController : ControllerBase
     private async Task HandlePaymentIntentFailed(Event stripeEvent)
     {
         var paymentIntent = stripeEvent.Data.Object as PaymentIntent;
-        if (paymentIntent == null) return;
+        if (paymentIntent == null)
+        {
+            return;
+        }
 
         _logger.LogWarning("Payment intent failed: {PaymentIntentId}", paymentIntent.Id);
 
@@ -180,15 +187,20 @@ public class StripeWebhookController : ControllerBase
                 FailureReason = failureReason
             });
 
-            _logger.LogInformation("Payment {PaymentId} marked as failed: {FailureReason}", 
-                payment.Id, failureReason);
+            _logger.LogInformation(
+                "Payment {PaymentId} marked as failed: {FailureReason}",
+                payment.Id,
+                failureReason);
         }
     }
 
     private async Task HandleChargeSucceeded(Event stripeEvent)
     {
         var charge = stripeEvent.Data.Object as Charge;
-        if (charge == null) return;
+        if (charge == null)
+        {
+            return;
+        }
 
         _logger.LogInformation("Charge succeeded: {ChargeId}", charge.Id);
 
@@ -202,8 +214,10 @@ public class StripeWebhookController : ControllerBase
             {
                 payment.SetStripePaymentIntentId(charge.Id);
                 await _context.SaveChangesAsync();
-                _logger.LogInformation("Payment {PaymentId} updated with ChargeId: {ChargeId}", 
-                    payment.Id, charge.Id);
+                _logger.LogInformation(
+                    "Payment {PaymentId} updated with ChargeId: {ChargeId}",
+                    payment.Id,
+                    charge.Id);
             }
         }
     }
@@ -211,7 +225,10 @@ public class StripeWebhookController : ControllerBase
     private async Task HandleChargeFailed(Event stripeEvent)
     {
         var charge = stripeEvent.Data.Object as Charge;
-        if (charge == null) return;
+        if (charge == null)
+        {
+            return;
+        }
 
         _logger.LogWarning("Charge failed: {ChargeId}", charge.Id);
 
@@ -240,9 +257,11 @@ public class StripeWebhookController : ControllerBase
         // Get subscription ID from the JSON data
         var dataObject = stripeEvent.Data.Object as dynamic;
         string? subscriptionId = dataObject?.subscription_id ?? dataObject?.subscription;
-        
-        _logger.LogInformation("Invoice paid: {InvoiceId} for subscription: {SubscriptionId}", 
-            invoice.Id, subscriptionId);
+
+        _logger.LogInformation(
+            "Invoice paid: {InvoiceId} for subscription: {SubscriptionId}",
+            invoice.Id,
+            subscriptionId);
 
         if (subscriptionId != null)
         {
@@ -253,16 +272,15 @@ public class StripeWebhookController : ControllerBase
             {
                 // Create a payment record for the subscription payment
                 var amount = Money.Create(
-                    invoice.AmountPaid / 100m, 
-                    invoice.Currency.ToUpper()
-                );
+                    invoice.AmountPaid / 100m,
+                    invoice.Currency.ToUpper());
 
                 var payment = new Payment(
                     subscription.UserId,
                     amount,
                     PaymentMethodType.Card,
                     $"Subscription payment for invoice {invoice.Id}");
-                
+
                 // Get payment intent ID from the JSON data
                 string? paymentIntentId = dataObject?.payment_intent ?? invoice.Id;
                 payment.SetStripePaymentIntentId(paymentIntentId);
@@ -271,7 +289,8 @@ public class StripeWebhookController : ControllerBase
                 _context.Payments.Add(payment);
                 await _context.SaveChangesAsync();
 
-                _logger.LogInformation("Created payment record {PaymentId} for subscription invoice", 
+                _logger.LogInformation(
+                    "Created payment record {PaymentId} for subscription invoice",
                     payment.Id);
             }
         }
@@ -288,9 +307,11 @@ public class StripeWebhookController : ControllerBase
         // Get subscription ID from the JSON data
         var dataObject = stripeEvent.Data.Object as dynamic;
         string? subscriptionId = dataObject?.subscription_id ?? dataObject?.subscription;
-        
-        _logger.LogWarning("Invoice payment failed: {InvoiceId} for subscription: {SubscriptionId}", 
-            invoice.Id, subscriptionId);
+
+        _logger.LogWarning(
+            "Invoice payment failed: {InvoiceId} for subscription: {SubscriptionId}",
+            invoice.Id,
+            subscriptionId);
 
         if (subscriptionId != null)
         {
@@ -309,7 +330,10 @@ public class StripeWebhookController : ControllerBase
     private async Task HandleSubscriptionCreated(Event stripeEvent)
     {
         var stripeSubscription = stripeEvent.Data.Object as Stripe.Subscription;
-        if (stripeSubscription == null) return;
+        if (stripeSubscription == null)
+        {
+            return;
+        }
 
         _logger.LogInformation("Subscription created: {SubscriptionId}", stripeSubscription.Id);
 
@@ -330,10 +354,15 @@ public class StripeWebhookController : ControllerBase
     private async Task HandleSubscriptionUpdated(Event stripeEvent)
     {
         var stripeSubscription = stripeEvent.Data.Object as Stripe.Subscription;
-        if (stripeSubscription == null) return;
+        if (stripeSubscription == null)
+        {
+            return;
+        }
 
-        _logger.LogInformation("Subscription updated: {SubscriptionId}, Status: {Status}", 
-            stripeSubscription.Id, stripeSubscription.Status);
+        _logger.LogInformation(
+            "Subscription updated: {SubscriptionId}, Status: {Status}",
+            stripeSubscription.Id,
+            stripeSubscription.Status);
 
         var subscription = await _context.Subscriptions
             .FirstOrDefaultAsync(s => s.StripeSubscriptionId == stripeSubscription.Id);
@@ -341,9 +370,11 @@ public class StripeWebhookController : ControllerBase
         if (subscription != null)
         {
             // TODO: Properly handle subscription status updates with Stripe SDK
-            _logger.LogInformation("Subscription {SubscriptionId} status updated to {Status}", 
-                subscription.Id, stripeSubscription.Status);
-            
+            _logger.LogInformation(
+                "Subscription {SubscriptionId} status updated to {Status}",
+                subscription.Id,
+                stripeSubscription.Status);
+
             switch (stripeSubscription.Status)
             {
                 case "canceled":
@@ -359,7 +390,10 @@ public class StripeWebhookController : ControllerBase
     private async Task HandleSubscriptionDeleted(Event stripeEvent)
     {
         var stripeSubscription = stripeEvent.Data.Object as Stripe.Subscription;
-        if (stripeSubscription == null) return;
+        if (stripeSubscription == null)
+        {
+            return;
+        }
 
         _logger.LogInformation("Subscription deleted: {SubscriptionId}", stripeSubscription.Id);
 
@@ -381,8 +415,10 @@ public class StripeWebhookController : ControllerBase
             return Task.CompletedTask;
         }
 
-        _logger.LogInformation("Payment method attached: {PaymentMethodId} for customer: {CustomerId}", 
-            paymentMethod.Id, paymentMethod.CustomerId);
+        _logger.LogInformation(
+            "Payment method attached: {PaymentMethodId} for customer: {CustomerId}",
+            paymentMethod.Id,
+            paymentMethod.CustomerId);
 
         // You could store payment method information here if needed
         // For now, just log it
