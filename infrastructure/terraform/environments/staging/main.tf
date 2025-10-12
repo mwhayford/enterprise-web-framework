@@ -98,7 +98,7 @@ module "rds" {
 
   # Staging configuration - cost optimized
   engine_version    = "16.1"
-  instance_class    = "db.t4g.medium"
+  instance_class    = "db.t4g.micro"  # Smallest ARM-based instance (~$13/month)
   allocated_storage = 20
   max_allocated_storage = 50
   multi_az          = false  # Single AZ for staging
@@ -133,7 +133,7 @@ module "redis" {
 
   # Staging configuration - cost optimized
   engine_version = "7.1"
-  node_type      = "cache.t4g.small"
+  node_type      = "cache.t4g.micro"  # Smallest ARM-based instance (~$12/month)
   num_cache_nodes = 1  # Single node for staging
 
   # Disable high availability features for staging
