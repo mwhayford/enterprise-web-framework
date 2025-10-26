@@ -460,7 +460,6 @@ const LandingPage: React.FC = () => {
               >
                 Monthly
               </span>
-              {/* eslint-disable-next-line jsx-a11y/aria-props */}
               <button
                 onClick={() => setIsAnnual(!isAnnual)}
                 className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
@@ -468,7 +467,7 @@ const LandingPage: React.FC = () => {
                 }`}
                 type="button"
                 role="switch"
-                aria-checked={isAnnual}
+                aria-checked={isAnnual ? 'true' : 'false'}
                 aria-label="Toggle annual billing"
               >
                 <span

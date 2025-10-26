@@ -110,12 +110,11 @@ export const Navigation: React.FC<NavigationProps> = ({ onGetStarted }) => {
           </div>
 
           {/* Mobile Menu Button */}
-          {/* eslint-disable-next-line jsx-a11y/aria-props */}
           <button
             className="md:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             aria-label="Toggle menu"
-            aria-expanded={isMobileMenuOpen}
+            aria-expanded={isMobileMenuOpen ? 'true' : 'false'}
             type="button"
           >
             <svg

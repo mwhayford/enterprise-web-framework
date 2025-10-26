@@ -23,13 +23,14 @@ export const FAQItem: React.FC<FAQItemProps> = ({ question, answer }) => {
 
   return (
     <div className="border-b border-gray-200 last:border-0">
-      {/* eslint-disable-next-line jsx-a11y/aria-props */}
+      {/* @ts-ignore */}
       <button
         className="w-full py-6 flex items-center justify-between text-left hover:text-blue-600 transition-colors"
         onClick={handleToggle}
         onKeyDown={handleKeyDown}
         aria-expanded={isOpen}
         type="button"
+        aria-controls={`faq-answer-${question.replace(/\s+/g, '-').toLowerCase()}`}
       >
         <span className="text-lg font-semibold text-gray-900 pr-8">
           {question}
@@ -41,6 +42,7 @@ export const FAQItem: React.FC<FAQItemProps> = ({ question, answer }) => {
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
+          aria-hidden="true"
         >
           <path
             strokeLinecap="round"
@@ -51,6 +53,8 @@ export const FAQItem: React.FC<FAQItemProps> = ({ question, answer }) => {
         </svg>
       </button>
       <div
+        id={`faq-answer-${question.replace(/\s+/g, '-').toLowerCase()}`}
+        role="region"
         className={`overflow-hidden transition-all duration-200 ${
           isOpen ? 'max-h-96 pb-6' : 'max-h-0'
         }`}
