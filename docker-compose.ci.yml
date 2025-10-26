@@ -3,15 +3,15 @@ version: '3.8'
 services:
   postgres:
     image: postgres:16-alpine
-    container_name: core-postgres-ci
+    container_name: rentalmanager-postgres-ci
     environment:
-      POSTGRES_DB: CoreDb
+      POSTGRES_DB: RentalManagerDb
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: password
     ports:
       - "5433:5432"
     networks:
-      - core-network
+      - rentalmanager-network
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 10s
@@ -20,11 +20,11 @@ services:
 
   redis:
     image: redis:7-alpine
-    container_name: core-redis-ci
+    container_name: rentalmanager-redis-ci
     ports:
       - "6380:6379"
     networks:
-      - core-network
+      - rentalmanager-network
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 10s
@@ -33,7 +33,7 @@ services:
 
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.11.0
-    container_name: core-elasticsearch-ci
+    container_name: rentalmanager-elasticsearch-ci
     environment:
       - discovery.type=single-node
       - xpack.security.enabled=false
@@ -41,7 +41,7 @@ services:
     ports:
       - "9200:9200"
     networks:
-      - core-network
+      - rentalmanager-network
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost:9200/_cluster/health || exit 1"]
       interval: 30s
@@ -51,12 +51,12 @@ services:
 
   zookeeper:
     image: confluentinc/cp-zookeeper:7.4.0
-    container_name: core-zookeeper-ci
+    container_name: rentalmanager-zookeeper-ci
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
     networks:
-      - core-network
+      - rentalmanager-network
     healthcheck:
       test: ["CMD", "nc", "-z", "localhost", "2181"]
       interval: 30s
@@ -66,7 +66,7 @@ services:
 
   kafka:
     image: confluentinc/cp-kafka:7.4.0
-    container_name: core-kafka-ci
+    container_name: rentalmanager-kafka-ci
     depends_on:
       zookeeper:
         condition: service_healthy
@@ -82,7 +82,7 @@ services:
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
       KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'true'
     networks:
-      - core-network
+      - rentalmanager-network
     healthcheck:
       test: ["CMD", "kafka-broker-api-versions", "--bootstrap-server", "localhost:9092"]
       interval: 30s
@@ -94,13 +94,13 @@ services:
     build:
       context: ./src/backend
       dockerfile: Dockerfile
-    container_name: core-backend-ci
+    container_name: rentalmanager-backend-ci
     ports:
       - "5111:80"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:80
-      - ConnectionStrings__DefaultConnection=Host=postgres;Port=5432;Database=CoreDb;Username=postgres;Password=password
+      - ConnectionStrings__DefaultConnection=Host=postgres;Port=5432;Database=RentalManagerDb;Username=postgres;Password=password
       - Redis__Configuration=redis:6379
       - Jwt__Key=YourSuperSecretKeyThatIsAtLeast32CharactersLong!
       - Jwt__Issuer=RentalManager.API
@@ -112,7 +112,7 @@ services:
       - StripeSettings__WebhookSecret=whsec_dummy_webhook_secret_for_ci
       - Frontend__BaseUrl=http://localhost:3001
       - Elasticsearch__Url=http://elasticsearch:9200
-      - Elasticsearch__DefaultIndex=core-index
+      - Elasticsearch__DefaultIndex=rentalmanager-index
       - Kafka__BootstrapServers=kafka:29092
       - Kafka__GroupId=rentalmanager-api-group
     depends_on:
@@ -125,7 +125,7 @@ services:
       kafka:
         condition: service_healthy
     networks:
-      - core-network
+      - rentalmanager-network
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:80/health"]
       interval: 30s
@@ -146,7 +146,7 @@ services:
       backend:
         condition: service_healthy
     networks:
-      - core-network
+      - rentalmanager-network
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:80"]
       interval: 30s
@@ -154,6 +154,6 @@ services:
       retries: 3
 
 networks:
-  core-network:
+  rentalmanager-network:
     driver: bridge
 

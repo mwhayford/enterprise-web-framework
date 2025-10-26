@@ -14,7 +14,7 @@ services:
       - postgres_data:/var/lib/postgresql/data
       - ./scripts/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
     networks:
-      - core-network
+      - rentalmanager-network
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 10s
@@ -29,7 +29,7 @@ services:
     volumes:
       - redis_data:/data
     networks:
-      - core-network
+      - rentalmanager-network
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 10s
@@ -77,7 +77,7 @@ services:
       jaeger:
         condition: service_healthy
     networks:
-      - core-network
+      - rentalmanager-network
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost/health"]
       interval: 30s
@@ -98,7 +98,7 @@ services:
       backend:
         condition: service_healthy
     networks:
-      - core-network
+      - rentalmanager-network
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:80"]
       interval: 30s
@@ -107,7 +107,7 @@ services:
 
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.11.0
-    container_name: core-elasticsearch
+    container_name: rentalmanager-elasticsearch
     environment:
       - discovery.type=single-node
       - xpack.security.enabled=false
@@ -118,7 +118,7 @@ services:
     volumes:
       - elasticsearch_data:/usr/share/elasticsearch/data
     networks:
-      - core-network
+      - rentalmanager-network
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost:9200/_cluster/health || exit 1"]
       interval: 30s
@@ -128,12 +128,12 @@ services:
 
   zookeeper:
     image: confluentinc/cp-zookeeper:7.4.0
-    container_name: core-zookeeper
+    container_name: rentalmanager-zookeeper
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
     networks:
-      - core-network
+      - rentalmanager-network
     healthcheck:
       test: ["CMD", "nc", "-z", "localhost", "2181"]
       interval: 30s
@@ -143,7 +143,7 @@ services:
 
   kafka:
     image: confluentinc/cp-kafka:7.4.0
-    container_name: core-kafka
+    container_name: rentalmanager-kafka
     depends_on:
       zookeeper:
         condition: service_healthy
@@ -162,7 +162,7 @@ services:
     volumes:
       - kafka_data:/var/lib/kafka/data
     networks:
-      - core-network
+      - rentalmanager-network
     healthcheck:
       test: ["CMD", "kafka-broker-api-versions", "--bootstrap-server", "localhost:9092"]
       interval: 30s
@@ -172,14 +172,14 @@ services:
 
   prometheus:
     image: prom/prometheus:latest
-    container_name: core-prometheus
+    container_name: rentalmanager-prometheus
     ports:
       - "9090:9090"
     volumes:
       - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
       - prometheus_data:/prometheus
     networks:
-      - core-network
+      - rentalmanager-network
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
       - '--storage.tsdb.path=/prometheus'
@@ -196,7 +196,7 @@ services:
 
   grafana:
     image: grafana/grafana:latest
-    container_name: core-grafana
+    container_name: rentalmanager-grafana
     ports:
       - "3002:3000"
     environment:
@@ -206,7 +206,7 @@ services:
       - grafana_data:/var/lib/grafana
       - ./monitoring/grafana/provisioning:/etc/grafana/provisioning
     networks:
-      - core-network
+      - rentalmanager-network
     depends_on:
       - prometheus
     healthcheck:
@@ -218,14 +218,14 @@ services:
 
   jaeger:
     image: jaegertracing/all-in-one:latest
-    container_name: core-jaeger
+    container_name: rentalmanager-jaeger
     ports:
       - "16686:16686"
       - "14268:14268"
     environment:
       - COLLECTOR_OTLP_ENABLED=true
     networks:
-      - core-network
+      - rentalmanager-network
     healthcheck:
       test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:16686/"]
       interval: 30s
@@ -242,5 +242,5 @@ volumes:
   grafana_data:
 
 networks:
-  core-network:
+  rentalmanager-network:
     driver: bridge
