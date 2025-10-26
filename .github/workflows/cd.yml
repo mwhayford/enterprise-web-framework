@@ -1,4 +1,4 @@
-# Copyright (c) Core. All Rights Reserved.
+# Copyright (c) RentalManager. All Rights Reserved.
 # Licensed under the MIT License. See LICENSE in the project root for license information.
 
 name: CD Pipeline
@@ -28,8 +28,8 @@ env:
   DOTNET_VERSION: '9.0.x'
   NODE_VERSION: '18'
   AWS_REGION: 'us-east-1'
-  ECR_REPOSITORY_BACKEND: 'core-backend'
-  ECR_REPOSITORY_FRONTEND: 'core-frontend'
+  ECR_REPOSITORY_BACKEND: 'rentalmanager-backend'
+  ECR_REPOSITORY_FRONTEND: 'rentalmanager-frontend'
 
 jobs:
   # Build and Push Docker Images
@@ -131,23 +131,23 @@ jobs:
         working-directory: infrastructure/kubernetes
         run: |
           # Update image tags in Kubernetes manifests
-          kubectl set image deployment/core-backend \
-            core-backend=${{ needs.build-and-push.outputs.backend-image }} \
-            -n core-${{ github.event.inputs.environment }}
+          kubectl set image deployment/rentalmanager-backend \
+            rentalmanager-backend=${{ needs.build-and-push.outputs.backend-image }} \
+            -n rentalmanager-${{ github.event.inputs.environment }}
           
-          kubectl set image deployment/core-frontend \
-            core-frontend=${{ needs.build-and-push.outputs.frontend-image }} \
-            -n core-${{ github.event.inputs.environment }}
+          kubectl set image deployment/rentalmanager-frontend \
+            rentalmanager-frontend=${{ needs.build-and-push.outputs.frontend-image }} \
+            -n rentalmanager-${{ github.event.inputs.environment }}
           
           # Wait for rollout to complete
-          kubectl rollout status deployment/core-backend -n core-${{ github.event.inputs.environment }} --timeout=5m
-          kubectl rollout status deployment/core-frontend -n core-${{ github.event.inputs.environment }} --timeout=5m
+          kubectl rollout status deployment/rentalmanager-backend -n rentalmanager-${{ github.event.inputs.environment }} --timeout=5m
+          kubectl rollout status deployment/rentalmanager-frontend -n rentalmanager-${{ github.event.inputs.environment }} --timeout=5m
       
       - name: Run database migrations
         run: |
-          kubectl exec -n core-${{ github.event.inputs.environment }} \
-            deployment/core-backend -- \
-            dotnet ef database update --project Core.Infrastructure --startup-project Core.API
+          kubectl exec -n rentalmanager-${{ github.event.inputs.environment }} \
+            deployment/rentalmanager-backend -- \
+            dotnet ef database update --project RentalManager.Infrastructure --startup-project RentalManager.API
       
       - name: Verify deployment
         run: |
@@ -155,7 +155,7 @@ jobs:
           echo "Version: ${{ github.event.inputs.version }}"
           
           # Get service URLs
-          kubectl get svc -n core-${{ github.event.inputs.environment }}
+          kubectl get svc -n rentalmanager-${{ github.event.inputs.environment }}
   
   # Run smoke tests
   smoke-tests:
@@ -174,13 +174,13 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
       
       - name: Install dependencies
-        working-directory: tests/Core.E2ETests
+        working-directory: tests/RentalManager.E2ETests
         run: |
           npm ci
           npx playwright install chromium --with-deps
       
       - name: Run smoke tests
-        working-directory: tests/Core.E2ETests
+        working-directory: tests/RentalManager.E2ETests
         run: |
           # Run a subset of critical E2E tests as smoke tests
           npx playwright test auth.spec.ts navigation.spec.ts
@@ -251,11 +251,11 @@ jobs:
         run: |
           echo "🔄 Rolling back deployment..."
           
-          kubectl rollout undo deployment/core-backend -n core-${{ github.event.inputs.environment }}
-          kubectl rollout undo deployment/core-frontend -n core-${{ github.event.inputs.environment }}
+          kubectl rollout undo deployment/rentalmanager-backend -n rentalmanager-${{ github.event.inputs.environment }}
+          kubectl rollout undo deployment/rentalmanager-frontend -n rentalmanager-${{ github.event.inputs.environment }}
           
-          kubectl rollout status deployment/core-backend -n core-${{ github.event.inputs.environment }} --timeout=5m
-          kubectl rollout status deployment/core-frontend -n core-${{ github.event.inputs.environment }} --timeout=5m
+          kubectl rollout status deployment/rentalmanager-backend -n rentalmanager-${{ github.event.inputs.environment }} --timeout=5m
+          kubectl rollout status deployment/rentalmanager-frontend -n rentalmanager-${{ github.event.inputs.environment }} --timeout=5m
           
           echo "✅ Rollback completed!"
 

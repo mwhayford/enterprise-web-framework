@@ -47,7 +47,7 @@ E2E tests sit at the top of the test pyramid, covering:
 ### Directory Organization
 
 ```
-tests/Core.E2ETests/
+tests/RentalManager.E2ETests/
 ├── tests/
 │   ├── fixtures/
 │   │   └── auth.fixture.ts       # Authentication fixtures
@@ -118,7 +118,7 @@ classDiagram
 
 ```bash
 # Navigate to E2E tests directory
-cd tests/Core.E2ETests
+cd tests/RentalManager.E2ETests
 
 # Install dependencies
 npm install
@@ -400,13 +400,13 @@ jobs:
       
       - name: Install E2E test dependencies
         run: |
-          cd tests/Core.E2ETests
+          cd tests/RentalManager.E2ETests
           npm ci
           npx playwright install chromium --with-deps
       
       - name: Run E2E tests
         run: |
-          cd tests/Core.E2ETests
+          cd tests/RentalManager.E2ETests
           npm test
         env:
           CI: true
@@ -416,14 +416,14 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: playwright-report
-          path: tests/Core.E2ETests/playwright-report/
+          path: tests/RentalManager.E2ETests/playwright-report/
       
       - name: Upload test artifacts
         if: failure()
         uses: actions/upload-artifact@v3
         with:
           name: test-results
-          path: tests/Core.E2ETests/test-results/
+          path: tests/RentalManager.E2ETests/test-results/
 ```
 
 ### Running in Docker
@@ -434,10 +434,10 @@ FROM mcr.microsoft.com/playwright:v1.40.0-jammy
 
 WORKDIR /app
 
-COPY tests/Core.E2ETests/package*.json ./
+COPY tests/RentalManager.E2ETests/package*.json ./
 RUN npm ci
 
-COPY tests/Core.E2ETests/ ./
+COPY tests/RentalManager.E2ETests/ ./
 
 CMD ["npm", "test"]
 ```

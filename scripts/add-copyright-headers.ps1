@@ -1,13 +1,13 @@
 # Script to add copyright headers to source files
 
 $csHeader = @"
-// Copyright (c) Core. All rights reserved.
+// Copyright (c) RentalManager. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
 "@
 
 $tsHeader = @"
-// Copyright (c) Core. All rights reserved.
+// Copyright (c) RentalManager. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
 "@

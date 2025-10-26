@@ -74,7 +74,7 @@ IP: 10.0.10.213
 #### 2.2 Frontend Pod Health
 ```
 ✅ PASSED
-Pod: core-frontend-5bb4fdcb8b-67qdd
+Pod: rentalmanager-frontend-5bb4fdcb8b-67qdd
 Status: Running
 Ready: 1/1
 Restarts: 0
@@ -351,14 +351,14 @@ If kept running:
 ```
 NAME                             READY   STATUS    RESTARTS   AGE
 core-backend-76db97c7d7-xlfw5    1/1     Running   0          5m28s
-core-frontend-5bb4fdcb8b-67qdd   1/1     Running   0          7m23s
+rentalmanager-frontend-5bb4fdcb8b-67qdd   1/1     Running   0          7m23s
 ```
 
 #### Services
 ```
 NAME            TYPE           EXTERNAL-IP
 core-backend    LoadBalancer   a28936a2575f44b70b93fffe775ff301-588...
-core-frontend   LoadBalancer   aed135fabffdf4e2a8c1ef2a7649aa32-981...
+rentalmanager-frontend   LoadBalancer   aed135fabffdf4e2a8c1ef2a7649aa32-981...
 ```
 
 #### Health Check

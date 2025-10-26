@@ -1,4 +1,4 @@
-# Copyright (c) Core. All Rights Reserved.
+# Copyright (c) RentalManager. All Rights Reserved.
 # Licensed under the MIT License. See LICENSE in the project root for license information.
 
 apiVersion: autoscaling/v2
@@ -12,7 +12,7 @@ spec:
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
-  name: core-frontend-hpa
+  name: rentalmanager-frontend-hpa
 spec:
   minReplicas: 5
   maxReplicas: 20

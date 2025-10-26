@@ -1,4 +1,4 @@
-// Copyright (c) Core. All rights reserved.
+// Copyright (c) RentalManager. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 import React from 'react'
 import {
@@ -8,6 +8,7 @@ import {
   Navigate,
 } from 'react-router-dom'
 import { AuthProvider, useAuth } from './contexts/AuthContext'
+import LandingPage from './pages/LandingPage'
 import LoginPage from './pages/LoginPage'
 import DashboardPage from './pages/DashboardPage'
 import AuthCallbackPage from './pages/AuthCallbackPage'
@@ -17,6 +18,12 @@ import { PaymentMethodsPage } from './pages/PaymentMethodsPage'
 import { PaymentSuccessPage } from './pages/PaymentSuccessPage'
 import { SubscriptionSuccessPage } from './pages/SubscriptionSuccessPage'
 import SearchPage from './pages/SearchPage'
+import { PropertiesPage } from './pages/PropertiesPage'
+import { PropertyDetailPage } from './pages/PropertyDetailPage'
+import { ApplicationFormPage } from './pages/ApplicationFormPage'
+import { MyApplicationsPage } from './pages/MyApplicationsPage'
+import { AdminApplicationsPage } from './pages/AdminApplicationsPage'
+import { ApplicationReviewPage } from './pages/ApplicationReviewPage'
 
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({
   children,
@@ -55,6 +62,7 @@ const PublicRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 const AppRoutes: React.FC = () => {
   return (
     <Routes>
+      <Route path="/" element={<LandingPage />} />
       <Route
         path="/login"
         element={
@@ -120,8 +128,41 @@ const AppRoutes: React.FC = () => {
           </ProtectedRoute>
         }
       />
-      <Route path="/" element={<Navigate to="/dashboard" replace />} />
-      <Route path="*" element={<Navigate to="/dashboard" replace />} />
+      <Route path="/properties" element={<PropertiesPage />} />
+      <Route path="/properties/:id" element={<PropertyDetailPage />} />
+      <Route
+        path="/properties/:id/apply"
+        element={
+          <ProtectedRoute>
+            <ApplicationFormPage />
+          </ProtectedRoute>
+        }
+      />
+                <Route
+                  path="/applications/my"
+                  element={
+                    <ProtectedRoute>
+                      <MyApplicationsPage />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/admin/applications"
+                  element={
+                    <ProtectedRoute>
+                      <AdminApplicationsPage />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/admin/applications/:id"
+                  element={
+                    <ProtectedRoute>
+                      <ApplicationReviewPage />
+                    </ProtectedRoute>
+                  }
+                />
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   )
 }

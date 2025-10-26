@@ -103,8 +103,8 @@ services:
       - ConnectionStrings__DefaultConnection=Host=postgres;Port=5432;Database=CoreDb;Username=postgres;Password=password
       - Redis__Configuration=redis:6379
       - Jwt__Key=YourSuperSecretKeyThatIsAtLeast32CharactersLong!
-      - Jwt__Issuer=Core.API
-      - Jwt__Audience=Core.API.Users
+      - Jwt__Issuer=RentalManager.API
+      - Jwt__Audience=RentalManager.API.Users
       - Authentication__Google__ClientId=test-google-client-id
       - Authentication__Google__ClientSecret=test-google-client-secret
       - StripeSettings__SecretKey=sk_test_dummy_key_for_ci
@@ -114,7 +114,7 @@ services:
       - Elasticsearch__Url=http://elasticsearch:9200
       - Elasticsearch__DefaultIndex=core-index
       - Kafka__BootstrapServers=kafka:29092
-      - Kafka__GroupId=core-api-group
+      - Kafka__GroupId=rentalmanager-api-group
     depends_on:
       postgres:
         condition: service_healthy
@@ -137,7 +137,7 @@ services:
     build:
       context: ./src/frontend
       dockerfile: Dockerfile
-    container_name: core-frontend-ci
+    container_name: rentalmanager-frontend-ci
     ports:
       - "3001:80"
     environment:

@@ -1,0 +1,116 @@
+# Core - Enterprise Web Framework
+
+## Overview
+A full-stack enterprise web application framework built with .NET Core backend and React frontend.
+
+## Architecture
+- **Backend**: ASP.NET Core 8.0 with Clean Architecture (Domain, Application, Infrastructure, API layers)
+- **Frontend**: React 18 + TypeScript + Vite + TailwindCSS
+- **Database**: PostgreSQL with Entity Framework Core
+- **Authentication**: Google OAuth + JWT tokens
+- **Payments**: Stripe integration
+- **Infrastructure**: Docker, Kubernetes, AWS deployment
+
+## Project Structure
+
+### Backend (src/backend/)
+- **Core.API**: REST API controllers, authentication, Swagger docs
+  - Controllers: Auth, Users, Subscriptions, Payments, Products, Analytics, Notifications
+  - Program.cs: Application configuration and dependency injection
+  
+- **Core.Application**: Business logic layer (CQRS pattern)
+  - Commands: RegisterUser, CreateSubscription, ProcessPayment, etc.
+  - Queries: GetUser, GetSubscription, GetAnalytics, etc.
+  - Handlers: MediatR command/query handlers
+  - DTOs: Data transfer objects
+  - Validators: FluentValidation validators
+  - Mappings: AutoMapper profiles
+
+- **Core.Domain**: Domain entities and business rules
+  - Entities: User, Subscription, Payment, Product, Notification
+  - ValueObjects: Money, Email, Address, PhoneNumber, SubscriptionPeriod
+  - Events: Domain events
+  - Interfaces: Repository interfaces
+
+- **Core.Infrastructure**: External concerns implementation
+  - Persistence: ApplicationDbContext, repositories
+  - Services: JWT, Email, Payment, Cache, Search, Notification services
+  - Identity: ApplicationUser (ASP.NET Identity)
+  - Migrations: EF Core database migrations
+  - ExternalServices: Third-party integrations
+
+### Frontend (src/frontend/)
+- **src/components**: Reusable React components
+- **src/pages**: Page components (Dashboard, Login, Subscriptions, etc.)
+- **src/contexts**: React contexts (AuthContext)
+- **src/services**: API client services
+- **src/types**: TypeScript type definitions
+- **src/utils**: Utility functions
+
+### Infrastructure
+- **docker**: Docker Compose configurations for development and production
+- **infrastructure/kubernetes**: K8s manifests (base + overlays for staging/production)
+- **infrastructure/terraform**: Infrastructure as Code (modules: VPC, EKS, RDS, Redis)
+- **monitoring**: Prometheus and Grafana configuration
+
+### Testing (tests/)
+- **Core.UnitTests**: Domain and application layer unit tests
+- **Core.IntegrationTests**: API integration tests with test containers
+- **Core.E2ETests**: Playwright end-to-end tests
+
+## Key Features
+1. **Authentication**: Google OAuth with JWT token-based auth
+2. **Subscription Management**: Tiered subscription plans with Stripe
+3. **Payment Processing**: Secure payment handling via Stripe
+4. **User Management**: User profiles, roles, and permissions
+5. **Analytics**: Real-time analytics and reporting
+6. **Notifications**: Email and in-app notifications
+7. **Search**: Elasticsearch integration for full-text search
+8. **Caching**: Redis caching for performance
+9. **Monitoring**: OpenTelemetry, Prometheus, Grafana
+
+## Technology Stack
+- **.NET**: C# 12, ASP.NET Core 8.0, Entity Framework Core, MediatR, AutoMapper, FluentValidation
+- **Frontend**: React 18, TypeScript, Vite, TailwindCSS, React Router, React Query, Axios
+- **Database**: PostgreSQL 15
+- **Cache**: Redis
+- **Search**: Elasticsearch
+- **Payments**: Stripe
+- **Cloud**: AWS (EKS, RDS, ElastiCache, S3, CloudWatch)
+- **DevOps**: Docker, Kubernetes, Terraform, GitHub Actions
+- **Testing**: xUnit, Moq, FluentAssertions, Playwright
+
+## Development Patterns
+- Clean Architecture / Onion Architecture
+- CQRS (Command Query Responsibility Segregation) with MediatR
+- Repository Pattern
+- Dependency Injection
+- Domain-Driven Design principles
+- RESTful API design
+- JWT authentication
+- Role-based authorization
+
+## API Endpoints
+- `/api/auth/*`: Authentication (Google OAuth, JWT)
+- `/api/users/*`: User management
+- `/api/subscriptions/*`: Subscription management
+- `/api/payments/*`: Payment processing
+- `/api/products/*`: Product catalog
+- `/api/analytics/*`: Analytics and reporting
+- `/api/notifications/*`: Notification management
+
+## Environment Configuration
+- Development: `appsettings.Development.json`
+- Production: `appsettings.Production.json`
+- Secrets: Managed via AWS Secrets Manager / Kubernetes Secrets
+
+## CI/CD
+GitHub Actions workflows for:
+- Build and test
+- Docker image builds
+- Deployment to staging/production
+- Database migrations
+- E2E test execution
+
+
+

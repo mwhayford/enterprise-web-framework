@@ -8,9 +8,9 @@ This project implements comprehensive unit testing using NUnit, Moq, FluentAsser
 
 ### Test Projects
 
-- **Core.UnitTests**: Contains unit tests for domain entities, value objects, and application layer components
-- **Core.IntegrationTests**: Contains integration tests (to be implemented)
-- **Core.E2ETests**: Contains end-to-end tests (to be implemented)
+- **RentalManager.UnitTests**: Contains unit tests for domain entities, value objects, and application layer components
+- **RentalManager.IntegrationTests**: Contains integration tests (to be implemented)
+- **RentalManager.E2ETests**: Contains end-to-end tests (to be implemented)
 
 ### Test Categories
 

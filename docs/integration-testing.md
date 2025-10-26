@@ -11,7 +11,7 @@ This document describes the integration testing strategy for the Core applicatio
 - **Assertions**: FluentAssertions 6.12.0
 - **Database Cleanup**: Respawn 6.2.1
 - **Mocking**: Moq 4.20.72
-- **Test Host**: Microsoft.AspNetCore.Mvc.Testing 9.0.0
+- **Test Host**: Microsoft.AspNetRentalManager.Mvc.Testing 9.0.0
 
 ## Test Infrastructure
 
@@ -149,19 +149,19 @@ public async Task Redis_ShouldSetWithExpiration()
 ### Run All Tests
 
 ```bash
-dotnet test tests/Core.IntegrationTests/Core.IntegrationTests.csproj
+dotnet test tests/RentalManager.IntegrationTests/RentalManager.IntegrationTests.csproj
 ```
 
 ### Run Specific Test Class
 
 ```bash
-dotnet test tests/Core.IntegrationTests/Core.IntegrationTests.csproj --filter "FullyQualifiedName~DatabaseTests"
+dotnet test tests/RentalManager.IntegrationTests/RentalManager.IntegrationTests.csproj --filter "FullyQualifiedName~DatabaseTests"
 ```
 
 ### Run with Detailed Output
 
 ```bash
-dotnet test tests/Core.IntegrationTests/Core.IntegrationTests.csproj --logger "console;verbosity=detailed"
+dotnet test tests/RentalManager.IntegrationTests/RentalManager.IntegrationTests.csproj --logger "console;verbosity=detailed"
 ```
 
 ## Test Lifecycle
@@ -354,7 +354,7 @@ jobs:
         run: dotnet restore
 
       - name: Run Integration Tests
-        run: dotnet test tests/Core.IntegrationTests --logger trx --collect:"XPlat Code Coverage"
+        run: dotnet test tests/RentalManager.IntegrationTests --logger trx --collect:"XPlat Code Coverage"
 
       - name: Upload Test Results
         uses: actions/upload-artifact@v3

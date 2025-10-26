@@ -3,7 +3,7 @@
   "settings": {
     "documentationRules": {
       "companyName": "Core",
-      "copyrightText": "Copyright (c) Core. All rights reserved.",
+      "copyrightText": "Copyright (c) RentalManager. All rights reserved.",
       "xmlHeader": false,
       "fileNamingConvention": "stylecop",
       "documentInterfaces": false,

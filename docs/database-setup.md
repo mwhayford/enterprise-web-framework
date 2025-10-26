@@ -91,19 +91,19 @@ docker-compose -f docker-compose.dev.yml ps
 
 ```bash
 # Navigate to API project
-cd src/backend/Core.API
+cd src/backend/RentalManager.API
 
 # Add new migration
-dotnet ef migrations add MigrationName --project ../Core.Infrastructure
+dotnet ef migrations add MigrationName --project ../RentalManager.Infrastructure
 
 # Update database
-dotnet ef database update --project ../Core.Infrastructure
+dotnet ef database update --project ../RentalManager.Infrastructure
 
 # Remove last migration
-dotnet ef migrations remove --project ../Core.Infrastructure
+dotnet ef migrations remove --project ../RentalManager.Infrastructure
 
 # Generate SQL script
-dotnet ef migrations script --project ../Core.Infrastructure
+dotnet ef migrations script --project ../RentalManager.Infrastructure
 ```
 
 ## Database Schema

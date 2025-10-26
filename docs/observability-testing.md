@@ -110,13 +110,13 @@ The `MetricsService` has been implemented to track:
 ### Tracing
 - **Instrumentation**: ASP.NET Core, EF Core, HTTP Client
 - **Exporter**: Jaeger (http://jaeger:14268/api/traces)
-- **Service Name**: Core.API
+- **Service Name**: RentalManager.API
 - **Service Version**: 1.0.0
 
 ### Metrics
 - **Instrumentation**: ASP.NET Core, Runtime, HTTP Client
 - **Exporter**: Prometheus (exposed at /metrics)
-- **Custom Meters**: Core.API with business metrics
+- **Custom Meters**: RentalManager.API with business metrics
 
 ## Monitoring Configuration Files
 

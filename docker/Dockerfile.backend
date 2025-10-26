@@ -3,11 +3,11 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
 # Copy project files
-COPY src/backend/Core.sln ./
-COPY src/backend/Core.Domain/Core.Domain.csproj ./Core.Domain/
-COPY src/backend/Core.Application/Core.Application.csproj ./Core.Application/
-COPY src/backend/Core.Infrastructure/Core.Infrastructure.csproj ./Core.Infrastructure/
-COPY src/backend/Core.API/Core.API.csproj ./Core.API/
+COPY src/backend/RentalManager.sln ./
+COPY src/backend/RentalManager.Domain/RentalManager.Domain.csproj ./RentalManager.Domain/
+COPY src/backend/RentalManager.Application/RentalManager.Application.csproj ./RentalManager.Application/
+COPY src/backend/RentalManager.Infrastructure/RentalManager.Infrastructure.csproj ./RentalManager.Infrastructure/
+COPY src/backend/RentalManager.API/RentalManager.API.csproj ./RentalManager.API/
 
 # Restore dependencies
 RUN dotnet restore
@@ -20,7 +20,7 @@ RUN dotnet build -c Release -o /app/build
 
 # Publish stage
 FROM build AS publish
-RUN dotnet publish Core.API/Core.API.csproj -c Release -o /app/publish
+RUN dotnet publish RentalManager.API/RentalManager.API.csproj -c Release -o /app/publish
 
 # Runtime stage
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
@@ -41,4 +41,4 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
   CMD curl -f http://localhost:8080/health || exit 1
 
 # Start the application
-ENTRYPOINT ["dotnet", "Core.API.dll"]
+ENTRYPOINT ["dotnet", "RentalManager.API.dll"]

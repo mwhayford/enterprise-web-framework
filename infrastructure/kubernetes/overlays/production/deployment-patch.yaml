@@ -1,4 +1,4 @@
-# Copyright (c) Core. All Rights Reserved.
+# Copyright (c) RentalManager. All Rights Reserved.
 # Licensed under the MIT License. See LICENSE in the project root for license information.
 
 apiVersion: apps/v1
@@ -21,12 +21,12 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: core-frontend
+  name: rentalmanager-frontend
 spec:
   template:
     spec:
       containers:
-      - name: core-frontend
+      - name: rentalmanager-frontend
         resources:
           requests:
             cpu: 200m

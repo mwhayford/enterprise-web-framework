@@ -111,8 +111,8 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ConnectionStrings__DefaultConnection=Host=postgres;Database=CoreDb_Dev;Username=postgres;Password=password
       - Jwt__Key=YourSuperSecretKeyThatIsAtLeast32CharactersLong!
-      - Jwt__Issuer=Core.API
-      - Jwt__Audience=Core.API.Users
+      - Jwt__Issuer=RentalManager.API
+      - Jwt__Audience=RentalManager.API.Users
       - Google__ClientId=your-google-client-id
       - Google__ClientSecret=your-google-client-secret
       - Stripe__SecretKey=sk_test_your_stripe_secret_key
@@ -134,7 +134,7 @@ services:
     build:
       context: ..
       dockerfile: docker/Dockerfile.frontend
-    container_name: core-frontend
+    container_name: rentalmanager-frontend
     depends_on:
       - backend
     environment:

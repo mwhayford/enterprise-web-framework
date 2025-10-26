@@ -942,7 +942,7 @@ const token = await page.evaluate(() =>
 4. **Debug Locally**:
 ```bash
 # Run tests in headed mode
-cd tests/Core.E2ETests
+cd tests/RentalManager.E2ETests
 npx playwright test --headed
 
 # Run specific test with debug

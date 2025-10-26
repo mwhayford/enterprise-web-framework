@@ -18,9 +18,9 @@ data:
   Elasticsearch__Url: "http://elasticsearch:9200"
   Elasticsearch__DefaultIndex: "core-index"
   Kafka__BootstrapServers: "kafka:9092"
-  Kafka__GroupId: "core-api-staging"
+  Kafka__GroupId: "rentalmanager-api-staging"
   Redis__InstanceName: "CoreStaging"
-  OpenTelemetry__ServiceName: "Core.API.Staging"
+  OpenTelemetry__ServiceName: "RentalManager.API.Staging"
   OpenTelemetry__ServiceVersion: "1.0.0"
 ---
 apiVersion: v1
@@ -38,8 +38,8 @@ stringData:
   
   # Authentication - using test values for staging
   Jwt__Key: "YourSuperSecretKeyThatIsAtLeast32CharactersLong!"
-  Jwt__Issuer: "Core.API"
-  Jwt__Audience: "Core.API.Users"
+  Jwt__Issuer: "RentalManager.API"
+  Jwt__Audience: "RentalManager.API.Users"
   Jwt__ExpiryMinutes: "60"
   
   # Google OAuth - using test values
@@ -122,23 +122,23 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: core-frontend
+  name: rentalmanager-frontend
   namespace: core-staging
   labels:
-    app: core-frontend
+    app: rentalmanager-frontend
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: core-frontend
+      app: rentalmanager-frontend
   template:
     metadata:
       labels:
-        app: core-frontend
+        app: rentalmanager-frontend
     spec:
       containers:
-      - name: core-frontend
-        image: 436399375303.dkr.ecr.us-east-1.amazonaws.com/core-frontend:latest
+      - name: rentalmanager-frontend
+        image: 436399375303.dkr.ecr.us-east-1.amazonaws.com/rentalmanager-frontend:latest
         imagePullPolicy: Always
         ports:
         - name: http
@@ -166,7 +166,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: core-frontend
+  name: rentalmanager-frontend
   namespace: core-staging
 spec:
   type: LoadBalancer
@@ -176,5 +176,5 @@ spec:
     protocol: TCP
     name: http
   selector:
-    app: core-frontend
+    app: rentalmanager-frontend
 

@@ -364,11 +364,11 @@ kubectl get ingress core-ingress -n core-staging
 ```powershell
 # Run migrations
 kubectl exec -n core-staging deployment/core-backend -- `
-  dotnet ef database update --project Core.Infrastructure --startup-project Core.API
+  dotnet ef database update --project RentalManager.Infrastructure --startup-project RentalManager.API
 
 # Verify database
 kubectl exec -n core-staging deployment/core-backend -- `
-  dotnet ef migrations list --project Core.Infrastructure --startup-project Core.API
+  dotnet ef migrations list --project RentalManager.Infrastructure --startup-project RentalManager.API
 ```
 
 ### Step 6: Test Application

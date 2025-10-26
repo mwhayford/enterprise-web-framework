@@ -1,4 +1,4 @@
-# Copyright (c) Core. All Rights Reserved.
+# Copyright (c) RentalManager. All Rights Reserved.
 # Licensed under the MIT License. See LICENSE in the project root for license information.
 
 name: CI Pipeline
@@ -70,16 +70,16 @@ jobs:
           dotnet-version: ${{ env.DOTNET_VERSION }}
       
       - name: Restore dependencies
-        run: dotnet restore src/backend/Core.sln
+        run: dotnet restore src/backend/RentalManager.sln
       
       - name: Build backend
-        run: dotnet build src/backend/Core.sln --configuration Release --no-restore
+        run: dotnet build src/backend/RentalManager.sln --configuration Release --no-restore
       
       - name: Run unit tests
-        run: dotnet test tests/Core.UnitTests/Core.UnitTests.csproj --configuration Release --no-build --verbosity normal --logger "trx;LogFileName=unit-test-results.trx"
+        run: dotnet test tests/RentalManager.UnitTests/RentalManager.UnitTests.csproj --configuration Release --no-build --verbosity normal --logger "trx;LogFileName=unit-test-results.trx"
       
       - name: Run integration tests
-        run: dotnet test tests/Core.IntegrationTests/Core.IntegrationTests.csproj --configuration Release --no-build --verbosity normal --logger "trx;LogFileName=integration-test-results.trx"
+        run: dotnet test tests/RentalManager.IntegrationTests/RentalManager.IntegrationTests.csproj --configuration Release --no-build --verbosity normal --logger "trx;LogFileName=integration-test-results.trx"
         env:
           ConnectionStrings__DefaultConnection: "Host=localhost;Port=5433;Database=CoreDb_Test;Username=postgres;Password=postgres"
           Redis__Configuration: "localhost:6380"
@@ -90,8 +90,8 @@ jobs:
         with:
           name: backend-test-results
           path: |
-            tests/Core.UnitTests/TestResults/*.trx
-            tests/Core.IntegrationTests/TestResults/*.trx
+            tests/RentalManager.UnitTests/TestResults/*.trx
+            tests/RentalManager.IntegrationTests/TestResults/*.trx
   
   # Frontend Build and Test
   frontend:
@@ -161,7 +161,7 @@ jobs:
           echo "=== Container Status ==="
           docker ps -a
           echo "=== Backend Container Logs (last 50 lines) ==="
-          docker logs --tail 50 core-backend-ci || true
+          docker logs --tail 50 rentalmanager-backend-ci || true
       
       - name: Wait for services to be healthy
         run: |
@@ -191,18 +191,18 @@ jobs:
         if: failure()
         run: |
           echo "=== Full Backend Container Logs ==="
-          docker logs core-backend-ci || true
+          docker logs rentalmanager-backend-ci || true
           echo "=== Backend Container Inspect ==="
-          docker inspect core-backend-ci || true
+          docker inspect rentalmanager-backend-ci || true
       
       - name: Install E2E test dependencies
-        working-directory: tests/Core.E2ETests
+        working-directory: tests/RentalManager.E2ETests
         run: |
           npm ci
           npx playwright install chromium --with-deps
       
       - name: Run E2E tests
-        working-directory: tests/Core.E2ETests
+        working-directory: tests/RentalManager.E2ETests
         timeout-minutes: 20
         run: |
           echo "Starting Playwright E2E tests..."
@@ -215,21 +215,21 @@ jobs:
       
       - name: Show test results if failed
         if: failure()
-        working-directory: tests/Core.E2ETests
+        working-directory: tests/RentalManager.E2ETests
         run: |
           echo "=== Test Results Summary ==="
           if [ -f "test-results/results.json" ]; then
             cat test-results/results.json | head -100
           fi
           echo "=== Container Logs ==="
-          docker logs --tail 100 core-backend-ci || true
+          docker logs --tail 100 rentalmanager-backend-ci || true
       
       - name: Upload Playwright report
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: playwright-report
-          path: tests/Core.E2ETests/playwright-report/
+          path: tests/RentalManager.E2ETests/playwright-report/
           retention-days: 30
       
       - name: Upload test results
@@ -237,7 +237,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: e2e-test-results
-          path: tests/Core.E2ETests/test-results/
+          path: tests/RentalManager.E2ETests/test-results/
           retention-days: 7
       
       - name: Stop Docker services
@@ -261,10 +261,10 @@ jobs:
           dotnet-version: ${{ env.DOTNET_VERSION }}
       
       - name: Restore dependencies
-        run: dotnet restore src/backend/Core.sln
+        run: dotnet restore src/backend/RentalManager.sln
       
       - name: Build for analysis
-        run: dotnet build src/backend/Core.sln --configuration Release --no-restore
+        run: dotnet build src/backend/RentalManager.sln --configuration Release --no-restore
       
       # Optional: Add SonarCloud or similar analysis here
       # - name: SonarCloud Scan
@@ -292,7 +292,7 @@ jobs:
           context: src/backend
           file: src/backend/Dockerfile
           push: false
-          tags: core-backend:latest
+          tags: rentalmanager-backend:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
       
@@ -302,7 +302,7 @@ jobs:
           context: src/frontend
           file: src/frontend/Dockerfile
           push: false
-          tags: core-frontend:latest
+          tags: rentalmanager-frontend:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
   
@@ -334,12 +334,12 @@ jobs:
           dotnet-version: ${{ env.DOTNET_VERSION }}
       
       - name: Restore .NET dependencies
-        run: dotnet restore src/backend/Core.sln
+        run: dotnet restore src/backend/RentalManager.sln
       
       - name: Check for .NET vulnerabilities
         continue-on-error: true
         run: |
-          dotnet list src/backend/Core.API/Core.API.csproj package --vulnerable --include-transitive
+          dotnet list src/backend/RentalManager.API/RentalManager.API.csproj package --vulnerable --include-transitive
       
       - name: Setup Node.js
         uses: actions/setup-node@v4

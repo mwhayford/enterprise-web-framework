@@ -4,6 +4,8 @@
 
 This document provides comprehensive documentation for the Enterprise Web Application Framework API. The API follows RESTful principles and uses JWT authentication for secure access.
 
+> **Note**: For information about API versioning, see [API Versioning Strategy](api-versioning.md).
+
 ## Base URL
 
 - **Development**: `https://localhost:7001/api`

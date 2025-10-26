@@ -3,9 +3,9 @@ version: '3.8'
 services:
   postgres:
     image: postgres:16-alpine
-    container_name: core-postgres
+    container_name: rentalmanager-postgres
     environment:
-      POSTGRES_DB: CoreDb
+      POSTGRES_DB: RentalManagerDb
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: password
     ports:
@@ -23,7 +23,7 @@ services:
 
   redis:
     image: redis:7-alpine
-    container_name: core-redis
+    container_name: rentalmanager-redis
     ports:
       - "6380:6379"
     volumes:
@@ -40,26 +40,26 @@ services:
     build:
       context: ./src/backend
       dockerfile: Dockerfile
-    container_name: core-backend
+    container_name: rentalmanager-backend
     ports:
       - "5111:80"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:80
-      - ConnectionStrings__DefaultConnection=Host=postgres;Port=5432;Database=CoreDb;Username=postgres;Password=password
+      - ConnectionStrings__DefaultConnection=Host=postgres;Port=5432;Database=RentalManagerDb;Username=postgres;Password=password
       - Jwt__Key=YourSuperSecretKeyThatIsAtLeast32CharactersLong!
-      - Jwt__Issuer=Core.API
-      - Jwt__Audience=Core.API.Users
+      - Jwt__Issuer=RentalManager.API
+      - Jwt__Audience=RentalManager.API.Users
       - Authentication__Google__ClientId=your-google-client-id
       - Authentication__Google__ClientSecret=your-google-client-secret
       - Stripe__SecretKey=sk_test_your_stripe_secret_key
       - Stripe__PublishableKey=pk_test_your_stripe_publishable_key
       - Frontend__BaseUrl=http://localhost:3001
       - Elasticsearch__Url=http://elasticsearch:9200
-      - Elasticsearch__DefaultIndex=core-index
+      - Elasticsearch__DefaultIndex=rentalmanager-index
       - Kafka__BootstrapServers=kafka:29092
-      - Kafka__GroupId=core-api-group
-      - OpenTelemetry__ServiceName=Core.API
+      - Kafka__GroupId=rentalmanager-api-group
+      - OpenTelemetry__ServiceName=RentalManager.API
       - OpenTelemetry__ServiceVersion=1.0.0
       - OpenTelemetry__JaegerEndpoint=http://jaeger:14268/api/traces
       - OpenTelemetry__PrometheusEndpoint=http://prometheus:9090
@@ -89,7 +89,7 @@ services:
     build:
       context: ./src/frontend
       dockerfile: Dockerfile
-    container_name: core-frontend
+    container_name: rentalmanager-frontend
     ports:
       - "3001:80"
     environment:

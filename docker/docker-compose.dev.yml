@@ -14,7 +14,7 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:8080
-    command: ["dotnet", "watch", "run", "--project", "Core.API/Core.API.csproj", "--urls", "http://0.0.0.0:8080"]
+    command: ["dotnet", "watch", "run", "--project", "RentalManager.API/RentalManager.API.csproj", "--urls", "http://0.0.0.0:8080"]
 
   frontend:
     build:

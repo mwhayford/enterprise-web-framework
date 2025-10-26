@@ -3,24 +3,24 @@ FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 WORKDIR /src
 
 # Copy project files
-COPY ["Core.Domain/Core.Domain.csproj", "Core.Domain/"]
-COPY ["Core.Application/Core.Application.csproj", "Core.Application/"]
-COPY ["Core.Infrastructure/Core.Infrastructure.csproj", "Core.Infrastructure/"]
-COPY ["Core.API/Core.API.csproj", "Core.API/"]
+COPY ["RentalManager.Domain/RentalManager.Domain.csproj", "RentalManager.Domain/"]
+COPY ["RentalManager.Application/RentalManager.Application.csproj", "RentalManager.Application/"]
+COPY ["RentalManager.Infrastructure/RentalManager.Infrastructure.csproj", "RentalManager.Infrastructure/"]
+COPY ["RentalManager.API/RentalManager.API.csproj", "RentalManager.API/"]
 
 # Restore dependencies
-RUN dotnet restore "Core.API/Core.API.csproj"
+RUN dotnet restore "RentalManager.API/RentalManager.API.csproj"
 
 # Copy all source code
 COPY . .
 
 # Build the application
-WORKDIR "/src/Core.API"
-RUN dotnet build "Core.API.csproj" -c Release -o /app/build
+WORKDIR "/src/RentalManager.API"
+RUN dotnet build "RentalManager.API.csproj" -c Release -o /app/build
 
 # Publish the application
 FROM build AS publish
-RUN dotnet publish "Core.API.csproj" -c Release -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "RentalManager.API.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
 # Use the official .NET 9 runtime image for running
 FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS final
@@ -37,4 +37,4 @@ EXPOSE 80
 EXPOSE 443
 
 # Set the entry point
-ENTRYPOINT ["dotnet", "Core.API.dll"]
+ENTRYPOINT ["dotnet", "RentalManager.API.dll"]

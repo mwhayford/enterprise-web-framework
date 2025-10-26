@@ -1,13 +1,13 @@
-# Copyright (c) Core. All Rights Reserved.
+# Copyright (c) RentalManager. All Rights Reserved.
 # Licensed under the MIT License. See LICENSE in the project root for license information.
 
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: core-frontend
+  name: rentalmanager-frontend
   namespace: core
   labels:
-    app: core-frontend
+    app: rentalmanager-frontend
     component: web
 spec:
   replicas: 3
@@ -18,11 +18,11 @@ spec:
       maxUnavailable: 0
   selector:
     matchLabels:
-      app: core-frontend
+      app: rentalmanager-frontend
   template:
     metadata:
       labels:
-        app: core-frontend
+        app: rentalmanager-frontend
         component: web
     spec:
       securityContext:
@@ -30,8 +30,8 @@ spec:
         runAsUser: 101  # nginx user
         fsGroup: 101
       containers:
-      - name: core-frontend
-        image: ECR_REGISTRY/core-frontend:latest
+      - name: rentalmanager-frontend
+        image: ECR_REGISTRY/rentalmanager-frontend:latest
         imagePullPolicy: Always
         ports:
         - name: http
@@ -87,6 +87,6 @@ spec:
                 - key: app
                   operator: In
                   values:
-                  - core-frontend
+                  - rentalmanager-frontend
               topologyKey: kubernetes.io/hostname
 

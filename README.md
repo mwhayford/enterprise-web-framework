@@ -78,7 +78,7 @@ This project implements a **Clean Architecture** pattern with **CQRS** (Command 
 3. **Configure environment variables**
    ```bash
    # Backend
-   cp src/backend/Core.API/appsettings.Development.json.example src/backend/Core.API/appsettings.Development.json
+   cp src/backend/RentalManager.API/appsettings.Development.json.example src/backend/RentalManager.API/appsettings.Development.json
    
    # Frontend
    cp src/frontend/env.example src/frontend/.env.development
@@ -88,7 +88,7 @@ This project implements a **Clean Architecture** pattern with **CQRS** (Command 
    ```bash
    cd src/backend
    dotnet restore
-   dotnet run --project Core.API
+   dotnet run --project RentalManager.API
    ```
 
 5. **Start the frontend**
@@ -119,11 +119,11 @@ docker-compose -f docker-compose.yml -f docker-compose.dev.yml up
 Core/
 ├── src/
 │   ├── backend/                 # .NET Backend
-│   │   ├── Core.API/           # Web API layer
-│   │   ├── Core.Application/   # CQRS handlers, DTOs, validators
-│   │   ├── Core.Domain/        # Entities, value objects, domain events
-│   │   ├── Core.Infrastructure/ # EF Core, external services
-│   │   └── Core.Database/      # Database schema management
+│   │   ├── RentalManager.API/           # Web API layer
+│   │   ├── RentalManager.Application/   # CQRS handlers, DTOs, validators
+│   │   ├── RentalManager.Domain/        # Entities, value objects, domain events
+│   │   ├── RentalManager.Infrastructure/ # EF Core, external services
+│   │   └── RentalManager.Database/      # Database schema management
 │   └── frontend/               # React Frontend
 │       ├── src/
 │       │   ├── components/     # Reusable UI components
@@ -134,9 +134,9 @@ Core/
 │       │   ├── utils/          # Utility functions
 │       │   └── contexts/       # React contexts
 ├── tests/                      # Test projects
-│   ├── Core.UnitTests/         # NUnit unit tests
-│   ├── Core.IntegrationTests/  # Integration tests
-│   └── Core.E2ETests/          # Playwright E2E tests
+│   ├── RentalManager.UnitTests/         # NUnit unit tests
+│   ├── RentalManager.IntegrationTests/  # Integration tests
+│   └── RentalManager.E2ETests/          # Playwright E2E tests
 ├── docker/                     # Docker configurations
 ├── kubernetes/                 # K8s manifests
 ├── terraform/                  # Infrastructure as Code
@@ -181,19 +181,19 @@ Core/
 
 ### Unit Tests
 ```bash
-cd tests/Core.UnitTests
+cd tests/RentalManager.UnitTests
 dotnet test
 ```
 
 ### Integration Tests
 ```bash
-cd tests/Core.IntegrationTests
+cd tests/RentalManager.IntegrationTests
 dotnet test
 ```
 
 ### End-to-End Tests
 ```bash
-cd tests/Core.E2ETests
+cd tests/RentalManager.E2ETests
 npm install
 npx playwright test
 ```
@@ -224,10 +224,12 @@ terraform apply
 
 - [Architecture Overview](docs/architecture.md)
 - [API Documentation](docs/api-documentation.md)
+- [API Versioning Strategy](docs/api-versioning.md)
 - [Authentication Guide](docs/authentication.md)
 - [Payment Processing](docs/payment-processing.md)
 - [Deployment Guide](docs/deployment.md)
 - [Contributing Guidelines](CONTRIBUTING.md)
+- [Getting Started Guide](ONBOARDING.md)
 
 ## 🤝 Contributing
 

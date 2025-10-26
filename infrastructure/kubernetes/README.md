@@ -68,7 +68,7 @@ kubectl apply -k overlays/staging
 
 # Watch deployment progress
 kubectl rollout status deployment/core-backend-staging -n core-staging
-kubectl rollout status deployment/core-frontend-staging -n core-staging
+kubectl rollout status deployment/rentalmanager-frontend-staging -n core-staging
 ```
 
 ### 4. Deploy to Production
@@ -82,7 +82,7 @@ kubectl apply -k overlays/production
 
 # Watch deployment progress
 kubectl rollout status deployment/core-backend-production -n core-production
-kubectl rollout status deployment/core-frontend-production -n core-production
+kubectl rollout status deployment/rentalmanager-frontend-production -n core-production
 ```
 
 ## Configuration
@@ -191,7 +191,7 @@ The application uses AWS Application Load Balancer (ALB) Ingress Controller:
 ```yaml
 Hosts:
   - api.example.com  → core-backend
-  - app.example.com  → core-frontend
+  - app.example.com  → rentalmanager-frontend
 
 Annotations:
   - HTTPS redirect
@@ -471,7 +471,7 @@ spec:
   - from:
     - podSelector:
         matchLabels:
-          app: core-frontend
+          app: rentalmanager-frontend
 ```
 
 ### Pod Security Standards

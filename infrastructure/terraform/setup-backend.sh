@@ -1,5 +1,5 @@
 #!/bin/bash
-# Copyright (c) Core. All Rights Reserved.
+# Copyright (c) RentalManager. All Rights Reserved.
 # Licensed under the MIT License. See LICENSE in the project root for license information.
 
 # Script to setup S3 backend for Terraform state management
@@ -7,8 +7,8 @@ set -e
 
 # Configuration
 AWS_REGION="${AWS_REGION:-us-east-1}"
-S3_BUCKET_NAME="core-terraform-state"
-DYNAMODB_TABLE_NAME="core-terraform-locks"
+S3_BUCKET_NAME="rentalmanager-terraform-state"
+DYNAMODB_TABLE_NAME="rentalmanager-terraform-locks"
 
 echo "======================================"
 echo "Terraform Backend Setup"

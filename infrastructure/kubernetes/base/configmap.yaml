@@ -1,4 +1,4 @@
-# Copyright (c) Core. All Rights Reserved.
+# Copyright (c) RentalManager. All Rights Reserved.
 # Licensed under the MIT License. See LICENSE in the project root for license information.
 
 apiVersion: v1
@@ -13,9 +13,9 @@ data:
   Elasticsearch__Url: "http://elasticsearch:9200"
   Elasticsearch__DefaultIndex: "core"
   Kafka__BootstrapServers: "kafka:9092"
-  Kafka__GroupId: "core-api"
+  Kafka__GroupId: "rentalmanager-api"
   Redis__InstanceName: "Core"
-  OpenTelemetry__ServiceName: "Core.API"
+  OpenTelemetry__ServiceName: "RentalManager.API"
   OpenTelemetry__ServiceVersion: "1.0.0"
   OpenTelemetry__JaegerEndpoint: "http://jaeger-collector:14268/api/traces"
   OpenTelemetry__PrometheusEndpoint: "http://prometheus:9090"

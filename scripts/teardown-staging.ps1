@@ -29,7 +29,7 @@ if ($snapshot -eq "yes") {
     Write-Host "📸 Creating RDS snapshot..." -ForegroundColor Yellow
     $timestamp = Get-Date -Format "yyyyMMdd-HHmmss"
     aws rds create-db-snapshot `
-        --db-instance-identifier core-staging-db `
+        --db-instance-identifier rentalmanager-staging-db `
         --db-snapshot-identifier "staging-final-$timestamp"
     
     Write-Host "✅ Snapshot created: staging-final-$timestamp" -ForegroundColor Green
@@ -40,7 +40,7 @@ Write-Host ""
 Write-Host "1️⃣  Deleting Kubernetes resources..." -ForegroundColor Yellow
 
 try {
-    kubectl delete namespace core-staging --ignore-not-found=true --timeout=5m
+    kubectl delete namespace rentalmanager-staging --ignore-not-found=true --timeout=5m
     Write-Host "✅ Kubernetes namespace deleted" -ForegroundColor Green
 } catch {
     Write-Host "⚠️  Warning: Could not delete Kubernetes namespace (may not exist)" -ForegroundColor Yellow
@@ -83,7 +83,7 @@ Write-Host ""
 Write-Host "3️⃣  Verifying deletion..." -ForegroundColor Yellow
 
 $eksCount = (aws eks list-clusters --region us-east-1 --query 'clusters' --output json | ConvertFrom-Json).Count
-$rdsCount = (aws rds describe-db-instances --region us-east-1 --query 'DBInstances[?contains(DBInstanceIdentifier, `core-staging`)]' --output json | ConvertFrom-Json).Count
+$rdsCount = (aws rds describe-db-instances --region us-east-1 --query 'DBInstances[?contains(DBInstanceIdentifier, `rentalmanager-staging`)]' --output json | ConvertFrom-Json).Count
 
 if ($eksCount -eq 0 -and $rdsCount -eq 0) {
     Write-Host "✅ All resources successfully deleted" -ForegroundColor Green
@@ -99,7 +99,7 @@ Write-Host ""
 Write-Host "4️⃣  Cleaning up local configuration..." -ForegroundColor Yellow
 
 try {
-    kubectl config delete-context "arn:aws:eks:us-east-1:*:cluster/core-staging-eks" 2>$null
+    kubectl config delete-context "arn:aws:eks:us-east-1:*:cluster/rentalmanager-staging-eks" 2>$null
     Write-Host "✅ kubectl context removed" -ForegroundColor Green
 } catch {
     Write-Host "⚠️  kubectl context not found (already removed)" -ForegroundColor Yellow

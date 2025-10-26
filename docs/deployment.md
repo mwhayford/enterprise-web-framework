@@ -54,7 +54,7 @@ cd enterprise-web-framework
 ```bash
 # Copy environment files
 cp src/frontend/.env.example src/frontend/.env.local
-cp src/backend/Core.API/appsettings.Development.json.example src/backend/Core.API/appsettings.Development.json
+cp src/backend/RentalManager.API/appsettings.Development.json.example src/backend/RentalManager.API/appsettings.Development.json
 
 # Update configuration values
 # - Database connection strings
@@ -81,7 +81,7 @@ docker-compose down
 docker-compose exec backend dotnet ef database update
 
 # Seed initial data
-docker-compose exec backend dotnet run --project Core.Database --seed
+docker-compose exec backend dotnet run --project RentalManager.Database --seed
 ```
 
 ### Service URLs

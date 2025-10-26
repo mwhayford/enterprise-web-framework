@@ -1,4 +1,4 @@
-# Copyright (c) Core. All Rights Reserved.
+# Copyright (c) RentalManager. All Rights Reserved.
 # Licensed under the MIT License. See LICENSE in the project root for license information.
 
 name: PR Checks
@@ -163,11 +163,11 @@ jobs:
           dotnet-version: '9.0.x'
       
       - name: Restore dependencies
-        run: dotnet restore tests/Core.UnitTests/Core.UnitTests.csproj
+        run: dotnet restore tests/RentalManager.UnitTests/RentalManager.UnitTests.csproj
       
       - name: Run tests with coverage
         run: |
-          dotnet test tests/Core.UnitTests/Core.UnitTests.csproj \
+          dotnet test tests/RentalManager.UnitTests/RentalManager.UnitTests.csproj \
             --configuration Release \
             --collect:"XPlat Code Coverage" \
             --results-directory ./coverage

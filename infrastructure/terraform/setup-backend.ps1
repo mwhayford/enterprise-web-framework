@@ -1,4 +1,4 @@
-# Copyright (c) Core. All Rights Reserved.
+# Copyright (c) RentalManager. All Rights Reserved.
 # Licensed under the MIT License. See LICENSE in the project root for license information.
 
 # Script to setup S3 backend for Terraform state management
@@ -6,8 +6,8 @@
 
 param(
     [string]$AwsRegion = "us-east-1",
-    [string]$S3BucketName = "core-terraform-state",
-    [string]$DynamoDbTableName = "core-terraform-locks"
+    [string]$S3BucketName = "rentalmanager-terraform-state",
+    [string]$DynamoDbTableName = "rentalmanager-terraform-locks"
 )
 
 $ErrorActionPreference = "Stop"

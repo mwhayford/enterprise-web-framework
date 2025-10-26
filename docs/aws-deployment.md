@@ -128,7 +128,7 @@ If not using Terraform to create ECR repositories, create them manually:
 
 ```bash
 aws ecr create-repository --repository-name core-backend --region us-east-1
-aws ecr create-repository --repository-name core-frontend --region us-east-1
+aws ecr create-repository --repository-name rentalmanager-frontend --region us-east-1
 ```
 
 ### Step 3: Review Configuration
@@ -236,7 +236,7 @@ kubectl get ingress core-ingress -n core-staging -o jsonpath='{.status.loadBalan
 
 ```bash
 kubectl exec -n core-staging deployment/core-backend -- \
-  dotnet ef database update --project Core.Infrastructure --startup-project Core.API
+  dotnet ef database update --project RentalManager.Infrastructure --startup-project RentalManager.API
 ```
 
 ### Step 10: Test Application
@@ -346,7 +346,7 @@ kubectl get ingress -n core-production
 2. Restart deployments to pick up new secrets:
    ```bash
    kubectl rollout restart deployment/core-backend -n core-production
-   kubectl rollout restart deployment/core-frontend -n core-production
+   kubectl rollout restart deployment/rentalmanager-frontend -n core-production
    ```
 
 ## Monitoring and Maintenance

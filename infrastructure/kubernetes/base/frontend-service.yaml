@@ -1,13 +1,13 @@
-# Copyright (c) Core. All Rights Reserved.
+# Copyright (c) RentalManager. All Rights Reserved.
 # Licensed under the MIT License. See LICENSE in the project root for license information.
 
 apiVersion: v1
 kind: Service
 metadata:
-  name: core-frontend
+  name: rentalmanager-frontend
   namespace: core
   labels:
-    app: core-frontend
+    app: rentalmanager-frontend
 spec:
   type: ClusterIP
   ports:
@@ -16,5 +16,5 @@ spec:
     targetPort: http
     protocol: TCP
   selector:
-    app: core-frontend
+    app: rentalmanager-frontend
 

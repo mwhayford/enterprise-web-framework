@@ -103,7 +103,7 @@ cd ../../../..  # Back to project root
 ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
 REGION=us-east-1
 BACKEND_REPO="${ACCOUNT_ID}.dkr.ecr.${REGION}.amazonaws.com/core-backend"
-FRONTEND_REPO="${ACCOUNT_ID}.dkr.ecr.${REGION}.amazonaws.com/core-frontend"
+FRONTEND_REPO="${ACCOUNT_ID}.dkr.ecr.${REGION}.amazonaws.com/rentalmanager-frontend"
 
 echo "Backend: $BACKEND_REPO"
 echo "Frontend: $FRONTEND_REPO"
@@ -141,11 +141,11 @@ cd ../..
 cd src/frontend
 
 # Build
-docker build -t core-frontend -f Dockerfile .
+docker build -t rentalmanager-frontend -f Dockerfile .
 
 # Tag
-docker tag core-frontend:latest ${FRONTEND_REPO}:latest
-docker tag core-frontend:latest ${FRONTEND_REPO}:v1.0.0
+docker tag rentalmanager-frontend:latest ${FRONTEND_REPO}:latest
+docker tag rentalmanager-frontend:latest ${FRONTEND_REPO}:v1.0.0
 
 # Push
 docker push ${FRONTEND_REPO}:latest
@@ -207,7 +207,7 @@ images:
     newName: ${ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com/core-backend
     newTag: v1.0.0
   - name: frontend
-    newName: ${ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com/core-frontend
+    newName: ${ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com/rentalmanager-frontend
     newTag: v1.0.0
 ```
 
@@ -235,7 +235,7 @@ kubectl get pods -n core-staging -w
 
 # Check deployment status
 kubectl rollout status deployment/core-backend -n core-staging
-kubectl rollout status deployment/core-frontend -n core-staging
+kubectl rollout status deployment/rentalmanager-frontend -n core-staging
 ```
 
 ### Step 6: Run Database Migrations
@@ -284,7 +284,7 @@ http://<load-balancer-url>
 Update `BASE_URL` in playwright config:
 
 ```bash
-cd tests/Core.E2ETests
+cd tests/RentalManager.E2ETests
 BASE_URL=http://<load-balancer-url> npx playwright test
 ```
 
@@ -375,7 +375,7 @@ aws ec2 describe-vpcs --filters "Name=tag:Project,Values=Core" --region us-east-
 kubectl config delete-context arn:aws:eks:us-east-1:*:cluster/core-staging-eks
 
 # Remove local Docker images
-docker rmi core-backend core-frontend
+docker rmi core-backend rentalmanager-frontend
 docker rmi ${BACKEND_REPO}:latest ${BACKEND_REPO}:v1.0.0
 docker rmi ${FRONTEND_REPO}:latest ${FRONTEND_REPO}:v1.0.0
 ```
@@ -526,8 +526,8 @@ aws ecr batch-delete-image \
   --image-ids "$(aws ecr list-images --repository-name core-backend --query 'imageIds[*]' --output json)"
 
 aws ecr batch-delete-image \
-  --repository-name core-frontend \
-  --image-ids "$(aws ecr list-images --repository-name core-frontend --query 'imageIds[*]' --output json)"
+  --repository-name rentalmanager-frontend \
+  --image-ids "$(aws ecr list-images --repository-name rentalmanager-frontend --query 'imageIds[*]' --output json)"
 ```
 
 ### VPC Dependencies Remain

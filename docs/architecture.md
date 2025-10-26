@@ -10,17 +10,17 @@ This document provides a comprehensive overview of the enterprise web applicatio
 Core/
 ├── src/
 │   ├── backend/
-│   │   ├── Core.API/              # Web API entry point
-│   │   ├── Core.Application/      # CQRS, MediatR handlers, business logic
-│   │   ├── Core.Domain/           # Entities, value objects, domain events
-│   │   ├── Core.Infrastructure/   # EF Core, external services, Identity
-│   │   └── Core.Database/         # SQL DacPac project for PostgreSQL
+│   │   ├── RentalManager.API/              # Web API entry point
+│   │   ├── RentalManager.Application/      # CQRS, MediatR handlers, business logic
+│   │   ├── RentalManager.Domain/           # Entities, value objects, domain events
+│   │   ├── RentalManager.Infrastructure/   # EF Core, external services, Identity
+│   │   └── RentalManager.Database/         # SQL DacPac project for PostgreSQL
 │   └── frontend/
 │       └── src/                   # Vite + React + TypeScript + Tailwind
 ├── tests/
-│   ├── Core.UnitTests/             # NUnit unit tests
-│   ├── Core.IntegrationTests/     # NUnit + TestContainers
-│   └── Core.E2ETests/              # Playwright E2E tests
+│   ├── RentalManager.UnitTests/             # NUnit unit tests
+│   ├── RentalManager.IntegrationTests/     # NUnit + TestContainers
+│   └── RentalManager.E2ETests/              # Playwright E2E tests
 ├── docker/                        # Docker configurations
 ├── kubernetes/                     # Kubernetes manifests
 └── docs/                          # Documentation
@@ -28,7 +28,7 @@ Core/
 
 ## Clean Architecture Implementation
 
-### Core.Domain Layer
+### RentalManager.Domain Layer
 **Purpose**: Contains the core business logic and domain entities
 
 **Key Components**:
@@ -42,7 +42,7 @@ Core/
 - Pure business logic
 - Rich domain models with behavior
 
-### Core.Application Layer
+### RentalManager.Application Layer
 **Purpose**: Contains application-specific business rules and use cases
 
 **Key Components**:
@@ -58,7 +58,7 @@ Core/
 - Use cases orchestrate domain entities
 - CQRS pattern implementation
 
-### Core.Infrastructure Layer
+### RentalManager.Infrastructure Layer
 **Purpose**: Contains implementations of external concerns
 
 **Key Components**:
@@ -72,7 +72,7 @@ Core/
 - Handles external dependencies
 - Database access and external API calls
 
-### Core.API Layer
+### RentalManager.API Layer
 **Purpose**: Web API entry point and HTTP concerns
 
 **Key Components**:

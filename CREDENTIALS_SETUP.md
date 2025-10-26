@@ -6,7 +6,7 @@
 ## 📋 Quick Setup Checklist
 
 - [ ] Copy `.env.template` to `.env` and fill in values
-- [ ] Copy `src/backend/Core.API/appsettings.Development.json.template` to `appsettings.Development.json` and fill in values
+- [ ] Copy `src/backend/RentalManager.API/appsettings.Development.json.template` to `appsettings.Development.json` and fill in values
 - [ ] Copy `src/frontend/.env.template` to `src/frontend/.env.local` and fill in values
 - [ ] Get Google OAuth credentials
 - [ ] Get Stripe test credentials
@@ -20,7 +20,7 @@
 
 ```powershell
 # Navigate to backend API directory
-cd src/backend/Core.API
+cd src/backend/RentalManager.API
 
 # Copy the template
 Copy-Item appsettings.Development.json.template appsettings.Development.json

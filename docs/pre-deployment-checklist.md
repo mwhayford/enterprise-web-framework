@@ -76,7 +76,7 @@ Use this checklist before deploying to AWS to ensure everything is properly conf
 ### ECR Repositories (Optional)
 
 - [ ] ECR repository created for backend: `core-backend`
-- [ ] ECR repository created for frontend: `core-frontend`
+- [ ] ECR repository created for frontend: `rentalmanager-frontend`
 - [ ] Lifecycle policies configured
 - [ ] Image scanning enabled
 
@@ -218,7 +218,7 @@ Use this checklist before deploying to AWS to ensure everything is properly conf
 
 - [ ] All unit tests passing
   ```bash
-  cd tests/Core.UnitTests
+  cd tests/RentalManager.UnitTests
   dotnet test
   ```
 - [ ] Code coverage > 80%
@@ -228,7 +228,7 @@ Use this checklist before deploying to AWS to ensure everything is properly conf
 
 - [ ] All integration tests passing
   ```bash
-  cd tests/Core.IntegrationTests
+  cd tests/RentalManager.IntegrationTests
   dotnet test
   ```
 - [ ] Database integration tested
@@ -239,7 +239,7 @@ Use this checklist before deploying to AWS to ensure everything is properly conf
 
 - [ ] E2E tests passing
   ```bash
-  cd tests/Core.E2ETests
+  cd tests/RentalManager.E2ETests
   npm test
   ```
 - [ ] Authentication flow tested

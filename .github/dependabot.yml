@@ -1,4 +1,4 @@
-# Copyright (c) Core. All Rights Reserved.
+# Copyright (c) RentalManager. All Rights Reserved.
 # Licensed under the MIT License. See LICENSE in the project root for license information.
 
 # Dependabot configuration for automated dependency updates
@@ -8,7 +8,7 @@ version: 2
 updates:
   # .NET Backend Dependencies
   - package-ecosystem: "nuget"
-    directory: "/src/backend/Core.API"
+    directory: "/src/backend/RentalManager.API"
     schedule:
       interval: "weekly"
       day: "monday"
@@ -25,7 +25,7 @@ updates:
       include: "scope"
 
   - package-ecosystem: "nuget"
-    directory: "/src/backend/Core.Domain"
+    directory: "/src/backend/RentalManager.Domain"
     schedule:
       interval: "weekly"
     open-pull-requests-limit: 5
@@ -34,7 +34,7 @@ updates:
       - "backend"
 
   - package-ecosystem: "nuget"
-    directory: "/src/backend/Core.Application"
+    directory: "/src/backend/RentalManager.Application"
     schedule:
       interval: "weekly"
     open-pull-requests-limit: 5
@@ -43,7 +43,7 @@ updates:
       - "backend"
 
   - package-ecosystem: "nuget"
-    directory: "/src/backend/Core.Infrastructure"
+    directory: "/src/backend/RentalManager.Infrastructure"
     schedule:
       interval: "weekly"
     open-pull-requests-limit: 5
@@ -77,7 +77,7 @@ updates:
 
   # E2E Test Dependencies
   - package-ecosystem: "npm"
-    directory: "/tests/Core.E2ETests"
+    directory: "/tests/RentalManager.E2ETests"
     schedule:
       interval: "weekly"
     open-pull-requests-limit: 5

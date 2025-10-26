@@ -249,7 +249,7 @@ kubectl get pods -n core-staging -w
 kubectl logs -n core-staging -l app=core-backend -f
 
 # Frontend logs
-kubectl logs -n core-staging -l app=core-frontend -f
+kubectl logs -n core-staging -l app=rentalmanager-frontend -f
 ```
 
 ### **Test Health Endpoints**

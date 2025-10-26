@@ -34,8 +34,8 @@ function Start-Database {
         $attempt++
         Start-Sleep -Seconds 2
         
-        $postgresHealth = docker inspect core-postgres-dev --format='{{.State.Health.Status}}' 2>$null
-        $redisHealth = docker inspect core-redis-dev --format='{{.State.Health.Status}}' 2>$null
+        $postgresHealth = docker inspect rentalmanager-postgres-dev --format='{{.State.Health.Status}}' 2>$null
+        $redisHealth = docker inspect rentalmanager-redis-dev --format='{{.State.Health.Status}}' 2>$null
         
         if ($postgresHealth -eq "healthy" -and $redisHealth -eq "healthy") {
             Write-Success "Database services are healthy and ready!"
@@ -76,16 +76,16 @@ function Run-Migration {
     Write-Info "Running database migrations..."
     
     # Check if services are running
-    $postgresStatus = docker inspect core-postgres-dev --format='{{.State.Status}}' 2>$null
+    $postgresStatus = docker inspect rentalmanager-postgres-dev --format='{{.State.Status}}' 2>$null
     if ($postgresStatus -ne "running") {
         Write-Error "PostgreSQL service is not running. Please start it first with: .\scripts\database.ps1 start"
         exit 1
     }
     
     # Run migrations
-    Set-Location "src\backend\Core.API"
+    Set-Location "src\backend\RentalManager.API"
     try {
-        dotnet ef database update --project ..\Core.Infrastructure
+        dotnet ef database update --project ..\RentalManager.Infrastructure
         Write-Success "Database migrations completed successfully"
     }
     catch {
@@ -101,7 +101,7 @@ function Seed-Database {
     Write-Info "Seeding database with initial data..."
     
     # Check if services are running
-    $postgresStatus = docker inspect core-postgres-dev --format='{{.State.Status}}' 2>$null
+    $postgresStatus = docker inspect rentalmanager-postgres-dev --format='{{.State.Status}}' 2>$null
     if ($postgresStatus -ne "running") {
         Write-Error "PostgreSQL service is not running. Please start it first with: .\scripts\database.ps1 start"
         exit 1
