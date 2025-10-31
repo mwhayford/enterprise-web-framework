@@ -29,4 +29,3 @@ public class ApplicationSettingsController : ControllerBase
         return Ok(result);
     }
 }
-

@@ -1,10 +1,10 @@
 // Copyright (c) Core. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
-using RentalManager.Application.Commands;
-using RentalManager.Application.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using RentalManager.Application.Commands;
+using RentalManager.Application.Queries;
 
 namespace RentalManager.API.Controllers;
 

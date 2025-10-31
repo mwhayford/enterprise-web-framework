@@ -10,4 +10,3 @@ public enum PropertyStatus
     Unlisted = 4
 }
 
-

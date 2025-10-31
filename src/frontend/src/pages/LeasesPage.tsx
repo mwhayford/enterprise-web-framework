@@ -1,72 +1,83 @@
-import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { leaseService, type LeaseDto, LeaseStatus, type LeaseStatusType } from '../services/leaseService';
+import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import {
+  leaseService,
+  type LeaseDto,
+  LeaseStatus,
+  type LeaseStatusType,
+} from '../services/leaseService'
 
 const LeaseStatusBadge = ({ status }: { status: LeaseStatusType }) => {
   const getStatusColor = () => {
     switch (status) {
       case LeaseStatus.Active:
-        return 'bg-green-100 text-green-800';
+        return 'bg-green-100 text-green-800'
       case LeaseStatus.Draft:
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-gray-100 text-gray-800'
       case LeaseStatus.Expired:
-        return 'bg-yellow-100 text-yellow-800';
+        return 'bg-yellow-100 text-yellow-800'
       case LeaseStatus.Terminated:
-        return 'bg-red-100 text-red-800';
+        return 'bg-red-100 text-red-800'
       case LeaseStatus.Renewed:
-        return 'bg-blue-100 text-blue-800';
+        return 'bg-blue-100 text-blue-800'
       default:
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-gray-100 text-gray-800'
     }
-  };
+  }
 
   const getStatusText = () => {
-    return Object.keys(LeaseStatus).find(key => LeaseStatus[key as keyof typeof LeaseStatus] === status) || status;
-  };
+    return (
+      Object.keys(LeaseStatus).find(
+        key => LeaseStatus[key as keyof typeof LeaseStatus] === status
+      ) || status
+    )
+  }
 
   return (
-    <span className={`px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor()}`}>
+    <span
+      className={`px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor()}`}
+    >
       {getStatusText()}
     </span>
-  );
-};
+  )
+}
 
 const LeasesPage = () => {
-  const [leases, setLeases] = useState<LeaseDto[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [viewMode, setViewMode] = useState<'tenant' | 'landlord'>('tenant');
-  const navigate = useNavigate();
+  const [leases, setLeases] = useState<LeaseDto[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [viewMode, setViewMode] = useState<'tenant' | 'landlord'>('tenant')
+  const navigate = useNavigate()
 
   // Get current user ID from localStorage (you might have this in a context)
-  const currentUserId = localStorage.getItem('user_id') || '';
+  const currentUserId = localStorage.getItem('user_id') || ''
 
   useEffect(() => {
-    loadLeases();
-  }, [viewMode, currentUserId]);
+    loadLeases()
+  }, [viewMode, currentUserId])
 
   const loadLeases = async () => {
     try {
-      setLoading(true);
-      setError(null);
+      setLoading(true)
+      setError(null)
 
       const data =
         viewMode === 'tenant'
           ? await leaseService.getLeasesByTenantId(currentUserId)
-          : await leaseService.getLeasesByTenantId(currentUserId); // TODO: Add landlord endpoint
+          : await leaseService.getLeasesByTenantId(currentUserId) // TODO: Add landlord endpoint
 
-      setLeases(data);
+      setLeases(data)
     } catch (err) {
-      setError('Failed to load leases');
-      console.error(err);
+      setError('Failed to load leases')
+      console.error(err)
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   const handleViewLease = (leaseId: string) => {
-    navigate(`/leases/${leaseId}`);
-  };
+    navigate(`/leases/${leaseId}`)
+  }
 
   if (loading) {
     return (
@@ -76,7 +87,7 @@ const LeasesPage = () => {
           <p className="mt-4 text-gray-600">Loading leases...</p>
         </div>
       </div>
-    );
+    )
   }
 
   if (error) {
@@ -92,7 +103,7 @@ const LeasesPage = () => {
           </button>
         </div>
       </div>
-    );
+    )
   }
 
   return (
@@ -100,7 +111,9 @@ const LeasesPage = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900">My Leases</h1>
-          <p className="mt-2 text-gray-600">View and manage your rental leases</p>
+          <p className="mt-2 text-gray-600">
+            View and manage your rental leases
+          </p>
         </div>
 
         {/* View Mode Toggle */}
@@ -147,7 +160,9 @@ const LeasesPage = () => {
               >
                 <div className="p-6">
                   <div className="flex justify-between items-start mb-4">
-                    <h3 className="text-lg font-semibold text-gray-900">Property {lease.propertyId.substring(0, 8)}...</h3>
+                    <h3 className="text-lg font-semibold text-gray-900">
+                      Property {lease.propertyId.substring(0, 8)}...
+                    </h3>
                     <LeaseStatusBadge status={lease.status} />
                   </div>
 
@@ -161,18 +176,24 @@ const LeasesPage = () => {
 
                     <div className="flex justify-between">
                       <span className="text-gray-600">Start Date:</span>
-                      <span>{new Date(lease.startDate).toLocaleDateString()}</span>
+                      <span>
+                        {new Date(lease.startDate).toLocaleDateString()}
+                      </span>
                     </div>
 
                     <div className="flex justify-between">
                       <span className="text-gray-600">End Date:</span>
-                      <span>{new Date(lease.endDate).toLocaleDateString()}</span>
+                      <span>
+                        {new Date(lease.endDate).toLocaleDateString()}
+                      </span>
                     </div>
 
                     {lease.isActive && (
                       <div className="flex justify-between">
                         <span className="text-gray-600">Days Remaining:</span>
-                        <span className="font-semibold text-green-600">{lease.remainingDays}</span>
+                        <span className="font-semibold text-green-600">
+                          {lease.remainingDays}
+                        </span>
                       </div>
                     )}
                   </div>
@@ -180,8 +201,8 @@ const LeasesPage = () => {
                   <div className="mt-4 pt-4 border-t border-gray-200">
                     <button
                       onClick={e => {
-                        e.stopPropagation();
-                        handleViewLease(lease.id);
+                        e.stopPropagation()
+                        handleViewLease(lease.id)
                       }}
                       className="w-full px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
                     >
@@ -195,8 +216,7 @@ const LeasesPage = () => {
         )}
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default LeasesPage;
-
+export default LeasesPage

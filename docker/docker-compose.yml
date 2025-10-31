@@ -108,15 +108,13 @@ services:
       kafka:
         condition: service_healthy
     environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - ConnectionStrings__DefaultConnection=Host=postgres;Database=RentalManagerDb_Dev;Username=postgres;Password=password
-      - Jwt__Key=YourSuperSecretKeyThatIsAtLeast32CharactersLong!
-      - Jwt__Issuer=RentalManager.API
-      - Jwt__Audience=RentalManager.API.Users
-      - Google__ClientId=your-google-client-id
-      - Google__ClientSecret=your-google-client-secret
-      - Stripe__SecretKey=sk_test_your_stripe_secret_key
-      - Stripe__PublishableKey=pk_test_your_stripe_publishable_key
+      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionStrings__DefaultConnection: Host=postgres;Database=RentalManagerDb_Dev;Username=postgres;Password=password
+      Jwt__Key: YourSuperSecretKeyThatIsAtLeast32CharactersLong!
+      Jwt__Issuer: RentalManager.API
+      Jwt__Audience: RentalManager.API.Users
+      Stripe__SecretKey: sk_test_your_stripe_secret_key
+      Stripe__PublishableKey: pk_test_your_stripe_publishable_key
     ports:
       - "7001:8080"
     volumes:

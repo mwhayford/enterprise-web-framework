@@ -23,7 +23,6 @@ export const FAQItem: React.FC<FAQItemProps> = ({ question, answer }) => {
 
   return (
     <div className="border-b border-gray-200 last:border-0">
-      {/* @ts-ignore */}
       <button
         className="w-full py-6 flex items-center justify-between text-left hover:text-blue-600 transition-colors"
         onClick={handleToggle}
@@ -64,4 +63,3 @@ export const FAQItem: React.FC<FAQItemProps> = ({ question, answer }) => {
     </div>
   )
 }
-

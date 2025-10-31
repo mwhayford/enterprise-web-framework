@@ -2,12 +2,9 @@
 // Copyright (c) Core. All rights reserved.
 // </copyright>
 
-using System;
-using System.Linq;
-using System.Threading.Tasks;
+using FluentAssertions;
 using RentalManager.Domain.Entities;
 using RentalManager.Domain.ValueObjects;
-using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
 

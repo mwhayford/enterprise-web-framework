@@ -14,7 +14,7 @@ public class PropertyTests
     {
         // Arrange
         var ownerId = Guid.NewGuid();
-        var address = PropertyAddress.Create("123 Main St", null, "Springfield", "IL", "62701", "USA");
+        var address = PropertyAddress.Create("123 Main St", "Springfield", "IL", "62701", country: "USA");
         var rent = Money.Create(1500, "USD");
         var deposit = Money.Create(1500, "USD");
         var availableDate = DateTime.UtcNow.AddDays(30);
@@ -135,7 +135,7 @@ public class PropertyTests
     private static Property CreateTestProperty()
     {
         var ownerId = Guid.NewGuid();
-        var address = PropertyAddress.Create("123 Main St", null, "Springfield", "IL", "62701", "USA");
+        var address = PropertyAddress.Create("123 Main St", "Springfield", "IL", "62701", country: "USA");
         var rent = Money.Create(1500, "USD");
         var deposit = Money.Create(1500, "USD");
         var availableDate = DateTime.UtcNow.AddDays(30);
@@ -153,4 +153,3 @@ public class PropertyTests
             "Beautiful 2BR apartment");
     }
 }
-

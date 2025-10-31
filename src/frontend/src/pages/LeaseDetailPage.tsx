@@ -1,75 +1,80 @@
-import { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { leaseService, type LeaseDto, LeaseStatus, type LeaseStatusType } from '../services/leaseService';
+import { useEffect, useState } from 'react'
+import { useParams, useNavigate } from 'react-router-dom'
+import {
+  leaseService,
+  type LeaseDto,
+  LeaseStatus,
+  type LeaseStatusType,
+} from '../services/leaseService'
 
 const LeaseDetailPage = () => {
-  const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
-  const [lease, setLease] = useState<LeaseDto | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [actionLoading, setActionLoading] = useState(false);
-  const [showTerminateModal, setShowTerminateModal] = useState(false);
-  const [terminationReason, setTerminationReason] = useState('');
+  const { id } = useParams<{ id: string }>()
+  const navigate = useNavigate()
+  const [lease, setLease] = useState<LeaseDto | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [actionLoading, setActionLoading] = useState(false)
+  const [showTerminateModal, setShowTerminateModal] = useState(false)
+  const [terminationReason, setTerminationReason] = useState('')
 
   useEffect(() => {
     if (id) {
-      loadLease();
+      loadLease()
     }
-  }, [id]);
+  }, [id])
 
   const loadLease = async () => {
-    if (!id) return;
+    if (!id) return
 
     try {
-      setLoading(true);
-      setError(null);
-      const data = await leaseService.getLeaseById(id);
-      setLease(data);
+      setLoading(true)
+      setError(null)
+      const data = await leaseService.getLeaseById(id)
+      setLease(data)
     } catch (err) {
-      setError('Failed to load lease details');
-      console.error(err);
+      setError('Failed to load lease details')
+      console.error(err)
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   const handleActivate = async () => {
-    if (!id || !lease) return;
+    if (!id || !lease) return
 
     try {
-      setActionLoading(true);
-      const updated = await leaseService.activateLease(id);
-      setLease(updated);
-      alert('Lease activated successfully!');
+      setActionLoading(true)
+      const updated = await leaseService.activateLease(id)
+      setLease(updated)
+      alert('Lease activated successfully!')
     } catch (err) {
-      alert('Failed to activate lease');
-      console.error(err);
+      alert('Failed to activate lease')
+      console.error(err)
     } finally {
-      setActionLoading(false);
+      setActionLoading(false)
     }
-  };
+  }
 
   const handleTerminate = async () => {
     if (!id || !terminationReason.trim()) {
-      alert('Please provide a termination reason');
-      return;
+      alert('Please provide a termination reason')
+      return
     }
 
     try {
-      setActionLoading(true);
-      const updated = await leaseService.terminateLease(id, terminationReason);
-      setLease(updated);
-      setShowTerminateModal(false);
-      setTerminationReason('');
-      alert('Lease terminated successfully');
+      setActionLoading(true)
+      const updated = await leaseService.terminateLease(id, terminationReason)
+      setLease(updated)
+      setShowTerminateModal(false)
+      setTerminationReason('')
+      alert('Lease terminated successfully')
     } catch (err) {
-      alert('Failed to terminate lease');
-      console.error(err);
+      alert('Failed to terminate lease')
+      console.error(err)
     } finally {
-      setActionLoading(false);
+      setActionLoading(false)
     }
-  };
+  }
 
   const getStatusBadge = (status: LeaseStatusType) => {
     const colors: Record<number, string> = {
@@ -78,16 +83,20 @@ const LeaseDetailPage = () => {
       [LeaseStatus.Expired]: 'bg-yellow-100 text-yellow-800',
       [LeaseStatus.Terminated]: 'bg-red-100 text-red-800',
       [LeaseStatus.Renewed]: 'bg-blue-100 text-blue-800',
-    };
+    }
 
-    const statusText = Object.keys(LeaseStatus).find(key => LeaseStatus[key as keyof typeof LeaseStatus] === status);
+    const statusText = Object.keys(LeaseStatus).find(
+      key => LeaseStatus[key as keyof typeof LeaseStatus] === status
+    )
 
     return (
-      <span className={`px-3 py-1 text-sm font-semibold rounded-full ${colors[status]}`}>
+      <span
+        className={`px-3 py-1 text-sm font-semibold rounded-full ${colors[status]}`}
+      >
         {statusText || status}
       </span>
-    );
-  };
+    )
+  }
 
   if (loading) {
     return (
@@ -97,7 +106,7 @@ const LeaseDetailPage = () => {
           <p className="mt-4 text-gray-600">Loading lease details...</p>
         </div>
       </div>
-    );
+    )
   }
 
   if (error || !lease) {
@@ -113,7 +122,7 @@ const LeaseDetailPage = () => {
           </button>
         </div>
       </div>
-    );
+    )
   }
 
   return (
@@ -142,7 +151,9 @@ const LeaseDetailPage = () => {
           <div className="p-6 space-y-6">
             {/* Financial Information */}
             <div>
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">Financial Details</h2>
+              <h2 className="text-xl font-semibold text-gray-900 mb-4">
+                Financial Details
+              </h2>
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <p className="text-sm text-gray-600">Monthly Rent</p>
@@ -153,36 +164,49 @@ const LeaseDetailPage = () => {
                 <div>
                   <p className="text-sm text-gray-600">Security Deposit</p>
                   <p className="text-lg font-semibold">
-                    ${lease.securityDeposit.toFixed(2)} {lease.securityDepositCurrency}
+                    ${lease.securityDeposit.toFixed(2)}{' '}
+                    {lease.securityDepositCurrency}
                   </p>
                 </div>
                 <div>
                   <p className="text-sm text-gray-600">Payment Day</p>
-                  <p className="text-lg font-semibold">Day {lease.paymentDayOfMonth} of month</p>
+                  <p className="text-lg font-semibold">
+                    Day {lease.paymentDayOfMonth} of month
+                  </p>
                 </div>
               </div>
             </div>
 
             {/* Lease Period */}
             <div className="border-t pt-6">
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">Lease Period</h2>
+              <h2 className="text-xl font-semibold text-gray-900 mb-4">
+                Lease Period
+              </h2>
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <p className="text-sm text-gray-600">Start Date</p>
-                  <p className="text-lg font-semibold">{new Date(lease.startDate).toLocaleDateString()}</p>
+                  <p className="text-lg font-semibold">
+                    {new Date(lease.startDate).toLocaleDateString()}
+                  </p>
                 </div>
                 <div>
                   <p className="text-sm text-gray-600">End Date</p>
-                  <p className="text-lg font-semibold">{new Date(lease.endDate).toLocaleDateString()}</p>
+                  <p className="text-lg font-semibold">
+                    {new Date(lease.endDate).toLocaleDateString()}
+                  </p>
                 </div>
                 <div>
                   <p className="text-sm text-gray-600">Duration</p>
-                  <p className="text-lg font-semibold">{lease.durationInDays} days</p>
+                  <p className="text-lg font-semibold">
+                    {lease.durationInDays} days
+                  </p>
                 </div>
                 {lease.isActive && (
                   <div>
                     <p className="text-sm text-gray-600">Days Remaining</p>
-                    <p className="text-lg font-semibold text-green-600">{lease.remainingDays} days</p>
+                    <p className="text-lg font-semibold text-green-600">
+                      {lease.remainingDays} days
+                    </p>
                   </div>
                 )}
               </div>
@@ -191,18 +215,26 @@ const LeaseDetailPage = () => {
             {/* Special Terms */}
             {lease.specialTerms && (
               <div className="border-t pt-6">
-                <h2 className="text-xl font-semibold text-gray-900 mb-4">Special Terms</h2>
-                <p className="text-gray-700 whitespace-pre-wrap">{lease.specialTerms}</p>
+                <h2 className="text-xl font-semibold text-gray-900 mb-4">
+                  Special Terms
+                </h2>
+                <p className="text-gray-700 whitespace-pre-wrap">
+                  {lease.specialTerms}
+                </p>
               </div>
             )}
 
             {/* Termination Info */}
             {lease.terminatedAt && (
               <div className="border-t pt-6">
-                <h2 className="text-xl font-semibold text-gray-900 mb-4">Termination Details</h2>
+                <h2 className="text-xl font-semibold text-gray-900 mb-4">
+                  Termination Details
+                </h2>
                 <div className="bg-red-50 p-4 rounded-md">
                   <p className="text-sm text-gray-600">Terminated On</p>
-                  <p className="text-lg font-semibold">{new Date(lease.terminatedAt).toLocaleDateString()}</p>
+                  <p className="text-lg font-semibold">
+                    {new Date(lease.terminatedAt).toLocaleDateString()}
+                  </p>
                   {lease.terminationReason && (
                     <>
                       <p className="text-sm text-gray-600 mt-2">Reason</p>
@@ -244,7 +276,9 @@ const LeaseDetailPage = () => {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
             <h3 className="text-xl font-semibold mb-4">Terminate Lease</h3>
-            <p className="text-gray-600 mb-4">Please provide a reason for terminating this lease.</p>
+            <p className="text-gray-600 mb-4">
+              Please provide a reason for terminating this lease.
+            </p>
             <textarea
               value={terminationReason}
               onChange={e => setTerminationReason(e.target.value)}
@@ -261,8 +295,8 @@ const LeaseDetailPage = () => {
               </button>
               <button
                 onClick={() => {
-                  setShowTerminateModal(false);
-                  setTerminationReason('');
+                  setShowTerminateModal(false)
+                  setTerminationReason('')
                 }}
                 disabled={actionLoading}
                 className="flex-1 px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300"
@@ -274,8 +308,7 @@ const LeaseDetailPage = () => {
         </div>
       )}
     </div>
-  );
-};
+  )
+}
 
-export default LeaseDetailPage;
-
+export default LeaseDetailPage

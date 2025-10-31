@@ -1,9 +1,9 @@
 // Copyright (c) Core. All rights reserved.
 
+using FluentAssertions;
 using RentalManager.Domain.Entities;
 using RentalManager.Domain.Events;
 using RentalManager.Domain.ValueObjects;
-using FluentAssertions;
 
 namespace RentalManager.UnitTests.Domain.Entities;
 

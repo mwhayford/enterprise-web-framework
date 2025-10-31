@@ -11,4 +11,3 @@ public enum ApplicationStatus
     Withdrawn = 5
 }
 
-

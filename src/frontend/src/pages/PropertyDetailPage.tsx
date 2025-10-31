@@ -1,8 +1,16 @@
-import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Bed, Bath, Square, Calendar, MapPin, Check } from 'lucide-react';
-import { propertyService, type PropertyDto } from '../services/propertyService';
-import { applicationSettingsService } from '../services/applicationSettingsService';
+import { useState, useEffect } from 'react'
+import { useParams, useNavigate } from 'react-router-dom'
+import {
+  ArrowLeft,
+  Bed,
+  Bath,
+  Square,
+  Calendar,
+  MapPin,
+  Check,
+} from 'lucide-react'
+import { propertyService, type PropertyDto } from '../services/propertyService'
+import { applicationSettingsService } from '../services/applicationSettingsService'
 
 const propertyTypeLabels: Record<number, string> = {
   0: 'Apartment',
@@ -11,81 +19,83 @@ const propertyTypeLabels: Record<number, string> = {
   3: 'Townhouse',
   4: 'Studio',
   5: 'Other',
-};
+}
 
 const propertyStatusLabels: Record<number, string> = {
   0: 'Available',
   1: 'Rented',
   2: 'Maintenance',
   3: 'Unlisted',
-};
+}
 
 export const PropertyDetailPage = () => {
-  const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
-  const [property, setProperty] = useState<PropertyDto | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
-  const [applicationFee, setApplicationFee] = useState<number | null>(null);
+  const { id } = useParams<{ id: string }>()
+  const navigate = useNavigate()
+  const [property, setProperty] = useState<PropertyDto | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0)
+  const [applicationFee, setApplicationFee] = useState<number | null>(null)
 
   useEffect(() => {
     if (id) {
-      loadProperty();
-      loadApplicationSettings();
+      loadProperty()
+      loadApplicationSettings()
     }
-  }, [id]);
+  }, [id])
 
   const loadProperty = async () => {
-    if (!id) return;
+    if (!id) return
 
     try {
-      setLoading(true);
-      setError(null);
-      const data = await propertyService.getPropertyById(id);
-      setProperty(data);
+      setLoading(true)
+      setError(null)
+      const data = await propertyService.getPropertyById(id)
+      setProperty(data)
     } catch (err) {
-      setError('Failed to load property details. Please try again later.');
-      console.error('Error loading property:', err);
+      setError('Failed to load property details. Please try again later.')
+      console.error('Error loading property:', err)
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   const loadApplicationSettings = async () => {
     try {
-      const settings = await applicationSettingsService.getSettings();
-      setApplicationFee(settings.defaultApplicationFee);
+      const settings = await applicationSettingsService.getSettings()
+      setApplicationFee(settings.defaultApplicationFee)
     } catch (err) {
-      console.error('Error loading application settings:', err);
+      console.error('Error loading application settings:', err)
     }
-  };
+  }
 
   const handleApplyNow = () => {
-    if (!property) return;
-    
-    const token = localStorage.getItem('token');
+    if (!property) return
+
+    const token = localStorage.getItem('token')
     if (!token) {
-      navigate('/login', { state: { from: `/properties/${id}` } });
-      return;
+      navigate('/login', { state: { from: `/properties/${id}` } })
+      return
     }
-    
-    navigate(`/properties/${id}/apply`);
-  };
+
+    navigate(`/properties/${id}/apply`)
+  }
 
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-gray-600">Loading property details...</div>
       </div>
-    );
+    )
   }
 
   if (error || !property) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <p className="text-red-600 text-lg mb-4">{error || 'Property not found'}</p>
+          <p className="text-red-600 text-lg mb-4">
+            {error || 'Property not found'}
+          </p>
           <button
             onClick={() => navigate('/properties')}
             className="text-blue-600 hover:underline"
@@ -94,16 +104,19 @@ export const PropertyDetailPage = () => {
           </button>
         </div>
       </div>
-    );
+    )
   }
 
-  const availableDate = new Date(property.availableDate).toLocaleDateString('en-US', {
-    month: 'long',
-    day: 'numeric',
-    year: 'numeric',
-  });
+  const availableDate = new Date(property.availableDate).toLocaleDateString(
+    'en-US',
+    {
+      month: 'long',
+      day: 'numeric',
+      year: 'numeric',
+    }
+  )
 
-  const displayApplicationFee = property.applicationFee ?? applicationFee;
+  const displayApplicationFee = property.applicationFee ?? applicationFee
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -147,10 +160,16 @@ export const PropertyDetailPage = () => {
                       key={index}
                       onClick={() => setSelectedImageIndex(index)}
                       className={`flex-shrink-0 w-20 h-20 rounded-md overflow-hidden border-2 ${
-                        index === selectedImageIndex ? 'border-blue-600' : 'border-transparent'
+                        index === selectedImageIndex
+                          ? 'border-blue-600'
+                          : 'border-transparent'
                       }`}
                     >
-                      <img src={image} alt={`Thumbnail ${index + 1}`} className="w-full h-full object-cover" />
+                      <img
+                        src={image}
+                        alt={`Thumbnail ${index + 1}`}
+                        className="w-full h-full object-cover"
+                      />
                     </button>
                   ))}
                 </div>
@@ -160,7 +179,7 @@ export const PropertyDetailPage = () => {
             {/* Property Details */}
             <div className="bg-white rounded-lg shadow-md p-6">
               <h2 className="text-2xl font-bold mb-4">Property Details</h2>
-              
+
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
                 <div className="flex items-center gap-2">
                   <Bed className="w-5 h-5 text-gray-600" />
@@ -180,7 +199,9 @@ export const PropertyDetailPage = () => {
                   <Square className="w-5 h-5 text-gray-600" />
                   <div>
                     <p className="text-sm text-gray-600">Square Feet</p>
-                    <p className="font-semibold">{property.squareFeet.toLocaleString()}</p>
+                    <p className="font-semibold">
+                      {property.squareFeet.toLocaleString()}
+                    </p>
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
@@ -194,7 +215,9 @@ export const PropertyDetailPage = () => {
 
               <div className="border-t pt-6">
                 <h3 className="font-semibold text-lg mb-2">Description</h3>
-                <p className="text-gray-700 whitespace-pre-line">{property.description}</p>
+                <p className="text-gray-700 whitespace-pre-line">
+                  {property.description}
+                </p>
               </div>
 
               {property.amenities && property.amenities.length > 0 && (
@@ -216,8 +239,13 @@ export const PropertyDetailPage = () => {
                 <div className="flex items-start gap-2 text-gray-700">
                   <MapPin className="w-5 h-5 text-gray-600 mt-0.5" />
                   <div>
-                    <p>{property.street}{property.unit ? `, ${property.unit}` : ''}</p>
-                    <p>{property.city}, {property.state} {property.zipCode}</p>
+                    <p>
+                      {property.street}
+                      {property.unit ? `, ${property.unit}` : ''}
+                    </p>
+                    <p>
+                      {property.city}, {property.state} {property.zipCode}
+                    </p>
                     <p>{property.country}</p>
                   </div>
                 </div>
@@ -231,16 +259,21 @@ export const PropertyDetailPage = () => {
               <div className="mb-4">
                 <div className="flex items-baseline gap-2 mb-2">
                   <span className="text-3xl font-bold text-gray-900">
-                    {property.rentCurrency} {property.monthlyRent.toLocaleString()}
+                    {property.rentCurrency}{' '}
+                    {property.monthlyRent.toLocaleString()}
                   </span>
                   <span className="text-gray-600">/month</span>
                 </div>
                 <span className="inline-block bg-blue-100 text-blue-800 text-sm font-semibold px-3 py-1 rounded">
                   {propertyTypeLabels[property.propertyType]}
                 </span>
-                <span className={`ml-2 inline-block text-sm font-semibold px-3 py-1 rounded ${
-                  property.status === 0 ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
-                }`}>
+                <span
+                  className={`ml-2 inline-block text-sm font-semibold px-3 py-1 rounded ${
+                    property.status === 0
+                      ? 'bg-green-100 text-green-800'
+                      : 'bg-gray-100 text-gray-800'
+                  }`}
+                >
                   {propertyStatusLabels[property.status]}
                 </span>
               </div>
@@ -249,14 +282,16 @@ export const PropertyDetailPage = () => {
                 <div className="flex justify-between">
                   <span className="text-gray-600">Security Deposit</span>
                   <span className="font-semibold">
-                    {property.securityDepositCurrency} {property.securityDeposit.toLocaleString()}
+                    {property.securityDepositCurrency}{' '}
+                    {property.securityDeposit.toLocaleString()}
                   </span>
                 </div>
                 {displayApplicationFee && (
                   <div className="flex justify-between">
                     <span className="text-gray-600">Application Fee</span>
                     <span className="font-semibold">
-                      {property.applicationFeeCurrency || 'USD'} {displayApplicationFee.toLocaleString()}
+                      {property.applicationFeeCurrency || 'USD'}{' '}
+                      {displayApplicationFee.toLocaleString()}
                     </span>
                   </div>
                 )}
@@ -283,6 +318,5 @@ export const PropertyDetailPage = () => {
         </div>
       </div>
     </div>
-  );
-};
-
+  )
+}

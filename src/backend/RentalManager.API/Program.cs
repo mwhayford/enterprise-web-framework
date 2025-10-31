@@ -1,15 +1,8 @@
 // Copyright (c) Core. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
+using System.Linq;
 using System.Text;
 using Confluent.Kafka;
-using RentalManager.API.Filters;
-using RentalManager.Application.Interfaces;
-using RentalManager.Application.Mappings;
-using RentalManager.Infrastructure.BackgroundJobs;
-using RentalManager.Infrastructure.ExternalServices;
-using RentalManager.Infrastructure.Identity;
-using RentalManager.Infrastructure.Persistence;
-using RentalManager.Infrastructure.Services;
 using FluentValidation;
 using Hangfire;
 using Hangfire.PostgreSql;
@@ -17,6 +10,7 @@ using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -26,10 +20,77 @@ using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
+using RentalManager.API.Filters;
+using RentalManager.Application.Interfaces;
+using RentalManager.Application.Mappings;
+using RentalManager.Infrastructure.BackgroundJobs;
+using RentalManager.Infrastructure.ExternalServices;
+using RentalManager.Infrastructure.Identity;
+using RentalManager.Infrastructure.Persistence;
+using RentalManager.Infrastructure.Services;
 using Serilog;
 using Stripe;
 
+// Check if running in Docker container
+var isDocker = !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER"));
+
 var builder = WebApplication.CreateBuilder(args);
+
+// When running in Docker, remove environment-specific appsettings sources
+// All secrets MUST come from environment variables (which override appsettings.json)
+if (isDocker)
+{
+    // Remove appsettings.{Environment}.json sources that may contain secrets
+    var sourcesToRemove = builder.Configuration.Sources
+        .Where(s => s is Microsoft.Extensions.Configuration.Json.JsonConfigurationSource jsonSource &&
+                   jsonSource.Path != null &&
+                   (jsonSource.Path.Contains("appsettings.Development.json") ||
+                    jsonSource.Path.Contains("appsettings.Production.json")))
+        .ToList();
+
+    foreach (var source in sourcesToRemove)
+    {
+        builder.Configuration.Sources.Remove(source);
+    }
+
+    // Validate that critical secrets come from environment variables, not appsettings.json placeholders
+    // Note: Google auth is optional (conditionally registered), so only validate if values are provided
+    var requiredSecrets = new List<(string ConfigKey, string Description)>
+    {
+        ("Jwt:Key", "JWT secret key"),
+        ("Stripe:SecretKey", "Stripe Secret Key")
+    };
+
+    // Google auth is optional - only validate if a value is provided (not empty)
+    var providedGoogleClientId = builder.Configuration["Authentication:Google:ClientId"];
+    if (!string.IsNullOrWhiteSpace(providedGoogleClientId))
+    {
+        requiredSecrets.Add(("Authentication:Google:ClientId", "Google OAuth Client ID"));
+        requiredSecrets.Add(("Authentication:Google:ClientSecret", "Google OAuth Client Secret"));
+    }
+
+    var missingSecrets = new List<string>();
+    foreach (var (configKey, description) in requiredSecrets)
+    {
+        var value = builder.Configuration[configKey];
+        if (string.IsNullOrWhiteSpace(value) ||
+            value.Contains("your-") ||
+            value.Contains("YOUR_") ||
+            value == "YourSuperSecretKeyThatIsAtLeast32CharactersLong!")
+        {
+            missingSecrets.Add($"{description} ({configKey})");
+        }
+    }
+
+    if (missingSecrets.Any())
+    {
+        throw new InvalidOperationException(
+            $"When running in Docker, the following secrets must be provided via environment variables " +
+            $"and cannot use placeholder values from appsettings.json:\n" +
+            string.Join("\n", missingSecrets.Select(s => $"  - {s}")) +
+            "\n\nSet these environment variables in docker-compose.yml or docker-compose.override.yml");
+    }
+}
 
 // Configure Serilog
 Log.Logger = new LoggerConfiguration()
@@ -78,7 +139,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Register IApplicationDbContext interface
-builder.Services.AddScoped<IApplicationDbContext>(provider => 
+builder.Services.AddScoped<IApplicationDbContext>(provider =>
     provider.GetRequiredService<ApplicationDbContext>());
 
 // Configure ASP.NET Core Identity
@@ -111,6 +172,9 @@ StripeConfiguration.ApiKey = builder.Configuration["Stripe:SecretKey"];
 builder.Services.AddMediatR(cfg =>
 {
     cfg.RegisterServicesFromAssembly(typeof(RentalManager.Application.Commands.RegisterUserCommand).Assembly);
+
+    // Ensure handlers living in Infrastructure (e.g., email handlers) are also registered
+    cfg.RegisterServicesFromAssembly(typeof(RentalManager.Infrastructure.Handlers.SendWelcomeEmailCommandHandler).Assembly);
 });
 
 // Configure AutoMapper
@@ -123,7 +187,7 @@ builder.Services.AddAutoMapper(cfg =>
 builder.Services.AddValidatorsFromAssembly(typeof(RentalManager.Application.Validators.RegisterUserCommandValidator).Assembly);
 
 // Configure Authentication
-builder.Services.AddAuthentication(options =>
+var authBuilder = builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -140,13 +204,19 @@ builder.Services.AddAuthentication(options =>
         ValidAudience = builder.Configuration["Jwt:Audience"],
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!)),
     };
-})
-.AddGoogle(options =>
-{
-    options.ClientId = builder.Configuration["Authentication:Google:ClientId"]!;
-    options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"]!;
-    options.CallbackPath = "/signin-google"; // This is the default, but making it explicit
 });
+
+// Conditionally add Google authentication if credentials are configured
+var googleClientId = builder.Configuration["Authentication:Google:ClientId"];
+if (!string.IsNullOrEmpty(googleClientId) && googleClientId != "your-google-client-id")
+{
+    authBuilder.AddGoogle(options =>
+    {
+        options.ClientId = googleClientId;
+        options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"]!;
+        options.CallbackPath = "/signin-google"; // This is the default, but making it explicit
+    });
+}
 
 // Configure Authorization
 builder.Services.AddAuthorization();

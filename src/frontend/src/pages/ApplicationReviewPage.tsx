@@ -1,7 +1,18 @@
-import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, CheckCircle, XCircle, User, Briefcase, Home, Phone } from 'lucide-react';
-import { applicationService, type PropertyApplicationDto } from '../services/applicationService';
+import { useState, useEffect } from 'react'
+import { useParams, useNavigate } from 'react-router-dom'
+import {
+  ArrowLeft,
+  CheckCircle,
+  XCircle,
+  User,
+  Briefcase,
+  Home,
+  Phone,
+} from 'lucide-react'
+import {
+  applicationService,
+  type PropertyApplicationDto,
+} from '../services/applicationService'
 
 const statusLabels: Record<number, string> = {
   0: 'Pending',
@@ -9,7 +20,7 @@ const statusLabels: Record<number, string> = {
   2: 'Approved',
   3: 'Rejected',
   4: 'Withdrawn',
-};
+}
 
 const statusColors: Record<number, string> = {
   0: 'bg-yellow-100 text-yellow-800',
@@ -17,80 +28,86 @@ const statusColors: Record<number, string> = {
   2: 'bg-green-100 text-green-800',
   3: 'bg-red-100 text-red-800',
   4: 'bg-gray-100 text-gray-800',
-};
+}
 
 export const ApplicationReviewPage = () => {
-  const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
-  const [application, setApplication] = useState<PropertyApplicationDto | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [decisionNotes, setDecisionNotes] = useState('');
-  const [submitting, setSubmitting] = useState(false);
+  const { id } = useParams<{ id: string }>()
+  const navigate = useNavigate()
+  const [application, setApplication] = useState<PropertyApplicationDto | null>(
+    null
+  )
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [decisionNotes, setDecisionNotes] = useState('')
+  const [submitting, setSubmitting] = useState(false)
 
   useEffect(() => {
     if (id) {
-      loadApplication();
+      loadApplication()
     }
-  }, [id]);
+  }, [id])
 
   const loadApplication = async () => {
-    if (!id) return;
+    if (!id) return
 
     try {
-      setLoading(true);
-      setError(null);
-      const data = await applicationService.getApplicationById(id);
-      setApplication(data);
+      setLoading(true)
+      setError(null)
+      const data = await applicationService.getApplicationById(id)
+      setApplication(data)
       if (data.decisionNotes) {
-        setDecisionNotes(data.decisionNotes);
+        setDecisionNotes(data.decisionNotes)
       }
     } catch (err) {
-      setError('Failed to load application details.');
-      console.error('Error loading application:', err);
+      setError('Failed to load application details.')
+      console.error('Error loading application:', err)
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   const handleApprove = async () => {
-    if (!id || !application) return;
+    if (!id || !application) return
 
     try {
-      setSubmitting(true);
-      setError(null);
-      await applicationService.approveApplication(id, decisionNotes);
-      navigate('/admin/applications', { state: { message: 'Application approved successfully!' } });
+      setSubmitting(true)
+      setError(null)
+      await applicationService.approveApplication(id, decisionNotes)
+      navigate('/admin/applications', {
+        state: { message: 'Application approved successfully!' },
+      })
     } catch (err) {
-      setError('Failed to approve application.');
-      console.error('Error approving application:', err);
+      setError('Failed to approve application.')
+      console.error('Error approving application:', err)
     } finally {
-      setSubmitting(false);
+      setSubmitting(false)
     }
-  };
+  }
 
   const handleReject = async () => {
-    if (!id || !application) return;
+    if (!id || !application) return
 
     try {
-      setSubmitting(true);
-      setError(null);
-      await applicationService.rejectApplication(id, decisionNotes);
-      navigate('/admin/applications', { state: { message: 'Application rejected.' } });
+      setSubmitting(true)
+      setError(null)
+      await applicationService.rejectApplication(id, decisionNotes)
+      navigate('/admin/applications', {
+        state: { message: 'Application rejected.' },
+      })
     } catch (err) {
-      setError('Failed to reject application.');
-      console.error('Error rejecting application:', err);
+      setError('Failed to reject application.')
+      console.error('Error rejecting application:', err)
     } finally {
-      setSubmitting(false);
+      setSubmitting(false)
     }
-  };
+  }
 
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-gray-600">Loading application...</div>
       </div>
-    );
+    )
   }
 
   if (error && !application) {
@@ -106,13 +123,15 @@ export const ApplicationReviewPage = () => {
           </button>
         </div>
       </div>
-    );
+    )
   }
 
-  if (!application) return null;
+  if (!application) return null
 
-  const applicationData = application.applicationData ? JSON.parse(application.applicationData) : {};
-  const canReview = application.status === 0 || application.status === 1;
+  const applicationData = application.applicationData
+    ? JSON.parse(application.applicationData)
+    : {}
+  const canReview = application.status === 0 || application.status === 1
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -127,8 +146,12 @@ export const ApplicationReviewPage = () => {
             <span>Back to Applications</span>
           </button>
           <div className="flex items-center justify-between">
-            <h1 className="text-2xl font-bold text-gray-900">Application Review</h1>
-            <span className={`px-3 py-1 rounded-full text-sm font-semibold ${statusColors[application.status]}`}>
+            <h1 className="text-2xl font-bold text-gray-900">
+              Application Review
+            </h1>
+            <span
+              className={`px-3 py-1 rounded-full text-sm font-semibold ${statusColors[application.status]}`}
+            >
               {statusLabels[application.status]}
             </span>
           </div>
@@ -149,7 +172,9 @@ export const ApplicationReviewPage = () => {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <p className="text-sm text-gray-600">Name</p>
-                  <p className="font-medium">{applicationData.firstName} {applicationData.lastName}</p>
+                  <p className="font-medium">
+                    {applicationData.firstName} {applicationData.lastName}
+                  </p>
                 </div>
                 <div>
                   <p className="text-sm text-gray-600">Email</p>
@@ -183,70 +208,96 @@ export const ApplicationReviewPage = () => {
                 </div>
                 <div>
                   <p className="text-sm text-gray-600">Annual Income</p>
-                  <p className="font-medium">${applicationData.annualIncome?.toLocaleString()}</p>
+                  <p className="font-medium">
+                    ${applicationData.annualIncome?.toLocaleString()}
+                  </p>
                 </div>
                 <div>
                   <p className="text-sm text-gray-600">Years Employed</p>
-                  <p className="font-medium">{applicationData.yearsEmployed} years</p>
+                  <p className="font-medium">
+                    {applicationData.yearsEmployed} years
+                  </p>
                 </div>
               </div>
             </div>
 
             {/* Rental History */}
-            {applicationData.previousAddresses && applicationData.previousAddresses.length > 0 && (
-              <div className="bg-white rounded-lg shadow-md p-6">
-                <div className="flex items-center gap-2 mb-4">
-                  <Home className="w-5 h-5 text-gray-600" />
-                  <h2 className="text-xl font-bold">Previous Addresses</h2>
+            {applicationData.previousAddresses &&
+              applicationData.previousAddresses.length > 0 && (
+                <div className="bg-white rounded-lg shadow-md p-6">
+                  <div className="flex items-center gap-2 mb-4">
+                    <Home className="w-5 h-5 text-gray-600" />
+                    <h2 className="text-xl font-bold">Previous Addresses</h2>
+                  </div>
+                  <div className="space-y-4">
+                    {applicationData.previousAddresses.map(
+                      (addr: Record<string, unknown>, index: number) => (
+                        <div
+                          key={index}
+                          className="border-l-4 border-blue-500 pl-4"
+                        >
+                          <p className="font-medium">
+                            {addr.address as string}
+                          </p>
+                          <p className="text-sm text-gray-600">
+                            {addr.moveInDate as string} -{' '}
+                            {addr.moveOutDate as string}
+                          </p>
+                          <p className="text-sm text-gray-600">
+                            Landlord: {addr.landlordName as string} (
+                            {addr.landlordPhone as string})
+                          </p>
+                          <p className="text-sm text-gray-600">
+                            Monthly Rent: $
+                            {(addr.monthlyRent as number).toLocaleString()}
+                          </p>
+                          <p className="text-sm text-gray-600">
+                            Reason for Leaving:{' '}
+                            {addr.reasonForLeaving as string}
+                          </p>
+                        </div>
+                      )
+                    )}
+                  </div>
                 </div>
-                <div className="space-y-4">
-                  {applicationData.previousAddresses.map((addr: Record<string, unknown>, index: number) => (
-                    <div key={index} className="border-l-4 border-blue-500 pl-4">
-                      <p className="font-medium">{addr.address as string}</p>
-                      <p className="text-sm text-gray-600">
-                        {addr.moveInDate as string} - {addr.moveOutDate as string}
-                      </p>
-                      <p className="text-sm text-gray-600">
-                        Landlord: {addr.landlordName as string} ({addr.landlordPhone as string})
-                      </p>
-                      <p className="text-sm text-gray-600">
-                        Monthly Rent: ${(addr.monthlyRent as number).toLocaleString()}
-                      </p>
-                      <p className="text-sm text-gray-600">
-                        Reason for Leaving: {addr.reasonForLeaving as string}
-                      </p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
+              )}
 
             {/* References */}
-            {applicationData.references && applicationData.references.length > 0 && (
-              <div className="bg-white rounded-lg shadow-md p-6">
-                <div className="flex items-center gap-2 mb-4">
-                  <Phone className="w-5 h-5 text-gray-600" />
-                  <h2 className="text-xl font-bold">References</h2>
+            {applicationData.references &&
+              applicationData.references.length > 0 && (
+                <div className="bg-white rounded-lg shadow-md p-6">
+                  <div className="flex items-center gap-2 mb-4">
+                    <Phone className="w-5 h-5 text-gray-600" />
+                    <h2 className="text-xl font-bold">References</h2>
+                  </div>
+                  <div className="space-y-3">
+                    {applicationData.references.map(
+                      (ref: Record<string, unknown>, index: number) => (
+                        <div
+                          key={index}
+                          className="border-b pb-3 last:border-b-0"
+                        >
+                          <p className="font-medium">{ref.name as string}</p>
+                          <p className="text-sm text-gray-600">
+                            {ref.relationship as string}
+                          </p>
+                          <p className="text-sm text-gray-600">
+                            {ref.phone as string} • {ref.email as string}
+                          </p>
+                        </div>
+                      )
+                    )}
+                  </div>
                 </div>
-                <div className="space-y-3">
-                  {applicationData.references.map((ref: Record<string, unknown>, index: number) => (
-                    <div key={index} className="border-b pb-3 last:border-b-0">
-                      <p className="font-medium">{ref.name as string}</p>
-                      <p className="text-sm text-gray-600">{ref.relationship as string}</p>
-                      <p className="text-sm text-gray-600">
-                        {ref.phone as string} • {ref.email as string}
-                      </p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
+              )}
 
             {/* Additional Notes */}
             {applicationData.additionalNotes && (
               <div className="bg-white rounded-lg shadow-md p-6">
                 <h2 className="text-xl font-bold mb-4">Additional Notes</h2>
-                <p className="text-gray-700 whitespace-pre-line">{applicationData.additionalNotes}</p>
+                <p className="text-gray-700 whitespace-pre-line">
+                  {applicationData.additionalNotes}
+                </p>
               </div>
             )}
           </div>
@@ -260,10 +311,13 @@ export const ApplicationReviewPage = () => {
                 <div>
                   <p className="text-sm text-gray-600">Application Fee</p>
                   <p className="text-lg font-semibold">
-                    {application.applicationFeeCurrency} {application.applicationFee.toLocaleString()}
+                    {application.applicationFeeCurrency}{' '}
+                    {application.applicationFee.toLocaleString()}
                   </p>
                   <p className="text-sm text-gray-600">
-                    {application.applicationFeePaymentId ? 'Paid' : 'Payment Pending'}
+                    {application.applicationFeePaymentId
+                      ? 'Paid'
+                      : 'Payment Pending'}
                   </p>
                 </div>
 
@@ -271,11 +325,14 @@ export const ApplicationReviewPage = () => {
                   <p className="text-sm text-gray-600">Submitted</p>
                   <p className="font-medium">
                     {application.submittedAt
-                      ? new Date(application.submittedAt).toLocaleDateString('en-US', {
-                          month: 'long',
-                          day: 'numeric',
-                          year: 'numeric',
-                        })
+                      ? new Date(application.submittedAt).toLocaleDateString(
+                          'en-US',
+                          {
+                            month: 'long',
+                            day: 'numeric',
+                            year: 'numeric',
+                          }
+                        )
                       : 'N/A'}
                   </p>
                 </div>
@@ -284,24 +341,30 @@ export const ApplicationReviewPage = () => {
                   <div>
                     <p className="text-sm text-gray-600">Reviewed</p>
                     <p className="font-medium">
-                      {new Date(application.reviewedAt).toLocaleDateString('en-US', {
-                        month: 'long',
-                        day: 'numeric',
-                        year: 'numeric',
-                      })}
+                      {new Date(application.reviewedAt).toLocaleDateString(
+                        'en-US',
+                        {
+                          month: 'long',
+                          day: 'numeric',
+                          year: 'numeric',
+                        }
+                      )}
                     </p>
                   </div>
                 )}
               </div>
 
               <div className="mb-6">
-                <label htmlFor="decisionNotes" className="block text-sm font-medium text-gray-700 mb-2">
+                <label
+                  htmlFor="decisionNotes"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
                   Decision Notes
                 </label>
                 <textarea
                   id="decisionNotes"
                   value={decisionNotes}
-                  onChange={(e) => setDecisionNotes(e.target.value)}
+                  onChange={e => setDecisionNotes(e.target.value)}
                   rows={4}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                   placeholder="Add notes about your decision..."
@@ -323,7 +386,9 @@ export const ApplicationReviewPage = () => {
                     className="w-full flex items-center justify-center gap-2 bg-green-600 text-white py-3 px-4 rounded-md hover:bg-green-700 transition-colors font-semibold disabled:opacity-50"
                   >
                     <CheckCircle className="w-5 h-5" />
-                    <span>{submitting ? 'Approving...' : 'Approve Application'}</span>
+                    <span>
+                      {submitting ? 'Approving...' : 'Approve Application'}
+                    </span>
                   </button>
                   <button
                     onClick={handleReject}
@@ -331,7 +396,9 @@ export const ApplicationReviewPage = () => {
                     className="w-full flex items-center justify-center gap-2 bg-red-600 text-white py-3 px-4 rounded-md hover:bg-red-700 transition-colors font-semibold disabled:opacity-50"
                   >
                     <XCircle className="w-5 h-5" />
-                    <span>{submitting ? 'Rejecting...' : 'Reject Application'}</span>
+                    <span>
+                      {submitting ? 'Rejecting...' : 'Reject Application'}
+                    </span>
                   </button>
                 </div>
               ) : (
@@ -344,6 +411,5 @@ export const ApplicationReviewPage = () => {
         </div>
       </div>
     </div>
-  );
-};
-
+  )
+}

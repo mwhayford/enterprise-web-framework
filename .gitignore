@@ -147,7 +147,10 @@ docker-compose.override.yml
 terraform.tfvars
 terraform.tfvars.json
 
-# Secrets
+# Secrets - DO NOT COMMIT files with actual secrets
+appsettings.Development.json
+appsettings.Production.json
+appsettings.Local.json
 appsettings.*.json
 secrets.json
 *.pem

@@ -14,4 +14,3 @@ public enum PropertyType
     Other = 99
 }
 
-

@@ -151,7 +151,7 @@ const LandingPage: React.FC = () => {
       <motion.section
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: "-100px" }}
+        viewport={{ once: true, margin: '-100px' }}
         transition={{ duration: 0.6 }}
         className="py-12 bg-white/50 backdrop-blur-sm"
       >
@@ -207,7 +207,7 @@ const LandingPage: React.FC = () => {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
+            viewport={{ once: true, margin: '-100px' }}
             transition={{ duration: 0.6 }}
             className="text-center"
           >
@@ -249,8 +249,8 @@ const LandingPage: React.FC = () => {
                   Property Management
                 </h3>
                 <p className="text-gray-600">
-                  Manage unlimited properties with detailed profiles, photos, and
-                  documents all in one place.
+                  Manage unlimited properties with detailed profiles, photos,
+                  and documents all in one place.
                 </p>
               </div>
             </motion.div>
@@ -284,8 +284,8 @@ const LandingPage: React.FC = () => {
                   Online Payments
                 </h3>
                 <p className="text-gray-600">
-                  Accept rent payments online with Stripe. Automated reminders and
-                  instant payment confirmations.
+                  Accept rent payments online with Stripe. Automated reminders
+                  and instant payment confirmations.
                 </p>
               </div>
             </motion.div>
@@ -319,8 +319,8 @@ const LandingPage: React.FC = () => {
                   Tenant Portal
                 </h3>
                 <p className="text-gray-600">
-                  Give tenants access to pay rent, submit maintenance requests, and
-                  view their lease information.
+                  Give tenants access to pay rent, submit maintenance requests,
+                  and view their lease information.
                 </p>
               </div>
             </motion.div>
@@ -389,8 +389,8 @@ const LandingPage: React.FC = () => {
                   Analytics & Reports
                 </h3>
                 <p className="text-gray-600">
-                  Get insights into your rental business with comprehensive reports
-                  and real-time analytics.
+                  Get insights into your rental business with comprehensive
+                  reports and real-time analytics.
                 </p>
               </div>
             </motion.div>
@@ -424,8 +424,8 @@ const LandingPage: React.FC = () => {
                   Smart Search
                 </h3>
                 <p className="text-gray-600">
-                  Powered by Elasticsearch, quickly find properties, tenants, and
-                  documents with lightning-fast search.
+                  Powered by Elasticsearch, quickly find properties, tenants,
+                  and documents with lightning-fast search.
                 </p>
               </div>
             </motion.div>
@@ -440,7 +440,7 @@ const LandingPage: React.FC = () => {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
+            viewport={{ once: true, margin: '-100px' }}
             transition={{ duration: 0.6 }}
             className="text-center mb-16"
           >
@@ -467,7 +467,7 @@ const LandingPage: React.FC = () => {
                 }`}
                 type="button"
                 role="switch"
-                aria-checked={isAnnual ? 'true' : 'false'}
+                aria-checked={isAnnual}
                 aria-label="Toggle annual billing"
               >
                 <span
@@ -498,16 +498,16 @@ const LandingPage: React.FC = () => {
                 transition={{ duration: 0.5, delay: index * 0.1 }}
               >
                 <PricingCard
-                key={index}
-                name={plan.name}
-                price={plan.price}
-                annualPrice={plan.annualPrice}
-                description={plan.description}
-                features={plan.features}
-                isPopular={plan.isPopular}
-                isAnnual={isAnnual}
-                onSelect={handleGetStarted}
-              />
+                  key={index}
+                  name={plan.name}
+                  price={plan.price}
+                  annualPrice={plan.annualPrice}
+                  description={plan.description}
+                  features={plan.features}
+                  isPopular={plan.isPopular}
+                  isAnnual={isAnnual}
+                  onSelect={handleGetStarted}
+                />
               </motion.div>
             ))}
           </div>
@@ -557,7 +557,9 @@ const LandingPage: React.FC = () => {
       <footer className="bg-gray-900 text-gray-400 py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <h3 className="text-2xl font-bold text-white mb-4">RentalManager</h3>
+            <h3 className="text-2xl font-bold text-white mb-4">
+              RentalManager
+            </h3>
             <p className="text-sm">
               © 2025 RentalManager. All rights reserved.
             </p>
@@ -580,4 +582,3 @@ const LandingPage: React.FC = () => {
 }
 
 export default LandingPage
-

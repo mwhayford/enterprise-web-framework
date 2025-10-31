@@ -2,9 +2,6 @@
 // Copyright (c) Core. All rights reserved.
 // </copyright>
 
-using System;
-using System.Threading.Tasks;
-using RentalManager.Infrastructure.Persistence;
 using DotNet.Testcontainers.Builders;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -13,6 +10,7 @@ using NUnit.Framework;
 using Respawn;
 using Testcontainers.PostgreSql;
 using Testcontainers.Redis;
+using RentalManager.Infrastructure.Persistence;
 
 namespace RentalManager.IntegrationTests.Infrastructure;
 

@@ -140,46 +140,46 @@ const AppRoutes: React.FC = () => {
           </ProtectedRoute>
         }
       />
-                <Route
-                  path="/applications/my"
-                  element={
-                    <ProtectedRoute>
-                      <MyApplicationsPage />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/admin/applications"
-                  element={
-                    <ProtectedRoute>
-                      <AdminApplicationsPage />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/admin/applications/:id"
-                  element={
-                    <ProtectedRoute>
-                      <ApplicationReviewPage />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/leases"
-                  element={
-                    <ProtectedRoute>
-                      <LeasesPage />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/leases/:id"
-                  element={
-                    <ProtectedRoute>
-                      <LeaseDetailPage />
-                    </ProtectedRoute>
-                  }
-                />
+      <Route
+        path="/applications/my"
+        element={
+          <ProtectedRoute>
+            <MyApplicationsPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/applications"
+        element={
+          <ProtectedRoute>
+            <AdminApplicationsPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/applications/:id"
+        element={
+          <ProtectedRoute>
+            <ApplicationReviewPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/leases"
+        element={
+          <ProtectedRoute>
+            <LeasesPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/leases/:id"
+        element={
+          <ProtectedRoute>
+            <LeaseDetailPage />
+          </ProtectedRoute>
+        }
+      />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   )

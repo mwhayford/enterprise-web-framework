@@ -44,6 +44,7 @@ public class PropertiesControllerTests
 
         // Assert
         response.EnsureSuccessStatusCode();
+
         // Just verify we get a successful response - actual data validation would require seeding
         Assert.That(response.IsSuccessStatusCode, Is.True);
     }
@@ -117,7 +118,7 @@ public class PropertiesControllerTests
         var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
         // Add test properties to database
-        // Implementation depends on your seeding strategy
+        await Task.CompletedTask; // satisfy async method until implemented
     }
 
     private async Task<Guid> CreateTestProperty()
@@ -127,6 +128,7 @@ public class PropertiesControllerTests
 
         // Create and save a test property
         // Return the property ID
+        await Task.CompletedTask; // satisfy async method until implemented
         return Guid.NewGuid(); // Placeholder
     }
 }
