@@ -19,8 +19,9 @@ public interface IApplicationDbContext
 
     DbSet<Lease> Leases { get; set; }
 
+    DbSet<WorkOrder> WorkOrders { get; set; }
+
     DbSet<ApplicationSettings> ApplicationSettings { get; set; }
 
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }
-

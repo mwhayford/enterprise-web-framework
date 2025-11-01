@@ -69,4 +69,3 @@ public class RenewLeaseCommandHandler : IRequestHandler<RenewLeaseCommand, Lease
         };
     }
 }
-

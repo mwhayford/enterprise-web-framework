@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Copyright (c) RentalManager. All rights reserved.
+
+using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable

@@ -20,4 +20,3 @@ public class UpdateLeaseRentCommandValidator : AbstractValidator<UpdateLeaseRent
             .Length(3).WithMessage("Currency must be a 3-letter ISO code");
     }
 }
-

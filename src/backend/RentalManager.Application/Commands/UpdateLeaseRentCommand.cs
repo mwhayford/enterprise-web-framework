@@ -6,4 +6,3 @@ using RentalManager.Application.DTOs;
 namespace RentalManager.Application.Commands;
 
 public record UpdateLeaseRentCommand(Guid LeaseId, UpdateLeaseRentDto RentData) : IRequest<LeaseDto>;
-

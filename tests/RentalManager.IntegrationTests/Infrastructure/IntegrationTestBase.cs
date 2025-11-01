@@ -7,10 +7,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Npgsql;
 using NUnit.Framework;
+using RentalManager.Infrastructure.Persistence;
 using Respawn;
 using Testcontainers.PostgreSql;
 using Testcontainers.Redis;
-using RentalManager.Infrastructure.Persistence;
 
 namespace RentalManager.IntegrationTests.Infrastructure;
 

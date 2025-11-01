@@ -9,4 +9,3 @@ public enum PaymentFrequency
     SemiAnnually = 3,
     Annually = 4
 }
-

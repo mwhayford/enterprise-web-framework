@@ -78,4 +78,3 @@ public class CreateLeaseCommandHandler : IRequestHandler<CreateLeaseCommand, Lea
         };
     }
 }
-

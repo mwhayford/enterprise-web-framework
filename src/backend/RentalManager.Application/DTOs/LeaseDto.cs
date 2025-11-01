@@ -54,4 +54,3 @@ public class LeaseDto
 
     public DateTime UpdatedAt { get; set; }
 }
-

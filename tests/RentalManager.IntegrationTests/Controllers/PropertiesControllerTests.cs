@@ -132,4 +132,3 @@ public class PropertiesControllerTests
         return Guid.NewGuid(); // Placeholder
     }
 }
-

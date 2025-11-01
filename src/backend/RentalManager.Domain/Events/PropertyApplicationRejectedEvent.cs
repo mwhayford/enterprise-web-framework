@@ -14,4 +14,3 @@ public record PropertyApplicationRejectedEvent : BaseEvent
 
     public string? DecisionNotes { get; init; }
 }
-

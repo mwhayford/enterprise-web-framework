@@ -100,4 +100,3 @@ public class LeaseConfiguration : IEntityTypeConfiguration<Lease>
         builder.Ignore(l => l.DomainEvents);
     }
 }
-

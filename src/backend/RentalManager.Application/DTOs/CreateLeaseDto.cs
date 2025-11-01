@@ -32,4 +32,3 @@ public class CreateLeaseDto
 
     public Guid? PropertyApplicationId { get; set; }
 }
-

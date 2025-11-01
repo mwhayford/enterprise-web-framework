@@ -22,4 +22,3 @@ public class ApplicationSettingsDto
 
     public DateTime UpdatedAt { get; set; }
 }
-

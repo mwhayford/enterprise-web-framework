@@ -59,6 +59,7 @@ public class PropertyApplicationTests
         var reviewerId = Guid.NewGuid();
 
         // Act
+        application.Submit(); // Applications must be submitted before they can be reviewed
         application.Review(reviewerId);
 
         // Assert
@@ -74,6 +75,7 @@ public class PropertyApplicationTests
         var notes = "Application approved based on strong credentials";
 
         // Act
+        application.Submit(); // Applications must be submitted before they can be approved
         application.Approve(reviewerId, notes);
 
         // Assert
@@ -92,6 +94,7 @@ public class PropertyApplicationTests
         var notes = "Insufficient income verification";
 
         // Act
+        application.Submit(); // Applications must be submitted before they can be rejected
         application.Reject(reviewerId, notes);
 
         // Assert
@@ -131,7 +134,6 @@ public class PropertyApplicationTests
     // Note: These tests are commented out as the domain model doesn't currently
     // enforce the constraint that applications can't be reviewed twice.
     // This could be added as a future enhancement if needed.
-
     // [Fact]
     // public void Cannot_Approve_Already_Reviewed_Application()
     // {
@@ -139,11 +141,9 @@ public class PropertyApplicationTests
     //     var application = CreateTestApplication();
     //     var reviewerId = Guid.NewGuid();
     //     application.Approve(reviewerId, "First approval");
-
-    //     // Act & Assert
+    //     //  Act & Assert
     //     var exception = Assert.Throws<InvalidOperationException>(() =>
     //         application.Approve(reviewerId, "Second approval"));
-
     //     Assert.Contains("already been reviewed", exception.Message);
     // }
 
@@ -154,14 +154,11 @@ public class PropertyApplicationTests
     //     var application = CreateTestApplication();
     //     var reviewerId = Guid.NewGuid();
     //     application.Reject(reviewerId, "First rejection");
-
-    //     // Act & Assert
+    //     //  Act & Assert
     //     var exception = Assert.Throws<InvalidOperationException>(() =>
     //         application.Reject(reviewerId, "Second rejection"));
-
     //     Assert.Contains("already been reviewed", exception.Message);
     // }
-
     private static PropertyApplication CreateTestApplication()
     {
         var propertyId = Guid.NewGuid();
@@ -176,4 +173,3 @@ public class PropertyApplicationTests
             fee);
     }
 }
-

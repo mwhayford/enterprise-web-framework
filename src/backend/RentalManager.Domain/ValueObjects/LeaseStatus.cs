@@ -10,4 +10,3 @@ public enum LeaseStatus
     Terminated = 4,
     Renewed = 5
 }
-

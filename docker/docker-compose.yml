@@ -110,15 +110,19 @@ services:
     environment:
       ASPNETCORE_ENVIRONMENT: Development
       ConnectionStrings__DefaultConnection: Host=postgres;Database=RentalManagerDb_Dev;Username=postgres;Password=password
-      Jwt__Key: YourSuperSecretKeyThatIsAtLeast32CharactersLong!
+      Jwt__Key: DevJwtSecretKeyForDockerAtLeast32CharsLongEnoughForSecurity123456789
       Jwt__Issuer: RentalManager.API
       Jwt__Audience: RentalManager.API.Users
       Stripe__SecretKey: sk_test_your_stripe_secret_key
       Stripe__PublishableKey: pk_test_your_stripe_publishable_key
+      DOTNET_RUNNING_IN_CONTAINER: "true"
+      Authentication__Google__ClientId: ${Authentication__Google__ClientId}
+      Authentication__Google__ClientSecret: ${Authentication__Google__ClientSecret}
     ports:
-      - "7001:8080"
-    volumes:
-      - ../src/backend:/app/src:ro
+      - "5111:8080"
+    # Volume mount commented out - using compiled DLLs from image instead of source
+    # volumes:
+    #   - ../src/backend:/app/src:ro
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
       interval: 30s
@@ -136,10 +140,10 @@ services:
     depends_on:
       - backend
     environment:
-      - VITE_API_BASE_URL=http://localhost:7001/api
+      - VITE_API_BASE_URL=http://localhost:5111/api
       - VITE_STRIPE_PUBLISHABLE_KEY=pk_test_your_stripe_publishable_key
     ports:
-      - "3000:3000"
+      - "3001:3000"
     volumes:
       - ../src/frontend:/app/src:ro
     healthcheck:

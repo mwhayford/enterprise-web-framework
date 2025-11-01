@@ -1,8 +1,8 @@
 // Copyright (c) Core. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
-using RentalManager.Domain.Events;
 using MediatR;
 using Microsoft.Extensions.Logging;
+using RentalManager.Domain.Events;
 
 namespace RentalManager.Application.Handlers;
 

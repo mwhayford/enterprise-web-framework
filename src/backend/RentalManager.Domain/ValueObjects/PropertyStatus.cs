@@ -9,4 +9,3 @@ public enum PropertyStatus
     Maintenance = 3,
     Unlisted = 4
 }
-

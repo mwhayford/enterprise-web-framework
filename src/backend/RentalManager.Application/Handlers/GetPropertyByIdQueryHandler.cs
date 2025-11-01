@@ -57,4 +57,3 @@ public class GetPropertyByIdQueryHandler : IRequestHandler<GetPropertyByIdQuery,
         };
     }
 }
-

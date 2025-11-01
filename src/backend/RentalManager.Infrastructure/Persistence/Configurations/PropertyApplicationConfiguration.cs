@@ -70,5 +70,3 @@ public class PropertyApplicationConfiguration : IEntityTypeConfiguration<Propert
         builder.Ignore(pa => pa.DomainEvents);
     }
 }
-
-

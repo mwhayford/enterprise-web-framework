@@ -2,8 +2,11 @@
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
 using Hangfire;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using RentalManager.Application.Interfaces;
+using RentalManager.Infrastructure.Identity;
 using RentalManager.Infrastructure.Services;
 
 namespace RentalManager.Infrastructure.BackgroundJobs;
@@ -12,15 +15,18 @@ public class ApplicationNotificationJobs : IApplicationNotificationJobs
 {
     private readonly EmailService _emailService;
     private readonly IApplicationDbContext _context;
+    private readonly UserManager<ApplicationUser> _userManager;
     private readonly ILogger<ApplicationNotificationJobs> _logger;
 
     public ApplicationNotificationJobs(
         EmailService emailService,
         IApplicationDbContext context,
+        UserManager<ApplicationUser> userManager,
         ILogger<ApplicationNotificationJobs> logger)
     {
         _emailService = emailService;
         _context = context;
+        _userManager = userManager;
         _logger = logger;
     }
 
@@ -151,7 +157,7 @@ public class ApplicationNotificationJobs : IApplicationNotificationJobs
     }
 
     [AutomaticRetry(Attempts = 3)]
-    public async Task SendPropertyOwnerNewApplicationNotificationAsync(Guid applicationId)
+    public async Task SendOwnerNewApplicationNotificationAsync(Guid applicationId)
     {
         try
         {
@@ -169,12 +175,30 @@ public class ApplicationNotificationJobs : IApplicationNotificationJobs
                 return;
             }
 
-            // Get owner email (in a real system, you'd fetch this from the User table)
-            // For now, we'll log it
-            _logger.LogInformation("New application {ApplicationId} received for property {PropertyId}", applicationId, property.Id);
+            // Get owner email from Identity
+            var owner = await _userManager.FindByIdAsync(property.OwnerId.ToString());
+            if (owner == null || string.IsNullOrEmpty(owner.Email))
+            {
+                _logger.LogWarning("Owner {OwnerId} not found or has no email for property {PropertyId}", property.OwnerId, property.Id);
+                return;
+            }
 
-            // TODO: Fetch owner email and send notification
-            // await _emailService.SendEmailAsync(ownerEmail, "New Rental Application", message);
+            var applicantEmail = ExtractEmailFromApplicationData(application.ApplicationData);
+            var applicantName = ExtractNameFromApplicationData(application.ApplicationData);
+
+            await _emailService.SendEmail(
+                owner.Email,
+                "New Rental Application Received",
+                $@"<h2>New Rental Application</h2>
+                   <p>You have received a new rental application for your property.</p>
+                   <p><strong>Property ID:</strong> {property.Id}</p>
+                   <p><strong>Application ID:</strong> {application.Id}</p>
+                   {(string.IsNullOrEmpty(applicantName) ? string.Empty : $"<p><strong>Applicant:</strong> {applicantName}</p>")}
+                   {(string.IsNullOrEmpty(applicantEmail) ? string.Empty : $"<p><strong>Applicant Email:</strong> {applicantEmail}</p>")}
+                   <p><strong>Application Fee:</strong> {application.ApplicationFee.Currency} {application.ApplicationFee.Amount:F2}</p>
+                   <p>Please review the application in your dashboard.</p>");
+
+            _logger.LogInformation("Sent owner notification email for application {ApplicationId}", applicationId);
         }
         catch (Exception ex)
         {
@@ -200,5 +224,35 @@ public class ApplicationNotificationJobs : IApplicationNotificationJobs
 
         return null;
     }
-}
 
+    private static string? ExtractNameFromApplicationData(string applicationDataJson)
+    {
+        try
+        {
+            var data = System.Text.Json.JsonSerializer.Deserialize<Dictionary<string, object>>(applicationDataJson);
+            if (data != null)
+            {
+                var firstName = data.TryGetValue("firstName", out var fn) ? fn?.ToString() : null;
+                var lastName = data.TryGetValue("lastName", out var ln) ? ln?.ToString() : null;
+
+                if (!string.IsNullOrEmpty(firstName) && !string.IsNullOrEmpty(lastName))
+                {
+                    return $"{firstName} {lastName}";
+                }
+
+                if (!string.IsNullOrEmpty(firstName))
+                {
+                    return firstName;
+                }
+
+                return data.TryGetValue("fullName", out var fullName) ? fullName?.ToString() : null;
+            }
+        }
+        catch
+        {
+            // Ignore JSON parsing errors
+        }
+
+        return null;
+    }
+}

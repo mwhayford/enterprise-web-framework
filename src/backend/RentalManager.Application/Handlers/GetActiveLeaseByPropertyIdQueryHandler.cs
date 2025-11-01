@@ -59,4 +59,3 @@ public class GetActiveLeaseByPropertyIdQueryHandler : IRequestHandler<GetActiveL
         };
     }
 }
-

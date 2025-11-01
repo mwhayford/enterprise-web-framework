@@ -21,4 +21,3 @@ public class CreatePropertyCommandValidator : AbstractValidator<CreatePropertyCo
             .SetValidator(new CreatePropertyDtoValidator());
     }
 }
-

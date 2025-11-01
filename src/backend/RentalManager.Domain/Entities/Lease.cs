@@ -282,4 +282,3 @@ public class Lease : BaseEntity
         return remaining > 0 ? remaining : 0;
     }
 }
-

@@ -208,4 +208,3 @@ public class PropertySearchDocument
 
     public DateTime UpdatedAt { get; set; }
 }
-

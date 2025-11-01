@@ -73,7 +73,7 @@ public class SubmitPropertyApplicationCommandHandler : IRequestHandler<SubmitPro
         BackgroundJob.Enqueue<IApplicationNotificationJobs>(x =>
             x.SendApplicationSubmittedEmailAsync(application.Id));
         BackgroundJob.Enqueue<IApplicationNotificationJobs>(x =>
-            x.SendPropertyOwnerNewApplicationNotificationAsync(application.Id));
+            x.SendOwnerNewApplicationNotificationAsync(application.Id));
 
         return MapToDto(application);
     }
@@ -99,4 +99,3 @@ public class SubmitPropertyApplicationCommandHandler : IRequestHandler<SubmitPro
         };
     }
 }
-

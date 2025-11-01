@@ -64,4 +64,3 @@ public class ReferenceDto
 
     public string Email { get; set; } = default!;
 }
-

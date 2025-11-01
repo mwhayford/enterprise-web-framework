@@ -174,4 +174,3 @@ public class ReferenceDtoValidator : AbstractValidator<ReferenceDto>
             .MaximumLength(200).WithMessage("Reference email must not exceed 200 characters");
     }
 }
-

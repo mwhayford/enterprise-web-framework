@@ -3,10 +3,10 @@
 // </copyright>
 
 using FluentAssertions;
-using RentalManager.Domain.Entities;
-using RentalManager.Domain.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
+using RentalManager.Domain.Entities;
+using RentalManager.Domain.ValueObjects;
 
 namespace RentalManager.IntegrationTests.Infrastructure;
 

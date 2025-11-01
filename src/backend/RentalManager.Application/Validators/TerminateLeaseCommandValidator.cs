@@ -18,4 +18,3 @@ public class TerminateLeaseCommandValidator : AbstractValidator<TerminateLeaseCo
             .MaximumLength(1000).WithMessage("Termination reason cannot exceed 1000 characters");
     }
 }
-

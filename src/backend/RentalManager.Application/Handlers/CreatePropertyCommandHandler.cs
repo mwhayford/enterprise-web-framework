@@ -111,4 +111,3 @@ public class CreatePropertyCommandHandler : IRequestHandler<CreatePropertyComman
         };
     }
 }
-

@@ -47,4 +47,3 @@ public class CreateLeaseCommandValidator : AbstractValidator<CreateLeaseCommand>
             .MaximumLength(5000).WithMessage("Special terms cannot exceed 5000 characters");
     }
 }
-

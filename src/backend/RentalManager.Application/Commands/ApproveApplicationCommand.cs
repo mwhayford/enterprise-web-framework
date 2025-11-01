@@ -6,4 +6,3 @@ using RentalManager.Application.DTOs;
 namespace RentalManager.Application.Commands;
 
 public record ApproveApplicationCommand(Guid ApplicationId, string? DecisionNotes = null) : IRequest<PropertyApplicationDto>;
-

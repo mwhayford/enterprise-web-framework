@@ -6,4 +6,3 @@ using RentalManager.Application.DTOs;
 namespace RentalManager.Application.Queries;
 
 public record GetLeaseByIdQuery(Guid LeaseId) : IRequest<LeaseDto?>;
-

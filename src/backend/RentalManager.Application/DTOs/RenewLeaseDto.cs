@@ -10,4 +10,3 @@ public class RenewLeaseDto
 
     public string? Currency { get; set; }
 }
-

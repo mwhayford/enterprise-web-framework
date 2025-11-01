@@ -6,4 +6,3 @@ using RentalManager.Application.DTOs;
 namespace RentalManager.Application.Commands;
 
 public record RenewLeaseCommand(Guid LeaseId, RenewLeaseDto RenewalData) : IRequest<LeaseDto>;
-

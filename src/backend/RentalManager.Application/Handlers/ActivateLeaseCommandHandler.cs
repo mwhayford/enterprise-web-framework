@@ -59,4 +59,3 @@ public class ActivateLeaseCommandHandler : IRequestHandler<ActivateLeaseCommand,
         };
     }
 }
-

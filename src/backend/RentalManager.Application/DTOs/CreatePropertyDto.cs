@@ -46,4 +46,3 @@ public class CreatePropertyDto
 
     public List<string>? Images { get; set; }
 }
-

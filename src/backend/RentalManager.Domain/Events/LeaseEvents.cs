@@ -81,4 +81,3 @@ public record LeaseRentUpdatedEvent : BaseEvent
 
     public string Currency { get; init; } = default!;
 }
-

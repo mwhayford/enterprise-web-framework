@@ -53,4 +53,3 @@ public class GetLeasesByTenantIdQueryHandler : IRequestHandler<GetLeasesByTenant
         }).ToList();
     }
 }
-

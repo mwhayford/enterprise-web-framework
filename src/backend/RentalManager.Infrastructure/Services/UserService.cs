@@ -1,5 +1,8 @@
 // Copyright (c) Core. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
+using MediatR;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using RentalManager.Application.Commands;
 using RentalManager.Application.Interfaces;
 using RentalManager.Domain.Entities;
@@ -7,9 +10,6 @@ using RentalManager.Domain.Events;
 using RentalManager.Domain.ValueObjects;
 using RentalManager.Infrastructure.Identity;
 using RentalManager.Infrastructure.Persistence;
-using MediatR;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 
 namespace RentalManager.Infrastructure.Services;
 

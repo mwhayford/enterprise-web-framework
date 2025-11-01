@@ -53,4 +53,3 @@ public class GetLeasesByPropertyIdQueryHandler : IRequestHandler<GetLeasesByProp
         }).ToList();
     }
 }
-

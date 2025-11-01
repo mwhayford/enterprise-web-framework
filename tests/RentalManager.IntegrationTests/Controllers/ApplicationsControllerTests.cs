@@ -113,4 +113,3 @@ public class ApplicationsControllerTests
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.Unauthorized));
     }
 }
-

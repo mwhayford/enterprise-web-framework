@@ -21,4 +21,3 @@ public class SubmitPropertyApplicationCommandValidator : AbstractValidator<Submi
             .SetValidator(new SubmitApplicationDtoValidator());
     }
 }
-

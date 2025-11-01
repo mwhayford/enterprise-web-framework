@@ -6,4 +6,3 @@ using RentalManager.Application.DTOs;
 namespace RentalManager.Application.Commands;
 
 public record TerminateLeaseCommand(Guid LeaseId, string Reason) : IRequest<LeaseDto>;
-

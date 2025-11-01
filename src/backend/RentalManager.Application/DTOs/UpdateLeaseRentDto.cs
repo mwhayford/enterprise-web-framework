@@ -8,4 +8,3 @@ public class UpdateLeaseRentDto
 
     public string Currency { get; set; } = "USD";
 }
-

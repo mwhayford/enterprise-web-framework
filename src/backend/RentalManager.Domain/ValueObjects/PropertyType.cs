@@ -13,4 +13,3 @@ public enum PropertyType
     MultiFamily = 7,
     Other = 99
 }
-

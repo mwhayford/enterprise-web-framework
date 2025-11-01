@@ -34,4 +34,3 @@ public class PropertyApplicationDto
 
     public DateTime UpdatedAt { get; set; }
 }
-

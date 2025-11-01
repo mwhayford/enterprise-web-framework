@@ -44,4 +44,3 @@ public class GetUserApplicationsQueryHandler : IRequestHandler<GetUserApplicatio
         return applications;
     }
 }
-

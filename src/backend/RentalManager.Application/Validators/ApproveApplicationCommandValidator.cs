@@ -24,4 +24,3 @@ public class ApproveApplicationCommandValidator : AbstractValidator<ApproveAppli
             .When(x => !string.IsNullOrWhiteSpace(x.DecisionNotes));
     }
 }
-
