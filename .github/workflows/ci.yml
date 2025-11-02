@@ -151,35 +151,57 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
       
-      - name: Start Docker services
-        run: docker compose -f docker-compose.ci.yml up -d
-      
-      - name: Capture container logs immediately
+      - name: Start Docker services and capture logs
+        continue-on-error: true
         run: |
+          echo "Starting Docker services..."
+          docker compose -f docker-compose.ci.yml up -d || true
+          
+          # Give containers a moment to start or crash
+          sleep 5
+          
+          echo ""
           echo "=== Container Status (after startup) ==="
-          docker ps -a
+          docker ps -a || true
           echo ""
+          
           echo "=== Backend Container Exit Code ==="
-          docker inspect rentalmanager-backend-ci --format='{{.State.ExitCode}}' || echo "Container not found"
+          docker inspect rentalmanager-backend-ci --format='{{.State.ExitCode}}' 2>/dev/null || echo "Container not found or failed to inspect"
           echo ""
+          
+          echo "=== Backend Container Status ==="
+          docker inspect rentalmanager-backend-ci --format='Status: {{.State.Status}}, Error: {{.State.Error}}, Started: {{.State.StartedAt}}' 2>/dev/null || echo "Container not found"
+          echo ""
+          
           echo "=== Full Backend Container Logs ==="
-          docker logs rentalmanager-backend-ci 2>&1 || true
+          docker logs rentalmanager-backend-ci 2>&1 || echo "Could not retrieve backend logs"
           echo ""
+          
           echo "=== Backend Container Environment ==="
-          docker inspect rentalmanager-backend-ci --format='{{range .Config.Env}}{{println .}}{{end}}' || true
+          docker inspect rentalmanager-backend-ci --format='{{range .Config.Env}}{{println .}}{{end}}' 2>/dev/null || echo "Could not retrieve environment"
           echo ""
+          
           echo "=== All Container Logs (for debugging) ==="
-          docker compose -f docker-compose.ci.yml logs --tail=100 || true
+          docker compose -f docker-compose.ci.yml logs --tail=100 2>&1 || echo "Could not retrieve compose logs"
+          echo ""
+          
+          echo "=== Docker Compose PS (all services) ==="
+          docker compose -f docker-compose.ci.yml ps -a || true
       
       - name: Wait for containers to initialize
+        continue-on-error: true
         run: |
           echo "Waiting 60 seconds for containers to initialize..."
           sleep 60
+          echo ""
           echo "=== Container Status (after wait) ==="
-          docker ps -a
+          docker ps -a || true
           echo ""
           echo "=== Backend Container Logs (last 100 lines) ==="
-          docker logs --tail 100 rentalmanager-backend-ci || true
+          docker logs --tail 100 rentalmanager-backend-ci 2>&1 || echo "Could not retrieve backend logs"
+          echo ""
+          echo "=== Backend Container Exit Code (after wait) ==="
+          docker inspect rentalmanager-backend-ci --format='Exit Code: {{.State.ExitCode}}, Status: {{.State.Status}}' 2>/dev/null || echo "Container not found"
       
       - name: Wait for services to be healthy
         run: |
