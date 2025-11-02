@@ -71,17 +71,29 @@ if (isDocker)
         requiredSecrets.Add(("Authentication:Google:ClientSecret", "Google OAuth Client Secret"));
     }
 
+    // Allow placeholder values in CI/Testing environments
+    var isTestingOrCI = builder.Environment.IsEnvironment("Testing") ||
+                        builder.Environment.EnvironmentName == "Testing" ||
+                        Environment.GetEnvironmentVariable("CI") == "true" ||
+                        Environment.GetEnvironmentVariable("GITHUB_ACTIONS") == "true";
+
     var missingSecrets = new List<string>();
     foreach (var (configKey, description) in requiredSecrets)
     {
         var value = builder.Configuration[configKey];
-        if (string.IsNullOrWhiteSpace(value) ||
-            value.Contains("your-") ||
-            value.Contains("YOUR_") ||
-            value == "YourSuperSecretKeyThatIsAtLeast32CharactersLong!")
+        if (string.IsNullOrWhiteSpace(value))
         {
             missingSecrets.Add($"{description} ({configKey})");
         }
+        else if (!isTestingOrCI && (
+            value.Contains("your-") ||
+            value.Contains("YOUR_") ||
+            value == "YourSuperSecretKeyThatIsAtLeast32CharactersLong!"))
+        {
+            // In non-testing environments, reject placeholder values
+            missingSecrets.Add($"{description} ({configKey})");
+        }
+        // In CI/Testing, allow placeholder values for testing purposes
     }
 
     if (missingSecrets.Any())
