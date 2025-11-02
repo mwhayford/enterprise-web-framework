@@ -263,46 +263,101 @@ var kafkaEnabled = !isTestEnvironment && !string.IsNullOrWhiteSpace(kafkaBootstr
 
 if (kafkaEnabled)
 {
-    builder.Services.AddSingleton<IProducer<Null, string>>(provider =>
+    try
     {
-        var settings = provider.GetRequiredService<IOptions<KafkaSettings>>().Value;
-        var config = new ProducerConfig
+        builder.Services.AddSingleton<IProducer<Null, string>>(provider =>
         {
-            BootstrapServers = settings.BootstrapServers,
-            SecurityProtocol = Enum.Parse<SecurityProtocol>(settings.SecurityProtocol, true),
-        };
+            var settings = provider.GetRequiredService<IOptions<KafkaSettings>>().Value;
+            
+            // Parse SecurityProtocol safely, defaulting to Plaintext
+            var securityProtocol = SecurityProtocol.Plaintext;
+            if (!string.IsNullOrWhiteSpace(settings.SecurityProtocol))
+            {
+                // Try common variations of the protocol name
+                var protocolStr = settings.SecurityProtocol.ToUpperInvariant();
+                securityProtocol = protocolStr switch
+                {
+                    "PLAINTEXT" or "PLAIN" => SecurityProtocol.Plaintext,
+                    "SSL" => SecurityProtocol.Ssl,
+                    "SASL_PLAINTEXT" or "SASLPLAINTEXT" => SecurityProtocol.SaslPlaintext,
+                    "SASL_SSL" or "SASLSSL" => SecurityProtocol.SaslSsl,
+                    _ => Enum.TryParse<SecurityProtocol>(settings.SecurityProtocol, true, out var parsed)
+                        ? parsed
+                        : SecurityProtocol.Plaintext
+                };
+            }
 
-        if (!string.IsNullOrEmpty(settings.SaslMechanism))
+            var config = new ProducerConfig
+            {
+                BootstrapServers = settings.BootstrapServers,
+                SecurityProtocol = securityProtocol,
+            };
+
+            if (!string.IsNullOrEmpty(settings.SaslMechanism))
+            {
+                if (Enum.TryParse<SaslMechanism>(settings.SaslMechanism, true, out var saslMechanism))
+                {
+                    config.SaslMechanism = saslMechanism;
+                    config.SaslUsername = settings.SaslUsername;
+                    config.SaslPassword = settings.SaslPassword;
+                }
+            }
+
+            return new ProducerBuilder<Null, string>(config).Build();
+        });
+
+        builder.Services.AddSingleton<IConsumer<Null, string>>(provider =>
         {
-            config.SaslMechanism = Enum.Parse<SaslMechanism>(settings.SaslMechanism, true);
-            config.SaslUsername = settings.SaslUsername;
-            config.SaslPassword = settings.SaslPassword;
-        }
+            var settings = provider.GetRequiredService<IOptions<KafkaSettings>>().Value;
+            
+            // Parse SecurityProtocol safely, defaulting to Plaintext
+            var securityProtocol = SecurityProtocol.Plaintext;
+            if (!string.IsNullOrWhiteSpace(settings.SecurityProtocol))
+            {
+                // Try common variations of the protocol name
+                var protocolStr = settings.SecurityProtocol.ToUpperInvariant();
+                securityProtocol = protocolStr switch
+                {
+                    "PLAINTEXT" or "PLAIN" => SecurityProtocol.Plaintext,
+                    "SSL" => SecurityProtocol.Ssl,
+                    "SASL_PLAINTEXT" or "SASLPLAINTEXT" => SecurityProtocol.SaslPlaintext,
+                    "SASL_SSL" or "SASLSSL" => SecurityProtocol.SaslSsl,
+                    _ => Enum.TryParse<SecurityProtocol>(settings.SecurityProtocol, true, out var parsed)
+                        ? parsed
+                        : SecurityProtocol.Plaintext
+                };
+            }
 
-        return new ProducerBuilder<Null, string>(config).Build();
-    });
+            var config = new ConsumerConfig
+            {
+                BootstrapServers = settings.BootstrapServers,
+                GroupId = settings.GroupId,
+                AutoOffsetReset = AutoOffsetReset.Earliest,
+                EnableAutoCommit = false,
+                SecurityProtocol = securityProtocol,
+            };
 
-    builder.Services.AddSingleton<IConsumer<Null, string>>(provider =>
+            if (!string.IsNullOrEmpty(settings.SaslMechanism))
+            {
+                if (Enum.TryParse<SaslMechanism>(settings.SaslMechanism, true, out var saslMechanism))
+                {
+                    config.SaslMechanism = saslMechanism;
+                    config.SaslUsername = settings.SaslUsername;
+                    config.SaslPassword = settings.SaslPassword;
+                }
+            }
+
+            return new ConsumerBuilder<Null, string>(config).Build();
+        });
+    }
+    catch (Exception ex)
     {
-        var settings = provider.GetRequiredService<IOptions<KafkaSettings>>().Value;
-        var config = new ConsumerConfig
-        {
-            BootstrapServers = settings.BootstrapServers,
-            GroupId = settings.GroupId,
-            AutoOffsetReset = AutoOffsetReset.Earliest,
-            EnableAutoCommit = false,
-            SecurityProtocol = Enum.Parse<SecurityProtocol>(settings.SecurityProtocol, true),
-        };
-
-        if (!string.IsNullOrEmpty(settings.SaslMechanism))
-        {
-            config.SaslMechanism = Enum.Parse<SaslMechanism>(settings.SaslMechanism, true);
-            config.SaslUsername = settings.SaslUsername;
-            config.SaslPassword = settings.SaslPassword;
-        }
-
-        return new ConsumerBuilder<Null, string>(config).Build();
-    });
+        // If Kafka registration fails, disable it and use NullEventBus
+        // Log the error, but don't crash the application
+        var logger = builder.Services.BuildServiceProvider().GetService<ILogger<Program>>();
+        logger?.LogWarning(ex, "Failed to register Kafka services. EventBus will use NullEventBus. Application will continue without Kafka.");
+        kafkaEnabled = false;
+    }
 }
 
 // Configure Hangfire - make it optional to prevent startup crashes
