@@ -196,8 +196,26 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 .AddEntityFrameworkStores<ApplicationDbContext>()
 .AddDefaultTokenProviders();
 
-// Configure Stripe
-StripeConfiguration.ApiKey = builder.Configuration["Stripe:SecretKey"];
+// Configure Stripe - make it optional to prevent crashes
+try
+{
+    var stripeKey = builder.Configuration["Stripe:SecretKey"];
+    if (!string.IsNullOrWhiteSpace(stripeKey))
+    {
+        StripeConfiguration.ApiKey = stripeKey;
+    }
+    else if (isDocker)
+    {
+        Console.WriteLine("[DEBUG] Stripe API key not configured - payment features may be unavailable");
+    }
+}
+catch (Exception ex)
+{
+    if (isDocker)
+    {
+        Console.WriteLine($"[DEBUG] Warning: Failed to configure Stripe: {ex.Message}");
+    }
+}
 
 // Configure MediatR
 builder.Services.AddMediatR(cfg =>
