@@ -509,8 +509,9 @@ test.describe('Admin Application Management', () => {
       
       // Verify filter is active (button should be highlighted)
       const isActive = await approvedFilter.evaluate(el => {
+        const win = el.ownerDocument.defaultView;
         return el.classList.contains('bg-blue-600') || 
-               window.getComputedStyle(el).backgroundColor !== 'rgba(0, 0, 0, 0)';
+               (win ? win.getComputedStyle(el).backgroundColor !== 'rgba(0, 0, 0, 0)' : false);
       });
       expect(isActive !== false).toBeTruthy();
     } else {
