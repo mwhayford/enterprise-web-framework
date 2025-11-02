@@ -7,3 +7,4 @@ namespace RentalManager.Application.Queries;
 
 public record GetWorkOrderByIdQuery(Guid WorkOrderId) : IRequest<WorkOrderDto?>;
 
+

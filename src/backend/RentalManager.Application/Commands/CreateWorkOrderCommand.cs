@@ -7,3 +7,4 @@ namespace RentalManager.Application.Commands;
 
 public record CreateWorkOrderCommand(CreateWorkOrderDto WorkOrderData) : IRequest<WorkOrderDto>;
 
+

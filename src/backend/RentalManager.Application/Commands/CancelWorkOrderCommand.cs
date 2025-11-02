@@ -7,3 +7,4 @@ namespace RentalManager.Application.Commands;
 
 public record CancelWorkOrderCommand(Guid WorkOrderId, string? Reason = null) : IRequest<WorkOrderDto>;
 
+

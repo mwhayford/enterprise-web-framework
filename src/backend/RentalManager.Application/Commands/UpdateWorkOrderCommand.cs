@@ -7,3 +7,4 @@ namespace RentalManager.Application.Commands;
 
 public record UpdateWorkOrderCommand(Guid WorkOrderId, UpdateWorkOrderDto UpdateData) : IRequest<WorkOrderDto>;
 
+
