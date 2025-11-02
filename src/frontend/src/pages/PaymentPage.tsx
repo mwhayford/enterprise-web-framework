@@ -6,6 +6,7 @@ import { PaymentForm } from '../components/payments/PaymentForm'
 import { Button } from '../components/ui/Button'
 import { useNavigate } from 'react-router-dom'
 import type { Payment } from '../types'
+import { AuthenticatedLayout } from '../components/layout/AuthenticatedLayout'
 
 export const PaymentPage: React.FC = () => {
   const navigate = useNavigate()
@@ -30,7 +31,7 @@ export const PaymentPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12">
+    <AuthenticatedLayout>
       <div className="max-w-md mx-auto">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900">Make a Payment</h1>
@@ -93,6 +94,6 @@ export const PaymentPage: React.FC = () => {
           </Button>
         </div>
       </div>
-    </div>
+    </AuthenticatedLayout>
   )
 }

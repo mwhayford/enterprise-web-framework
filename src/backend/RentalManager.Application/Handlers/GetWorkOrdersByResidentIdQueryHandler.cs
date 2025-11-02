@@ -28,3 +28,4 @@ public class GetWorkOrdersByResidentIdQueryHandler : IRequestHandler<GetWorkOrde
         return workOrders.Select(WorkOrderMappingHelper.MapToDto).ToList();
     }
 }
+

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
-import { Filter, ChevronLeft, ChevronRight } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
+import { Filter, ChevronLeft, ChevronRight, Home } from 'lucide-react'
 import { PropertyCard } from '../components/properties/PropertyCard'
 import { PropertyFilters } from '../components/properties/PropertyFilters'
 import {
@@ -7,8 +8,11 @@ import {
   type PropertyFilters as PropertyFiltersType,
 } from '../services/propertyService'
 import type { PropertyListDto, PagedResult } from '../services/propertyService'
+import { PublicLayout } from '../components/layout/PublicLayout'
+import { Button } from '../components/ui/Button'
 
 export const PropertiesPage = () => {
+  const navigate = useNavigate()
   const [properties, setProperties] =
     useState<PagedResult<PropertyListDto> | null>(null)
   const [loading, setLoading] = useState(true)
@@ -48,10 +52,20 @@ export const PropertiesPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <div className="bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+    <PublicLayout>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="mb-6">
+          <div className="flex items-center gap-3 mb-4">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => navigate('/')}
+              className="flex items-center gap-2"
+            >
+              <Home className="w-4 h-4" />
+              <span>Back to Home</span>
+            </Button>
+          </div>
           <h1 className="text-3xl font-bold text-gray-900">
             Available Properties
           </h1>
@@ -61,10 +75,6 @@ export const PropertiesPage = () => {
               : 'Loading...'}
           </p>
         </div>
-      </div>
-
-      {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex gap-6">
           {/* Filters Sidebar - Desktop */}
           <aside className="hidden lg:block w-80 flex-shrink-0">
@@ -202,6 +212,6 @@ export const PropertiesPage = () => {
           </div>
         </div>
       </div>
-    </div>
+    </PublicLayout>
   )
 }

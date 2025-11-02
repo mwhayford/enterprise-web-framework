@@ -11,6 +11,7 @@ import {
   applicationService,
   type PropertyApplicationDto,
 } from '../services/applicationService'
+import { AuthenticatedLayout } from '../components/layout/AuthenticatedLayout'
 
 const statusLabels: Record<number, string> = {
   0: 'Pending',
@@ -79,19 +80,13 @@ export const MyApplicationsPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <div className="bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <h1 className="text-3xl font-bold text-gray-900">My Applications</h1>
-          <p className="mt-2 text-gray-600">
-            Track the status of your rental applications
-          </p>
-        </div>
+    <AuthenticatedLayout>
+      <div>
+        <h1 className="text-3xl font-bold text-gray-900 mb-2">My Applications</h1>
+        <p className="text-gray-600 mb-6">
+          Track the status of your rental applications
+        </p>
       </div>
-
-      {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {successMessage && (
           <div className="mb-6 bg-green-50 border border-green-200 rounded-lg p-4 text-green-800 flex items-center gap-2">
             <CheckCircle className="w-5 h-5" />
@@ -237,7 +232,6 @@ export const MyApplicationsPage = () => {
             })}
           </div>
         )}
-      </div>
-    </div>
+    </AuthenticatedLayout>
   )
 }

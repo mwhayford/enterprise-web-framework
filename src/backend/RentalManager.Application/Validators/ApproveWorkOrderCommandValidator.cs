@@ -13,3 +13,4 @@ public class ApproveWorkOrderCommandValidator : AbstractValidator<ApproveWorkOrd
             .NotEmpty().WithMessage("Work order ID is required");
     }
 }
+

@@ -26,6 +26,7 @@ import { AdminApplicationsPage } from './pages/AdminApplicationsPage'
 import { ApplicationReviewPage } from './pages/ApplicationReviewPage'
 import LeasesPage from './pages/LeasesPage'
 import LeaseDetailPage from './pages/LeaseDetailPage'
+import HowItWorksPage from './pages/HowItWorksPage'
 
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({
   children,
@@ -130,6 +131,7 @@ const AppRoutes: React.FC = () => {
           </ProtectedRoute>
         }
       />
+      <Route path="/how-it-works" element={<HowItWorksPage />} />
       <Route path="/properties" element={<PropertiesPage />} />
       <Route path="/properties/:id" element={<PropertyDetailPage />} />
       <Route
