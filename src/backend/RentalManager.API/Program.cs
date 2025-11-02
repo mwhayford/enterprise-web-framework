@@ -253,46 +253,53 @@ builder.Services.AddSingleton<IElasticClient>(provider =>
 builder.Services.Configure<KafkaSettings>(
     builder.Configuration.GetSection("Kafka"));
 
-builder.Services.AddSingleton<IProducer<Null, string>>(provider =>
+// Only register Kafka producer/consumer if bootstrap servers are configured
+var kafkaSettings = builder.Configuration.GetSection("Kafka").Get<KafkaSettings>();
+var kafkaEnabled = !string.IsNullOrWhiteSpace(kafkaSettings?.BootstrapServers);
+
+if (kafkaEnabled)
 {
-    var settings = provider.GetRequiredService<IOptions<KafkaSettings>>().Value;
-    var config = new ProducerConfig
+    builder.Services.AddSingleton<IProducer<Null, string>>(provider =>
     {
-        BootstrapServers = settings.BootstrapServers,
-        SecurityProtocol = Enum.Parse<SecurityProtocol>(settings.SecurityProtocol, true),
-    };
+        var settings = provider.GetRequiredService<IOptions<KafkaSettings>>().Value;
+        var config = new ProducerConfig
+        {
+            BootstrapServers = settings.BootstrapServers,
+            SecurityProtocol = Enum.Parse<SecurityProtocol>(settings.SecurityProtocol, true),
+        };
 
-    if (!string.IsNullOrEmpty(settings.SaslMechanism))
+        if (!string.IsNullOrEmpty(settings.SaslMechanism))
+        {
+            config.SaslMechanism = Enum.Parse<SaslMechanism>(settings.SaslMechanism, true);
+            config.SaslUsername = settings.SaslUsername;
+            config.SaslPassword = settings.SaslPassword;
+        }
+
+        return new ProducerBuilder<Null, string>(config).Build();
+    });
+
+    builder.Services.AddSingleton<IConsumer<Null, string>>(provider =>
     {
-        config.SaslMechanism = Enum.Parse<SaslMechanism>(settings.SaslMechanism, true);
-        config.SaslUsername = settings.SaslUsername;
-        config.SaslPassword = settings.SaslPassword;
-    }
+        var settings = provider.GetRequiredService<IOptions<KafkaSettings>>().Value;
+        var config = new ConsumerConfig
+        {
+            BootstrapServers = settings.BootstrapServers,
+            GroupId = settings.GroupId,
+            AutoOffsetReset = AutoOffsetReset.Earliest,
+            EnableAutoCommit = false,
+            SecurityProtocol = Enum.Parse<SecurityProtocol>(settings.SecurityProtocol, true),
+        };
 
-    return new ProducerBuilder<Null, string>(config).Build();
-});
+        if (!string.IsNullOrEmpty(settings.SaslMechanism))
+        {
+            config.SaslMechanism = Enum.Parse<SaslMechanism>(settings.SaslMechanism, true);
+            config.SaslUsername = settings.SaslUsername;
+            config.SaslPassword = settings.SaslPassword;
+        }
 
-builder.Services.AddSingleton<IConsumer<Null, string>>(provider =>
-{
-    var settings = provider.GetRequiredService<IOptions<KafkaSettings>>().Value;
-    var config = new ConsumerConfig
-    {
-        BootstrapServers = settings.BootstrapServers,
-        GroupId = settings.GroupId,
-        AutoOffsetReset = AutoOffsetReset.Earliest,
-        EnableAutoCommit = false,
-        SecurityProtocol = Enum.Parse<SecurityProtocol>(settings.SecurityProtocol, true),
-    };
-
-    if (!string.IsNullOrEmpty(settings.SaslMechanism))
-    {
-        config.SaslMechanism = Enum.Parse<SaslMechanism>(settings.SaslMechanism, true);
-        config.SaslUsername = settings.SaslUsername;
-        config.SaslPassword = settings.SaslPassword;
-    }
-
-    return new ConsumerBuilder<Null, string>(config).Build();
-});
+        return new ConsumerBuilder<Null, string>(config).Build();
+    });
+}
 
 // Configure Hangfire - make it optional to prevent startup crashes
 // Hangfire will only be enabled if postgres connection works
@@ -354,7 +361,18 @@ builder.Services.AddScoped<IPaymentMethodService, RentalManager.Infrastructure.S
 builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 builder.Services.AddScoped<IDateTime, DateTimeService>();
 builder.Services.AddScoped<ISearchService, ElasticsearchService>();
-builder.Services.AddScoped<IEventBus, KafkaEventBus>();
+
+// Register EventBus conditionally based on Kafka availability
+if (kafkaEnabled)
+{
+    builder.Services.AddScoped<IEventBus, KafkaEventBus>();
+    builder.Services.AddHostedService<KafkaEventBus>();
+}
+else
+{
+    builder.Services.AddScoped<IEventBus, NullEventBus>();
+}
+
 builder.Services.AddScoped<IEventPublisher, EventPublisher>();
 
 // Register background job service conditionally based on Hangfire availability
@@ -373,7 +391,6 @@ builder.Services.AddScoped<IMetricsService, MetricsService>();
 builder.Services.AddScoped<IPropertyIndexingService, PropertyIndexingService>();
 builder.Services.AddScoped<IApplicationNotificationJobs, ApplicationNotificationJobs>();
 builder.Services.AddScoped<PropertySeeder>();
-builder.Services.AddHostedService<KafkaEventBus>();
 
 // Configure Swagger/OpenAPI
 builder.Services.AddEndpointsApiExplorer();
