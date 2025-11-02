@@ -145,9 +145,11 @@ services:
       - "3001:80"
     environment:
       - VITE_API_BASE_URL=http://localhost:5111/api
+    # Changed from service_healthy to service_started to allow frontend to start even if backend crashes
+    # This allows E2E tests to run and we can see frontend logs even if backend fails
     depends_on:
       backend:
-        condition: service_healthy
+        condition: service_started
     networks:
       - rentalmanager-network
     healthcheck:

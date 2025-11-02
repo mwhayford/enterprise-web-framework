@@ -187,6 +187,18 @@ jobs:
           
           echo "=== Docker Compose PS (all services) ==="
           docker compose -f docker-compose.ci.yml ps -a || true
+          echo ""
+          
+          echo "=== Frontend Container Status ==="
+          docker inspect rentalmanager-frontend-ci --format='Status: {{.State.Status}}, Exit Code: {{.State.ExitCode}}, Started: {{.State.StartedAt}}' 2>/dev/null || echo "Frontend container not found or failed to inspect"
+          echo ""
+          
+          echo "=== Frontend Container Logs ==="
+          docker logs rentalmanager-frontend-ci 2>&1 || echo "Could not retrieve frontend logs"
+          echo ""
+          
+          echo "=== Frontend Container Environment ==="
+          docker inspect rentalmanager-frontend-ci --format='{{range .Config.Env}}{{println .}}{{end}}' 2>/dev/null || echo "Could not retrieve frontend environment"
       
       - name: Wait for containers to initialize
         continue-on-error: true
