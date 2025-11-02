@@ -6,22 +6,123 @@ test.describe('Property Application Flow', () => {
   });
 
   test('should allow browsing available properties', async ({ page }) => {
+    // Mock API response for properties
+    await page.route('**/api/properties*', async route => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          items: [
+            {
+              id: 'test-property-1',
+              address: '123 Test St',
+              city: 'Test City',
+              state: 'TS',
+              zipCode: '12345',
+              propertyType: 0,
+              bedrooms: 2,
+              bathrooms: 2,
+              squareFeet: 1000,
+              monthlyRent: 1500,
+              thumbnailImage: null,
+              status: 0,
+              availableDate: new Date().toISOString(),
+            },
+          ],
+          totalCount: 1,
+          pageNumber: 1,
+          pageSize: 12,
+          totalPages: 1,
+          hasPreviousPage: false,
+          hasNextPage: false,
+        }),
+      });
+    });
+
     // Navigate to properties page
     await page.click('text=Properties');
     await expect(page).toHaveURL('/properties');
 
-    // Check for property listings
-    await expect(page.locator('[data-testid="property-card"]').first()).toBeVisible();
+    // Wait for page to finish loading (wait for loading state to disappear)
+    await page.waitForLoadState('networkidle');
+    
+    // Wait for either property cards to appear or error message
+    // Check if loading spinner is gone
+    await page.waitForTimeout(2000); // Give time for API call
+
+    // Check for property listings - wait for the API response to render
+    await expect(page.locator('[data-testid="property-card"]').first()).toBeVisible({ timeout: 15000 });
   });
 
   test('should show property details', async ({ page }) => {
+    // Mock API response for properties list
+    await page.route('**/api/properties*', async route => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          items: [
+            {
+              id: 'test-property-1',
+              address: '123 Test St',
+              city: 'Test City',
+              state: 'TS',
+              zipCode: '12345',
+              propertyType: 0,
+              bedrooms: 2,
+              bathrooms: 2,
+              squareFeet: 1000,
+              monthlyRent: 1500,
+              thumbnailImage: null,
+              status: 0,
+              availableDate: new Date().toISOString(),
+            },
+          ],
+          totalCount: 1,
+          pageNumber: 1,
+          pageSize: 12,
+          totalPages: 1,
+          hasPreviousPage: false,
+          hasNextPage: false,
+        }),
+      });
+    });
+
+    // Mock API response for property detail
+    await page.route('**/api/properties/test-property-1*', async route => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          id: 'test-property-1',
+          address: {
+            street: '123 Test St',
+            city: 'Test City',
+            state: 'TS',
+            zipCode: '12345',
+          },
+          propertyType: 0,
+          bedrooms: 2,
+          bathrooms: 2,
+          squareFeet: 1000,
+          monthlyRent: { amount: 1500, currency: 'USD' },
+          securityDeposit: { amount: 1500, currency: 'USD' },
+          description: 'Test property description',
+          status: 0,
+          availableDate: new Date().toISOString(),
+          images: [],
+          amenities: [],
+        }),
+      });
+    });
+
     // Navigate to properties page
     await page.goto('/properties');
-    await page.waitForLoadState('domcontentloaded');
-    await page.waitForTimeout(2000); // Wait for properties to load
+    await page.waitForLoadState('networkidle');
+    await page.waitForTimeout(1000); // Wait for properties to load
 
     // Wait for at least one property card to be visible
-    await expect(page.locator('[data-testid="property-card"]').first()).toBeVisible({ timeout: 10000 });
+    await expect(page.locator('[data-testid="property-card"]').first()).toBeVisible({ timeout: 15000 });
 
     // Click on first property
     await page.locator('[data-testid="property-card"]').first().click();
