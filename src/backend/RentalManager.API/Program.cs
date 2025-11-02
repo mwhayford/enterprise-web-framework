@@ -255,11 +255,14 @@ builder.Services.Configure<KafkaSettings>(
 
 // Only register Kafka producer/consumer if bootstrap servers are configured
 // Check configuration directly (not from bound object) to avoid default values
-// Disable Kafka in test environments or when explicitly set to empty
+// Disable Kafka in test/CI environments or when explicitly set to empty
 var kafkaBootstrapServers = builder.Configuration["Kafka:BootstrapServers"];
 var isTestEnvironment = builder.Environment.IsEnvironment("Testing") || 
                         builder.Environment.EnvironmentName == "Testing";
-var kafkaEnabled = !isTestEnvironment && !string.IsNullOrWhiteSpace(kafkaBootstrapServers);
+// Also disable Kafka if explicitly disabled via environment variable (useful for CI/Docker)
+var kafkaDisabled = builder.Configuration["Kafka:Disabled"] == "true" || 
+                    Environment.GetEnvironmentVariable("KAFKA_DISABLED") == "true";
+var kafkaEnabled = !isTestEnvironment && !kafkaDisabled && !string.IsNullOrWhiteSpace(kafkaBootstrapServers);
 
 if (kafkaEnabled)
 {

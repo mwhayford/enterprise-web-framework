@@ -113,7 +113,8 @@ services:
       - Frontend__BaseUrl=http://localhost:3001
       - Elasticsearch__Url=http://elasticsearch:9200
       - Elasticsearch__DefaultIndex=rentalmanager-index
-      - Kafka__BootstrapServers=kafka:29092
+      - Kafka__Disabled=true
+      - Kafka__BootstrapServers=
       - Kafka__GroupId=rentalmanager-api-group
     depends_on:
       postgres:
