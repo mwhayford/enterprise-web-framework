@@ -602,7 +602,12 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+// Only use HTTPS redirection if not in Docker (Docker handles this at proxy level)
+// This can cause crashes if certificates aren't available
+if (!isDocker)
+{
+    app.UseHttpsRedirection();
+}
 
 app.UseCors("AllowReactApp");
 
