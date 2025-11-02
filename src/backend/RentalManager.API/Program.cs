@@ -104,34 +104,55 @@ Log.Logger = new LoggerConfiguration()
 
 builder.Host.UseSerilog();
 
-// Configure OpenTelemetry
-var serviceName = builder.Configuration["OpenTelemetry:ServiceName"] ?? "Core.API";
-var serviceVersion = builder.Configuration["OpenTelemetry:ServiceVersion"] ?? "1.0.0";
+// Configure OpenTelemetry - make it optional to prevent crashes
+try
+{
+    var serviceName = builder.Configuration["OpenTelemetry:ServiceName"] ?? "Core.API";
+    var serviceVersion = builder.Configuration["OpenTelemetry:ServiceVersion"] ?? "1.0.0";
 
-builder.Services.AddOpenTelemetry()
-    .WithTracing(tracerProviderBuilder =>
-    {
-        tracerProviderBuilder
-            .SetResourceBuilder(ResourceBuilder.CreateDefault()
-                .AddService(serviceName, serviceVersion))
-            .AddAspNetCoreInstrumentation()
-            .AddEntityFrameworkCoreInstrumentation()
-            .AddHttpClientInstrumentation()
-            .AddJaegerExporter(options =>
+    builder.Services.AddOpenTelemetry()
+        .WithTracing(tracerProviderBuilder =>
+        {
+            tracerProviderBuilder
+                .SetResourceBuilder(ResourceBuilder.CreateDefault()
+                    .AddService(serviceName, serviceVersion))
+                .AddAspNetCoreInstrumentation()
+                .AddEntityFrameworkCoreInstrumentation()
+                .AddHttpClientInstrumentation();
+            
+            // Only add Jaeger if endpoint is configured
+            var jaegerEndpoint = builder.Configuration["OpenTelemetry:JaegerEndpoint"];
+            if (!string.IsNullOrWhiteSpace(jaegerEndpoint))
             {
-                options.Endpoint = new Uri(builder.Configuration["OpenTelemetry:JaegerEndpoint"] ?? "http://localhost:14268/api/traces");
-            });
-    })
-    .WithMetrics(metricsProviderBuilder =>
-    {
-        metricsProviderBuilder
-            .SetResourceBuilder(ResourceBuilder.CreateDefault()
-                .AddService(serviceName, serviceVersion))
-            .AddAspNetCoreInstrumentation()
-            .AddRuntimeInstrumentation()
-            .AddHttpClientInstrumentation()
-            .AddPrometheusExporter();
-    });
+                try
+                {
+                    tracerProviderBuilder.AddJaegerExporter(options =>
+                    {
+                        options.Endpoint = new Uri(jaegerEndpoint);
+                    });
+                }
+                catch
+                {
+                    // Jaeger configuration failed - continue without it
+                }
+            }
+        })
+        .WithMetrics(metricsProviderBuilder =>
+        {
+            metricsProviderBuilder
+                .SetResourceBuilder(ResourceBuilder.CreateDefault()
+                    .AddService(serviceName, serviceVersion))
+                .AddAspNetCoreInstrumentation()
+                .AddRuntimeInstrumentation()
+                .AddHttpClientInstrumentation()
+                .AddPrometheusExporter();
+        });
+}
+catch (Exception ex)
+{
+    // Log but don't crash - telemetry will be unavailable
+    Console.WriteLine($"Warning: Failed to configure OpenTelemetry: {ex.Message}");
+}
 
 // Add services to the container
 builder.Services.AddControllers();
@@ -235,19 +256,52 @@ builder.Services.AddAuthorization();
 builder.Services.Configure<ElasticsearchSettings>(
     builder.Configuration.GetSection("Elasticsearch"));
 
-builder.Services.AddSingleton<IElasticClient>(provider =>
+// Make Elasticsearch optional - disable if explicitly disabled or URL is empty
+var elasticsearchUrl = builder.Configuration["Elasticsearch:Url"];
+var elasticsearchDisabled = builder.Configuration["Elasticsearch:Disabled"] == "true" ||
+                            Environment.GetEnvironmentVariable("ELASTICSEARCH_DISABLED") == "true" ||
+                            string.IsNullOrWhiteSpace(elasticsearchUrl);
+
+if (!elasticsearchDisabled)
 {
-    var settings = provider.GetRequiredService<IOptions<ElasticsearchSettings>>().Value;
-    var connectionSettings = new ConnectionSettings(new Uri(settings.Url))
-        .DefaultIndex(settings.DefaultIndex);
-
-    if (!string.IsNullOrEmpty(settings.Username) && !string.IsNullOrEmpty(settings.Password))
+    try
     {
-        connectionSettings.BasicAuthentication(settings.Username, settings.Password);
-    }
+        builder.Services.AddSingleton<IElasticClient>(provider =>
+        {
+            try
+            {
+                var settings = provider.GetRequiredService<IOptions<ElasticsearchSettings>>().Value;
+                var connectionSettings = new ConnectionSettings(new Uri(settings.Url))
+                    .DefaultIndex(settings.DefaultIndex)
+                    .RequestTimeout(TimeSpan.FromSeconds(5))
+                    .PingTimeout(TimeSpan.FromSeconds(5));
 
-    return new ElasticClient(connectionSettings);
-});
+                if (!string.IsNullOrEmpty(settings.Username) && !string.IsNullOrEmpty(settings.Password))
+                {
+                    connectionSettings.BasicAuthentication(settings.Username, settings.Password);
+                }
+
+                return new ElasticClient(connectionSettings);
+            }
+            catch (Exception ex)
+            {
+                var logger = provider.GetService<ILogger<Program>>();
+                logger?.LogWarning(ex, "Failed to create Elasticsearch client. Search features may be unavailable.");
+                throw;
+            }
+        });
+    }
+    catch (Exception ex)
+    {
+        // Log but don't crash - search features will be unavailable
+        Console.WriteLine($"Warning: Failed to register Elasticsearch: {ex.Message}");
+        elasticsearchDisabled = true;
+    }
+}
+else if (isDocker)
+{
+    Console.WriteLine("[DEBUG] Elasticsearch is disabled - search features will be unavailable");
+}
 
 // Configure Kafka
 builder.Services.Configure<KafkaSettings>(
@@ -261,8 +315,19 @@ var isTestEnvironment = builder.Environment.IsEnvironment("Testing") ||
                         builder.Environment.EnvironmentName == "Testing";
 // Also disable Kafka if explicitly disabled via environment variable (useful for CI/Docker)
 var kafkaDisabled = builder.Configuration["Kafka:Disabled"] == "true" || 
-                    Environment.GetEnvironmentVariable("KAFKA_DISABLED") == "true";
+                    Environment.GetEnvironmentVariable("KAFKA_DISABLED") == "true" ||
+                    string.IsNullOrWhiteSpace(kafkaBootstrapServers); // Disable if bootstrap servers are empty
 var kafkaEnabled = !isTestEnvironment && !kafkaDisabled && !string.IsNullOrWhiteSpace(kafkaBootstrapServers);
+
+// Log Kafka status for debugging
+if (isDocker)
+{
+    Console.WriteLine($"[DEBUG] Kafka configuration check:");
+    Console.WriteLine($"[DEBUG]   BootstrapServers: '{kafkaBootstrapServers ?? "null"}'");
+    Console.WriteLine($"[DEBUG]   IsTestEnvironment: {isTestEnvironment}");
+    Console.WriteLine($"[DEBUG]   KafkaDisabled: {kafkaDisabled}");
+    Console.WriteLine($"[DEBUG]   KafkaEnabled: {kafkaEnabled}");
+}
 
 if (kafkaEnabled)
 {

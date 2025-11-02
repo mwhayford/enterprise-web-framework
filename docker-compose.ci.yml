@@ -111,8 +111,9 @@ services:
       - StripeSettings__PublishableKey=pk_test_dummy_key_for_ci
       - StripeSettings__WebhookSecret=whsec_dummy_webhook_secret_for_ci
       - Frontend__BaseUrl=http://localhost:3001
-      - Elasticsearch__Url=http://elasticsearch:9200
-      - Elasticsearch__DefaultIndex=rentalmanager-index
+      - Elasticsearch__Disabled=true
+      - Elasticsearch__Url=
+      - Elasticsearch__DefaultIndex=
       - Kafka__Disabled=true
       - Kafka__BootstrapServers=
       - Kafka__GroupId=rentalmanager-api-group
