@@ -579,7 +579,21 @@ builder.Services.AddCors(options =>
 // Configure HTTP Context Accessor
 builder.Services.AddHttpContextAccessor();
 
+if (isDocker)
+{
+    Console.WriteLine("[DEBUG] Starting application build...");
+    Console.WriteLine($"[DEBUG] Environment: {builder.Environment.EnvironmentName}");
+    Console.WriteLine($"[DEBUG] Kafka enabled: {kafkaEnabled}");
+    Console.WriteLine($"[DEBUG] Elasticsearch disabled: {elasticsearchDisabled}");
+    Console.WriteLine($"[DEBUG] Hangfire enabled: {hangfireEnabled}");
+}
+
 var app = builder.Build();
+
+if (isDocker)
+{
+    Console.WriteLine("[DEBUG] Application build completed successfully");
+}
 
 // Configure the HTTP request pipeline
 if (app.Environment.IsDevelopment())
@@ -792,6 +806,12 @@ if (app.Environment.IsDevelopment())
 
 var startupLogger = app.Services.GetRequiredService<ILogger<Program>>();
 startupLogger.LogInformation("Application startup complete. Starting web server...");
+
+if (isDocker)
+{
+    Console.WriteLine("[DEBUG] About to start web server (app.Run())...");
+    Console.WriteLine("[DEBUG] All initialization steps completed successfully");
+}
 
 app.Run();
 
