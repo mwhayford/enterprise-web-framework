@@ -6,6 +6,7 @@ import {
   LeaseStatus,
   type LeaseStatusType,
 } from '../services/leaseService'
+import { AuthenticatedLayout } from '../components/layout/AuthenticatedLayout'
 
 const LeaseStatusBadge = ({ status }: { status: LeaseStatusType }) => {
   const getStatusColor = () => {
@@ -107,14 +108,13 @@ const LeasesPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">My Leases</h1>
-          <p className="mt-2 text-gray-600">
-            View and manage your rental leases
-          </p>
-        </div>
+    <AuthenticatedLayout>
+      <div className="mb-6">
+        <h1 className="text-3xl font-bold text-gray-900">My Leases</h1>
+        <p className="mt-2 text-gray-600">
+          View and manage your rental leases
+        </p>
+      </div>
 
         {/* View Mode Toggle */}
         <div className="mb-6 flex space-x-2">
@@ -214,8 +214,7 @@ const LeasesPage = () => {
             ))}
           </div>
         )}
-      </div>
-    </div>
+    </AuthenticatedLayout>
   )
 }
 

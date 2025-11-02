@@ -4,6 +4,7 @@ import React, { useState, useEffect, useCallback } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import searchService from '../services/searchService'
 import type { SearchResult } from '../types'
+import { AuthenticatedLayout } from '../components/layout/AuthenticatedLayout'
 
 interface SearchDocument extends Record<string, unknown> {
   _score?: number
@@ -83,10 +84,9 @@ const SearchPage: React.FC = () => {
   }, [search, searchParams])
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="bg-white rounded-lg shadow-sm p-6">
-          <h1 className="text-2xl font-bold text-gray-900 mb-6">Search</h1>
+    <AuthenticatedLayout>
+      <div className="bg-white rounded-lg shadow-sm p-6">
+        <h1 className="text-2xl font-bold text-gray-900 mb-6">Search</h1>
 
           {/* Search Form */}
           <form onSubmit={handleSearch} className="mb-6">
@@ -211,9 +211,8 @@ const SearchPage: React.FC = () => {
               <p className="text-gray-500">No results found for "{query}"</p>
             </div>
           )}
-        </div>
       </div>
-    </div>
+    </AuthenticatedLayout>
   )
 }
 

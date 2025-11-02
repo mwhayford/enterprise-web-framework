@@ -13,3 +13,4 @@ public enum WorkOrderCategory
     Interior = 6,
     Safety = 7
 }
+

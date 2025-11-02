@@ -6,3 +6,4 @@ using RentalManager.Application.DTOs;
 namespace RentalManager.Application.Commands;
 
 public record CompleteWorkOrderCommand(Guid WorkOrderId, decimal? ActualCost = null, string? Notes = null) : IRequest<WorkOrderDto>;
+

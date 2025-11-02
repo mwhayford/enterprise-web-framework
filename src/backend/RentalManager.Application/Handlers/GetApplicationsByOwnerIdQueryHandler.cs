@@ -64,3 +64,4 @@ public class GetApplicationsByOwnerIdQueryHandler : IRequestHandler<GetApplicati
         };
     }
 }
+

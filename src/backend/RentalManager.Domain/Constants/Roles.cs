@@ -9,3 +9,4 @@ public static class Roles
     public const string Resident = "Resident";
     public const string Contractor = "Contractor";
 }
+

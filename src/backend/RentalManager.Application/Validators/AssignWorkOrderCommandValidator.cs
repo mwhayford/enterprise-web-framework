@@ -16,3 +16,4 @@ public class AssignWorkOrderCommandValidator : AbstractValidator<AssignWorkOrder
             .NotEmpty().WithMessage("Contractor ID is required");
     }
 }
+

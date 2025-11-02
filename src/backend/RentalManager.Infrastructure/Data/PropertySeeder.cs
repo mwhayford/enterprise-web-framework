@@ -97,7 +97,9 @@ public class PropertySeeder
             {
                 try
                 {
-                    var property = GenerateProperty(defaultOwnerId);
+                    // Ensure first property is always available for testing
+                    var isFirstProperty = (i == 0 && j == 0);
+                    var property = GenerateProperty(defaultOwnerId, forceAvailable: isFirstProperty);
                     batch.Add(property);
                 }
                 catch (Exception ex)
@@ -155,7 +157,9 @@ public class PropertySeeder
                 {
                     try
                     {
-                        var property = GeneratePropertyForMetro(defaultOwnerId, metro);
+                        // Ensure first property across all metros is always available for testing
+                        var isFirstProperty = (metroIndex == 1 && i == 0 && j == 0);
+                        var property = GeneratePropertyForMetro(defaultOwnerId, metro, forceAvailable: isFirstProperty);
                         batch.Add(property);
                     }
                     catch (Exception ex)
@@ -186,7 +190,7 @@ public class PropertySeeder
         return totalSeeded;
     }
 
-    private Property GenerateProperty(Guid ownerId)
+    private Property GenerateProperty(Guid ownerId, bool forceAvailable = false)
     {
         var streetNumber = _random.Next(1, 9999);
         var streetName = Streets[_random.Next(Streets.Length)];
@@ -197,10 +201,10 @@ public class PropertySeeder
         var state = States[_random.Next(States.Length)];
         var zipCode = GenerateZipCode();
         
-        return GeneratePropertyWithLocation(ownerId, street, city, state, zipCode, null);
+        return GeneratePropertyWithLocation(ownerId, street, city, state, zipCode, null, null, forceAvailable);
     }
 
-    private Property GeneratePropertyForMetro(Guid ownerId, MetroArea metro)
+    private Property GeneratePropertyForMetro(Guid ownerId, MetroArea metro, bool forceAvailable = false)
     {
         var streetNumber = _random.Next(1, 9999);
         var streetName = Streets[_random.Next(Streets.Length)];
@@ -221,10 +225,10 @@ public class PropertySeeder
             }
         }
 
-        return GeneratePropertyWithLocation(ownerId, street, metro.City, metro.State, zipCode, unit, metro.RentMultiplier);
+        return GeneratePropertyWithLocation(ownerId, street, metro.City, metro.State, zipCode, unit, metro.RentMultiplier, forceAvailable);
     }
 
-    private Property GeneratePropertyWithLocation(Guid ownerId, string street, string city, string state, string zipCode, string? unit, decimal? rentMultiplier = null)
+    private Property GeneratePropertyWithLocation(Guid ownerId, string street, string city, string state, string zipCode, string? unit, decimal? rentMultiplier = null, bool forceAvailable = false)
     {
         var address = PropertyAddress.Create(street, city, state, zipCode, unit);
 
@@ -339,18 +343,26 @@ public class PropertySeeder
         }
 
         // Property status: 60% Available, 30% Rented, 10% Maintenance
-        var statusRoll = _random.Next(100);
-        if (statusRoll < 60)
+        // If forceAvailable is true, always mark as available (for first property in seed)
+        if (forceAvailable)
         {
             property.MarkAsAvailable();
         }
-        else if (statusRoll < 90)
-        {
-            property.MarkAsRented();
-        }
         else
         {
-            property.MarkAsInMaintenance();
+            var statusRoll = _random.Next(100);
+            if (statusRoll < 60)
+            {
+                property.MarkAsAvailable();
+            }
+            else if (statusRoll < 90)
+            {
+                property.MarkAsRented();
+            }
+            else
+            {
+                property.MarkAsInMaintenance();
+            }
         }
 
         return property;

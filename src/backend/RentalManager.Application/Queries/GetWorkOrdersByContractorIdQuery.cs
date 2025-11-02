@@ -6,3 +6,4 @@ using RentalManager.Application.DTOs;
 namespace RentalManager.Application.Queries;
 
 public record GetWorkOrdersByContractorIdQuery(Guid ContractorId) : IRequest<List<WorkOrderDto>>;
+

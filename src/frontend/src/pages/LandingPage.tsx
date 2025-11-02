@@ -4,12 +4,12 @@ import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { Button } from '../components/ui/Button'
-import { Navigation } from '../components/landing/Navigation'
 import { PricingCard } from '../components/landing/PricingCard'
 import { TestimonialsSection } from '../components/landing/TestimonialsSection'
 import { FAQSection } from '../components/landing/FAQSection'
 import { ScreenshotGallery } from '../components/landing/ScreenshotGallery'
 import { NewsletterSignup } from '../components/landing/NewsletterSignup'
+import { PublicLayout } from '../components/layout/PublicLayout'
 
 const LandingPage: React.FC = () => {
   const navigate = useNavigate()
@@ -74,12 +74,10 @@ const LandingPage: React.FC = () => {
   ]
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
-      {/* Navigation */}
-      <Navigation onGetStarted={handleGetStarted} />
-
-      {/* Hero Section */}
-      <section className="relative pt-32 pb-20 sm:pt-40 sm:pb-24">
+    <PublicLayout>
+      <div className="bg-gradient-to-br from-blue-50 via-white to-purple-50">
+        {/* Hero Section */}
+        <section className="relative pt-12 pb-20 sm:pt-20 sm:pb-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <motion.h1
@@ -552,32 +550,8 @@ const LandingPage: React.FC = () => {
           </div>
         </div>
       </section>
-
-      {/* Footer */}
-      <footer className="bg-gray-900 text-gray-400 py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <h3 className="text-2xl font-bold text-white mb-4">
-              RentalManager
-            </h3>
-            <p className="text-sm">
-              © 2025 RentalManager. All rights reserved.
-            </p>
-            <div className="mt-6 flex justify-center gap-6">
-              <a href="#" className="hover:text-white transition-colors">
-                Privacy Policy
-              </a>
-              <a href="#" className="hover:text-white transition-colors">
-                Terms of Service
-              </a>
-              <a href="#" className="hover:text-white transition-colors">
-                Contact
-              </a>
-            </div>
-          </div>
-        </div>
-      </footer>
-    </div>
+      </div>
+    </PublicLayout>
   )
 }
 

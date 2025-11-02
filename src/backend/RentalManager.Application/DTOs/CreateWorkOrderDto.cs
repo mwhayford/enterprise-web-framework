@@ -20,3 +20,4 @@ public class CreateWorkOrderDto
 
     public List<string>? Images { get; set; }
 }
+

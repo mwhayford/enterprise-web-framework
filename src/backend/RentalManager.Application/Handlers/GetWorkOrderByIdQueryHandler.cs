@@ -31,3 +31,4 @@ public class GetWorkOrderByIdQueryHandler : IRequestHandler<GetWorkOrderByIdQuer
         return WorkOrderMappingHelper.MapToDto(workOrder);
     }
 }
+
