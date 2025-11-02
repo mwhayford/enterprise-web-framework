@@ -353,6 +353,7 @@ test.describe('Property Application Flow', () => {
     });
 
     // Set up authenticated user via localStorage (simulating OAuth login)
+    // PropertyDetailPage checks for 'token', AuthContext uses 'auth_token' - set both
     await page.goto('/');
     await page.evaluate(() => {
       const mockToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ0ZXN0LXVzZXItaWQiLCJuYW1lIjoiVGVzdCBVc2VyIiwiZW1haWwiOiJ0ZXN0QGV4YW1wbGUuY29tIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c';
@@ -366,17 +367,27 @@ test.describe('Property Application Flow', () => {
         createdAt: new Date().toISOString(),
         lastLoginAt: new Date().toISOString(),
       };
+      // Set both token keys for compatibility
       localStorage.setItem('auth_token', mockToken);
+      localStorage.setItem('token', mockToken); // PropertyDetailPage checks for 'token'
       localStorage.setItem('user', JSON.stringify(mockUser));
     });
 
+    // Wait for both tokens to be set
     await page.waitForFunction(() => {
       const user = localStorage.getItem('user');
-      const token = localStorage.getItem('auth_token');
-      return user !== null && token !== null;
+      const authToken = localStorage.getItem('auth_token');
+      const token = localStorage.getItem('token');
+      return user !== null && authToken !== null && token !== null;
     }, { timeout: 5000 });
     
-    await page.waitForTimeout(1000); // Wait for AuthContext to initialize
+    // Wait for AuthContext to initialize and recognize authenticated state
+    await page.waitForTimeout(2000);
+    
+    // Navigate to dashboard first to let AuthContext fully initialize
+    await page.goto('/dashboard');
+    await page.waitForLoadState('networkidle');
+    await page.waitForTimeout(1000);
 
     // Navigate to property and apply
     await page.goto('/properties');
@@ -410,11 +421,26 @@ test.describe('Property Application Flow', () => {
       throw new Error('Apply Now button not found on property detail page');
     }
 
+    // Verify button is actually visible and clickable
+    await expect(applyButton).toBeVisible({ timeout: 5000 });
+    
     // Click Apply Now
     await applyButton.click();
 
-    // Wait for navigation to application form
-    await page.waitForURL(/\/properties\/.*\/apply/, { timeout: 10000 });
+    // Wait for navigation to application form - increase timeout and check multiple possible URLs
+    try {
+      await page.waitForURL(/\/properties\/.*\/apply/, { timeout: 15000 });
+    } catch {
+      // If it redirects elsewhere, check what happened
+      const currentUrl = page.url();
+      if (currentUrl.includes('/login')) {
+        throw new Error('Redirected to login - authentication not properly set up');
+      } else if (currentUrl.includes('/dashboard')) {
+        throw new Error('Redirected to dashboard - ProtectedRoute not recognizing authentication');
+      }
+      // If we end up somewhere else, still fail with context
+      throw new Error(`Unexpected navigation to: ${currentUrl}`);
+    }
     await page.waitForLoadState('domcontentloaded');
     await page.waitForTimeout(1000);
 
