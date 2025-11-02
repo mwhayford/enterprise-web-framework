@@ -528,10 +528,11 @@ test.describe('Property Application Flow', () => {
       
       // If we're on a different page (not applications), check for success indicators
       if (!currentUrl.includes('/applications') && !successIndicator) {
-        // Wait a bit more in case navigation is slow
-        await page.waitForTimeout(2000);
-        const finalUrl = page.url();
-        if (!finalUrl.includes('/applications')) {
+        // Try waiting for navigation one more time with shorter timeout
+        try {
+          await page.waitForURL(/\/applications/, { timeout: 5000 });
+        } catch {
+          const finalUrl = page.url();
           throw new Error(`Application submission did not redirect to /applications. Current URL: ${finalUrl}`);
         }
       }
