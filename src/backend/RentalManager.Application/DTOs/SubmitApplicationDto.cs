@@ -8,4 +8,3 @@ public class SubmitApplicationDto
 
     public ApplicationDataDto ApplicationData { get; set; } = default!;
 }
-

@@ -3,8 +3,6 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using RentalManager.Application.Commands;
-using RentalManager.Infrastructure.Identity;
 using MediatR;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Google;
@@ -13,6 +11,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using RentalManager.Application.Commands;
+using RentalManager.Infrastructure.Identity;
 
 namespace RentalManager.API.Controllers;
 
@@ -36,6 +36,13 @@ public class AuthController : ControllerBase
     [HttpGet("google")]
     public IActionResult GoogleLogin()
     {
+        var googleClientId = _configuration["Authentication:Google:ClientId"];
+        if (string.IsNullOrEmpty(googleClientId) || googleClientId == "your-google-client-id")
+        {
+            _logger.LogWarning("Google authentication is not configured");
+            return BadRequest("Google authentication is not configured");
+        }
+
         var properties = new AuthenticationProperties
         {
             RedirectUri = Url.Action("GoogleCallback")
@@ -46,6 +53,13 @@ public class AuthController : ControllerBase
     [HttpGet("google-callback")]
     public async Task<IActionResult> GoogleCallback()
     {
+        var googleClientId = _configuration["Authentication:Google:ClientId"];
+        if (string.IsNullOrEmpty(googleClientId) || googleClientId == "your-google-client-id")
+        {
+            _logger.LogWarning("Google authentication is not configured");
+            return BadRequest("Google authentication is not configured");
+        }
+
         var result = await HttpContext.AuthenticateAsync(GoogleDefaults.AuthenticationScheme);
 
         if (!result.Succeeded)
@@ -111,6 +125,25 @@ public class AuthController : ControllerBase
 
         var token = GenerateJwtToken(Guid.Parse(userId), email, firstName, lastName);
         return Ok(new { Token = token });
+    }
+
+    [HttpGet("debug-config")]
+    public IActionResult DebugConfig()
+    {
+        var clientId = _configuration["Authentication:Google:ClientId"];
+        var clientSecret = _configuration["Authentication:Google:ClientSecret"];
+        var clientSecretPreview = string.IsNullOrEmpty(clientSecret)
+            ? "NULL"
+            : $"{clientSecret.Substring(0, Math.Min(20, clientSecret.Length))}...";
+
+        return Ok(new
+        {
+            ClientId = clientId,
+            ClientSecretLength = clientSecret?.Length ?? 0,
+            ClientSecretPreview = clientSecretPreview,
+            IsConfigured = !string.IsNullOrEmpty(clientId) && clientId != "your-google-client-id",
+            CallbackPath = "/signin-google"
+        });
     }
 
     [HttpPost("logout")]

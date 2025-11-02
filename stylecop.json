@@ -29,7 +29,7 @@
       ]
     },
     "layoutRules": {
-      "newlineAtEndOfFile": "require"
+      "newlineAtEndOfFile": "allow"
     },
     "maintainabilityRules": {
       "topLevelTypes": [

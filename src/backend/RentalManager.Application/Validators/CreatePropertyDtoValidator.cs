@@ -118,4 +118,3 @@ public class CreatePropertyDtoValidator : AbstractValidator<CreatePropertyDto>
         return validCurrencies.Contains(currencyCode.ToUpperInvariant());
     }
 }
-

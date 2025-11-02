@@ -1,4 +1,4 @@
--- Database initialization script for Core application
+-- Database initialization script for RentalManager application
 -- This script runs when the PostgreSQL container starts for the first time
 
 -- Create extensions that might be useful
@@ -13,11 +13,11 @@ SET timezone = 'UTC';
 -- CREATE SCHEMA IF NOT EXISTS reporting;
 
 -- Grant permissions
-GRANT ALL PRIVILEGES ON DATABASE "CoreDb" TO postgres;
+GRANT ALL PRIVILEGES ON DATABASE "RentalManagerDb" TO postgres;
 
 -- Log successful initialization
 DO $$
 BEGIN
-    RAISE NOTICE 'Core database initialized successfully';
+    RAISE NOTICE 'RentalManager database initialized successfully';
 END $$;
 

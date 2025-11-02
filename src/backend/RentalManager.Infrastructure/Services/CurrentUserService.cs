@@ -1,8 +1,8 @@
 // Copyright (c) Core. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 using System.Security.Claims;
-using RentalManager.Application.Interfaces;
 using Microsoft.AspNetCore.Http;
+using RentalManager.Application.Interfaces;
 
 namespace RentalManager.Infrastructure.Services;
 

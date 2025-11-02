@@ -65,4 +65,3 @@ public class ProcessApplicationFeeCommandHandler : IRequestHandler<ProcessApplic
         return paymentIntent.ClientSecret;
     }
 }
-

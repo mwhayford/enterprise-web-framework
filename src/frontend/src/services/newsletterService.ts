@@ -3,7 +3,7 @@
 
 /**
  * Newsletter subscription service
- * 
+ *
  * This is a mock implementation ready for real integration with services like:
  * - Mailchimp
  * - SendGrid
@@ -21,7 +21,9 @@ interface NewsletterResponse {
  * @param email - User's email address
  * @returns Promise with subscription result
  */
-export const subscribeToNewsletter = async (email: string): Promise<NewsletterResponse> => {
+export const subscribeToNewsletter = async (
+  email: string
+): Promise<NewsletterResponse> => {
   // Validate email format
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
   if (!emailRegex.test(email)) {
@@ -29,7 +31,7 @@ export const subscribeToNewsletter = async (email: string): Promise<NewsletterRe
   }
 
   // Simulate API call delay
-  await new Promise((resolve) => setTimeout(resolve, 1000))
+  await new Promise(resolve => setTimeout(resolve, 1000))
 
   // Mock API call - replace with actual implementation
   // Example real implementation:
@@ -43,7 +45,7 @@ export const subscribeToNewsletter = async (email: string): Promise<NewsletterRe
 
   // Mock success response
   console.log(`Newsletter subscription for: ${email}`)
-  
+
   // Simulate occasional failures for testing
   if (email.includes('fail@')) {
     throw new Error('Subscription failed. Please try again later.')
@@ -66,13 +68,14 @@ export const unsubscribeFromNewsletter = async (
   token?: string
 ): Promise<NewsletterResponse> => {
   // Mock implementation
-  await new Promise((resolve) => setTimeout(resolve, 500))
-  
-  console.log(`Newsletter unsubscribe for: ${email}${token ? ` with token: ${token}` : ''}`)
-  
+  await new Promise(resolve => setTimeout(resolve, 500))
+
+  console.log(
+    `Newsletter unsubscribe for: ${email}${token ? ` with token: ${token}` : ''}`
+  )
+
   return {
     success: true,
     message: 'Successfully unsubscribed from newsletter',
   }
 }
-

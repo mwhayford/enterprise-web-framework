@@ -1,0 +1,161 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="bd263692-b300-412b-8dfa-d661e0cc0069" name="mwhay@WIN-2DIK63C7G4T 2025-10-30 14:36:28" runUser="WIN-2DIK63C7G4T\mwhay" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2025-10-30T14:36:28.7490875-04:00" queuing="2025-10-30T14:36:28.7490877-04:00" start="2025-10-30T14:36:16.0067203-04:00" finish="2025-10-30T15:22:59.2915061-04:00" />
+  <TestSettings name="default" id="6eaba732-c999-4a3e-8254-432cb47081f8">
+    <Deployment runDeploymentRoot="mwhay_WIN-2DIK63C7G4T_2025-10-30_14_36_28" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="596aeedf-89d8-4898-8512-d463682318e9" testId="31e8b507-c76e-2c08-dbac-77bf269c145a" testName="ApproveApplication_Should_Return_Unauthorized_When_Not_Authenticated" computerName="WIN-2DIK63C7G4T" duration="00:00:11.3143010" startTime="2025-10-30T14:36:16.3463344-04:00" endTime="2025-10-30T14:36:27.6606069-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="596aeedf-89d8-4898-8512-d463682318e9">
+      <Output>
+        <StdOut>[14:36:16 INF] Start installing Hangfire SQL objects...&#xD;
+[14:36:16 INF] Start installing Hangfire SQL objects...&#xD;
+[14:36:16 INF] Hangfire SQL objects installed.&#xD;
+[14:36:16 INF] Hangfire SQL objects installed.&#xD;
+[14:36:16 INF] Starting database initialization...&#xD;
+[14:36:16 INF] Starting database initialization...&#xD;
+[14:36:16 INF] Database initialization completed successfully&#xD;
+[14:36:16 INF] Database initialization completed successfully&#xD;
+[14:36:16 INF] Configuring recurring jobs...&#xD;
+[14:36:16 INF] Configuring recurring jobs...&#xD;
+[14:36:16 INF] Configuring recurring background jobs&#xD;
+[14:36:16 INF] Configuring recurring background jobs&#xD;
+[14:36:17 INF] Recurring background jobs configured successfully&#xD;
+[14:36:17 INF] Recurring background jobs configured successfully&#xD;
+[14:36:17 INF] Recurring jobs configured successfully&#xD;
+[14:36:17 INF] Recurring jobs configured successfully&#xD;
+[14:36:17 INF] Application startup complete. Starting web server...&#xD;
+[14:36:17 INF] Application startup complete. Starting web server...&#xD;
+[14:36:27 INF] Starting Kafka Event Bus&#xD;
+[14:36:27 INF] Starting Kafka Event Bus&#xD;
+[14:36:27 INF] Starting Hangfire Server using job storage: 'PostgreSQL Server: Host: localhost, DB: RentalManagerDb, Schema: hangfire'&#xD;
+[14:36:27 INF] Starting Hangfire Server using job storage: 'PostgreSQL Server: Host: localhost, DB: RentalManagerDb, Schema: hangfire'&#xD;
+[14:36:27 INF] Using the following options for PostgreSQL job storage:&#xD;
+[14:36:27 INF] Using the following options for PostgreSQL job storage:&#xD;
+[14:36:27 INF]     Queue poll interval: 00:00:15.&#xD;
+[14:36:27 INF]     Queue poll interval: 00:00:15.&#xD;
+[14:36:27 INF]     Invisibility timeout: 00:30:00.&#xD;
+[14:36:27 INF]     Invisibility timeout: 00:30:00.&#xD;
+[14:36:27 INF]     Use sliding invisibility timeout: False.&#xD;
+[14:36:27 INF]     Use sliding invisibility timeout: False.&#xD;
+[14:36:27 INF] Using the following options for Hangfire Server:&#xD;
+    Worker count: 160&#xD;
+    Listening queues: 'default', 'emails', 'data-processing'&#xD;
+    Shutdown timeout: 00:00:15&#xD;
+    Schedule polling interval: 00:00:15&#xD;
+[14:36:27 INF] Using the following options for Hangfire Server:&#xD;
+    Worker count: 160&#xD;
+    Listening queues: 'default', 'emails', 'data-processing'&#xD;
+    Shutdown timeout: 00:00:15&#xD;
+    Schedule polling interval: 00:00:15&#xD;
+[14:36:27 INF] Server win-2dik63c7g4t:69644:8ca3f388 successfully announced in 8.9464 ms&#xD;
+[14:36:27 INF] Server win-2dik63c7g4t:69644:8ca3f388 successfully announced in 8.9464 ms&#xD;
+[14:36:27 INF] Server win-2dik63c7g4t:69644:8ca3f388 is starting the registered dispatchers: ServerWatchdog, ServerJobCancellationWatcher, ExpirationManager, CountersAggregator, Worker, DelayedJobScheduler, RecurringJobScheduler...&#xD;
+[14:36:27 INF] Server win-2dik63c7g4t:69644:8ca3f388 is starting the registered dispatchers: ServerWatchdog, ServerJobCancellationWatcher, ExpirationManager, CountersAggregator, Worker, DelayedJobScheduler, RecurringJobScheduler...&#xD;
+[14:36:27 INF] Server win-2dik63c7g4t:69644:8ca3f388 all the dispatchers started&#xD;
+[14:36:27 INF] Server win-2dik63c7g4t:69644:8ca3f388 all the dispatchers started&#xD;
+[14:36:27 INF] Server win-2dik63c7g4t:69644:8ca3f388 caught stopping signal...&#xD;
+[14:36:27 INF] Server win-2dik63c7g4t:69644:8ca3f388 caught stopping signal...&#xD;
+[14:36:27 INF] Stopping Kafka Event Bus&#xD;
+[14:36:27 INF] Stopping Kafka Event Bus&#xD;
+[14:36:27 INF] Stopping Kafka Event Bus&#xD;
+[14:36:27 INF] Stopping Kafka Event Bus&#xD;
+[14:36:27 INF] Kafka Event Bus stopped&#xD;
+[14:36:27 INF] Kafka Event Bus stopped&#xD;
+[14:36:27 INF] Server win-2dik63c7g4t:69644:8ca3f388 All dispatchers stopped&#xD;
+[14:36:27 INF] Server win-2dik63c7g4t:69644:8ca3f388 All dispatchers stopped&#xD;
+[14:36:27 INF] Server win-2dik63c7g4t:69644:8ca3f388 successfully reported itself as stopped in 2.4691 ms&#xD;
+[14:36:27 INF] Server win-2dik63c7g4t:69644:8ca3f388 successfully reported itself as stopped in 2.4691 ms&#xD;
+[14:36:27 INF] Server win-2dik63c7g4t:69644:8ca3f388 has been stopped in total 110.1198 ms&#xD;
+[14:36:27 INF] Server win-2dik63c7g4t:69644:8ca3f388 has been stopped in total 110.1198 ms</StdOut>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="ApproveApplication_Should_Return_Unauthorized_When_Not_Authenticated" storage="c:\src\rentalmanager\tests\rentalmanager.integrationtests\bin\debug\net9.0\rentalmanager.integrationtests.dll" id="31e8b507-c76e-2c08-dbac-77bf269c145a">
+      <Execution id="596aeedf-89d8-4898-8512-d463682318e9" />
+      <TestMethod codeBase="C:\src\RentalManager\tests\RentalManager.IntegrationTests\bin\Debug\net9.0\RentalManager.IntegrationTests.dll" adapterTypeName="executor://nunit3testexecutor/" className="RentalManager.IntegrationTests.Controllers.ApplicationsControllerTests" name="ApproveApplication_Should_Return_Unauthorized_When_Not_Authenticated" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="31e8b507-c76e-2c08-dbac-77bf269c145a" executionId="596aeedf-89d8-4898-8512-d463682318e9" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="1" executed="1" passed="1" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>NUnit Adapter 4.6.0.0: Test execution started&#xD;
+Running all tests in C:\src\RentalManager\tests\RentalManager.IntegrationTests\bin\Debug\net9.0\RentalManager.IntegrationTests.dll&#xD;
+   NUnit3TestExecutor discovered 22 of 22 NUnit test cases using Current Discovery mode, Non-Explicit run&#xD;
+[14:36:16 INF] Start installing Hangfire SQL objects...&#xD;
+[14:36:16 INF] Start installing Hangfire SQL objects...&#xD;
+[14:36:16 INF] Hangfire SQL objects installed.&#xD;
+[14:36:16 INF] Hangfire SQL objects installed.&#xD;
+[14:36:16 INF] Starting database initialization...&#xD;
+[14:36:16 INF] Starting database initialization...&#xD;
+[14:36:16 INF] Database initialization completed successfully&#xD;
+[14:36:16 INF] Database initialization completed successfully&#xD;
+[14:36:16 INF] Configuring recurring jobs...&#xD;
+[14:36:16 INF] Configuring recurring jobs...&#xD;
+[14:36:16 INF] Configuring recurring background jobs&#xD;
+[14:36:16 INF] Configuring recurring background jobs&#xD;
+[14:36:17 INF] Recurring background jobs configured successfully&#xD;
+[14:36:17 INF] Recurring background jobs configured successfully&#xD;
+[14:36:17 INF] Recurring jobs configured successfully&#xD;
+[14:36:17 INF] Recurring jobs configured successfully&#xD;
+[14:36:17 INF] Application startup complete. Starting web server...&#xD;
+[14:36:17 INF] Application startup complete. Starting web server...&#xD;
+[14:36:27 INF] Starting Kafka Event Bus&#xD;
+[14:36:27 INF] Starting Kafka Event Bus&#xD;
+[14:36:27 INF] Starting Hangfire Server using job storage: 'PostgreSQL Server: Host: localhost, DB: RentalManagerDb, Schema: hangfire'&#xD;
+[14:36:27 INF] Starting Hangfire Server using job storage: 'PostgreSQL Server: Host: localhost, DB: RentalManagerDb, Schema: hangfire'&#xD;
+[14:36:27 INF] Using the following options for PostgreSQL job storage:&#xD;
+[14:36:27 INF] Using the following options for PostgreSQL job storage:&#xD;
+[14:36:27 INF]     Queue poll interval: 00:00:15.&#xD;
+[14:36:27 INF]     Queue poll interval: 00:00:15.&#xD;
+[14:36:27 INF]     Invisibility timeout: 00:30:00.&#xD;
+[14:36:27 INF]     Invisibility timeout: 00:30:00.&#xD;
+[14:36:27 INF]     Use sliding invisibility timeout: False.&#xD;
+[14:36:27 INF]     Use sliding invisibility timeout: False.&#xD;
+[14:36:27 INF] Using the following options for Hangfire Server:&#xD;
+    Worker count: 160&#xD;
+    Listening queues: 'default', 'emails', 'data-processing'&#xD;
+    Shutdown timeout: 00:00:15&#xD;
+    Schedule polling interval: 00:00:15&#xD;
+[14:36:27 INF] Using the following options for Hangfire Server:&#xD;
+    Worker count: 160&#xD;
+    Listening queues: 'default', 'emails', 'data-processing'&#xD;
+    Shutdown timeout: 00:00:15&#xD;
+    Schedule polling interval: 00:00:15&#xD;
+[14:36:27 INF] Server win-2dik63c7g4t:69644:8ca3f388 successfully announced in 8.9464 ms&#xD;
+[14:36:27 INF] Server win-2dik63c7g4t:69644:8ca3f388 successfully announced in 8.9464 ms&#xD;
+[14:36:27 INF] Server win-2dik63c7g4t:69644:8ca3f388 is starting the registered dispatchers: ServerWatchdog, ServerJobCancellationWatcher, ExpirationManager, CountersAggregator, Worker, DelayedJobScheduler, RecurringJobScheduler...&#xD;
+[14:36:27 INF] Server win-2dik63c7g4t:69644:8ca3f388 is starting the registered dispatchers: ServerWatchdog, ServerJobCancellationWatcher, ExpirationManager, CountersAggregator, Worker, DelayedJobScheduler, RecurringJobScheduler...&#xD;
+[14:36:27 INF] Server win-2dik63c7g4t:69644:8ca3f388 all the dispatchers started&#xD;
+[14:36:27 INF] Server win-2dik63c7g4t:69644:8ca3f388 all the dispatchers started&#xD;
+[14:36:27 INF] Server win-2dik63c7g4t:69644:8ca3f388 caught stopping signal...&#xD;
+[14:36:27 INF] Server win-2dik63c7g4t:69644:8ca3f388 caught stopping signal...&#xD;
+[14:36:27 INF] Stopping Kafka Event Bus&#xD;
+[14:36:27 INF] Stopping Kafka Event Bus&#xD;
+[14:36:27 INF] Stopping Kafka Event Bus&#xD;
+[14:36:27 INF] Stopping Kafka Event Bus&#xD;
+[14:36:27 INF] Kafka Event Bus stopped&#xD;
+[14:36:27 INF] Kafka Event Bus stopped&#xD;
+[14:36:27 INF] Server win-2dik63c7g4t:69644:8ca3f388 All dispatchers stopped&#xD;
+[14:36:27 INF] Server win-2dik63c7g4t:69644:8ca3f388 All dispatchers stopped&#xD;
+[14:36:27 INF] Server win-2dik63c7g4t:69644:8ca3f388 successfully reported itself as stopped in 2.4691 ms&#xD;
+[14:36:27 INF] Server win-2dik63c7g4t:69644:8ca3f388 successfully reported itself as stopped in 2.4691 ms&#xD;
+[14:36:27 INF] Server win-2dik63c7g4t:69644:8ca3f388 has been stopped in total 110.1198 ms&#xD;
+[14:36:27 INF] Server win-2dik63c7g4t:69644:8ca3f388 has been stopped in total 110.1198 ms&#xD;
+&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="WIN-2DIK63C7G4T" outcome="Error" timestamp="2025-10-30T15:22:59.2819962-04:00">
+        <Text>The active test run was aborted. Reason: Test host process crashed</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

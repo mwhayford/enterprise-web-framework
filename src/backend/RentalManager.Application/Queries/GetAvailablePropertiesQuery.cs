@@ -38,4 +38,3 @@ public class PagedResult<T>
 
     public bool HasNextPage => PageNumber < TotalPages;
 }
-

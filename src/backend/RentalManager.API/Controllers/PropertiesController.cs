@@ -62,4 +62,3 @@ public class PropertiesController : ControllerBase
         return Ok(result);
     }
 }
-

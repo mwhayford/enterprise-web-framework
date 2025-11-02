@@ -46,4 +46,3 @@ public class GetApplicationByIdQueryHandler : IRequestHandler<GetApplicationById
         };
     }
 }
-

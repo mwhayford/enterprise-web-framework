@@ -14,4 +14,3 @@ public record PropertyApplicationSubmittedEvent : BaseEvent
 
     public string Currency { get; init; } = default!;
 }
-

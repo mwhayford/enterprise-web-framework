@@ -14,4 +14,3 @@ public record PropertyListedEvent : BaseEvent
 
     public DateTime AvailableDate { get; init; }
 }
-

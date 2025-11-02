@@ -1,7 +1,7 @@
 // Copyright (c) Core. All rights reserved.
 
-using RentalManager.Domain.ValueObjects;
 using FluentAssertions;
+using RentalManager.Domain.ValueObjects;
 
 namespace RentalManager.UnitTests.Domain.ValueObjects;
 

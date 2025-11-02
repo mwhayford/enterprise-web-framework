@@ -11,28 +11,29 @@ interface Screenshot {
 
 const screenshots: Screenshot[] = [
   {
-    title: "Dashboard Overview",
-    description: "Get a complete view of your rental business at a glance",
-    imageUrl: "/screenshots/dashboard.jpg",
-    category: "Dashboard",
+    title: 'Dashboard Overview',
+    description: 'Get a complete view of your rental business at a glance',
+    imageUrl: '/screenshots/dashboard.jpg',
+    category: 'Dashboard',
   },
   {
-    title: "Property Management",
-    description: "Manage all your properties with detailed profiles and documents",
-    imageUrl: "/screenshots/properties.jpg",
-    category: "Properties",
+    title: 'Property Management',
+    description:
+      'Manage all your properties with detailed profiles and documents',
+    imageUrl: '/screenshots/properties.jpg',
+    category: 'Properties',
   },
   {
-    title: "Payment Processing",
-    description: "Accept rent payments online with automatic reminders",
-    imageUrl: "/screenshots/payments.jpg",
-    category: "Payments",
+    title: 'Payment Processing',
+    description: 'Accept rent payments online with automatic reminders',
+    imageUrl: '/screenshots/payments.jpg',
+    category: 'Payments',
   },
   {
-    title: "Analytics & Reports",
-    description: "Track your revenue and performance with real-time analytics",
-    imageUrl: "/screenshots/analytics.jpg",
-    category: "Analytics",
+    title: 'Analytics & Reports',
+    description: 'Track your revenue and performance with real-time analytics',
+    imageUrl: '/screenshots/analytics.jpg',
+    category: 'Analytics',
   },
 ]
 
@@ -73,7 +74,7 @@ export const ScreenshotGallery: React.FC = () => {
               key={index}
               className="group cursor-pointer"
               onClick={() => handleImageClick(screenshot)}
-              onKeyDown={(e) => {
+              onKeyDown={e => {
                 if (e.key === 'Enter' || e.key === ' ') {
                   e.preventDefault()
                   handleImageClick(screenshot)
@@ -110,7 +111,9 @@ export const ScreenshotGallery: React.FC = () => {
                 {/* Overlay on hover */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0 opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-6">
                   <div className="text-white">
-                    <p className="text-sm font-semibold mb-1">Click to enlarge</p>
+                    <p className="text-sm font-semibold mb-1">
+                      Click to enlarge
+                    </p>
                   </div>
                 </div>
               </div>
@@ -155,7 +158,7 @@ export const ScreenshotGallery: React.FC = () => {
               />
             </svg>
           </button>
-          <div className="max-w-6xl w-full" onClick={(e) => e.stopPropagation()}>
+          <div className="max-w-6xl w-full" onClick={e => e.stopPropagation()}>
             <div className="bg-gradient-to-br from-blue-100 via-purple-100 to-pink-100 rounded-lg aspect-video flex items-center justify-center">
               <div className="text-center p-12">
                 <div className="w-24 h-24 mx-auto mb-6 bg-white rounded-lg flex items-center justify-center">
@@ -190,4 +193,3 @@ export const ScreenshotGallery: React.FC = () => {
     </section>
   )
 }
-

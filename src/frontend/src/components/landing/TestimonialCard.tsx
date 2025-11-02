@@ -66,4 +66,3 @@ export const TestimonialCard: React.FC<TestimonialCardProps> = ({
     </div>
   )
 }
-

@@ -1,13 +1,13 @@
 // Copyright (c) Core. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using RentalManager.Application.Interfaces;
 using RentalManager.Domain.Entities;
 using RentalManager.Domain.Events;
 using RentalManager.Domain.ValueObjects;
 using RentalManager.Infrastructure.Persistence;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 using Stripe;
 
 namespace RentalManager.API.Controllers;

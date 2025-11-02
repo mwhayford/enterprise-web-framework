@@ -1,37 +1,42 @@
 # Build stage
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 WORKDIR /src
 
-# Copy project files
-COPY src/backend/RentalManager.sln ./
+# Copy project files (only the projects we need, not the solution which includes test projects)
 COPY src/backend/RentalManager.Domain/RentalManager.Domain.csproj ./RentalManager.Domain/
 COPY src/backend/RentalManager.Application/RentalManager.Application.csproj ./RentalManager.Application/
 COPY src/backend/RentalManager.Infrastructure/RentalManager.Infrastructure.csproj ./RentalManager.Infrastructure/
 COPY src/backend/RentalManager.API/RentalManager.API.csproj ./RentalManager.API/
 
-# Restore dependencies
-RUN dotnet restore
+# Restore dependencies for each project
+RUN dotnet restore RentalManager.Domain/RentalManager.Domain.csproj && \
+    dotnet restore RentalManager.Application/RentalManager.Application.csproj && \
+    dotnet restore RentalManager.Infrastructure/RentalManager.Infrastructure.csproj && \
+    dotnet restore RentalManager.API/RentalManager.API.csproj
 
 # Copy source code
 COPY src/backend/ ./
 
-# Build the application
-RUN dotnet build -c Release -o /app/build
+# Build the application (build only the API project, which will build dependencies)
+RUN dotnet build RentalManager.API/RentalManager.API.csproj -c Release -o /app/build
 
 # Publish stage
 FROM build AS publish
 RUN dotnet publish RentalManager.API/RentalManager.API.csproj -c Release -o /app/publish
 
 # Runtime stage
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
+FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS runtime
 WORKDIR /app
 
 # Create non-root user
 RUN adduser --disabled-password --gecos '' appuser && chown -R appuser /app
 USER appuser
 
-# Copy published application
+# Copy published application (DLLs only, no source files)
 COPY --from=publish /app/publish .
+
+# Remove any source files that might have been copied (they shouldn't be, but just in case)
+RUN rm -rf /app/src 2>/dev/null || true
 
 # Expose port
 EXPOSE 8080

@@ -57,4 +57,3 @@ public class ApproveApplicationCommandHandler : IRequestHandler<ApproveApplicati
         };
     }
 }
-

@@ -207,4 +207,3 @@ public class PropertyApplication : BaseEntity
         UpdateTimestamp();
     }
 }
-

@@ -71,7 +71,12 @@ export const PricingCard: React.FC<PricingCardProps> = ({
               </div>
               {isAnnual && annualPrice && (
                 <p className="text-sm text-green-600 mt-2">
-                  Save ${(parseFloat(price) * 12 - parseFloat(annualPrice) * 12).toFixed(0)}/year
+                  Save $
+                  {(
+                    parseFloat(price) * 12 -
+                    parseFloat(annualPrice) * 12
+                  ).toFixed(0)}
+                  /year
                 </p>
               )}
             </>
@@ -123,9 +128,7 @@ export const PricingCard: React.FC<PricingCardProps> = ({
                 </svg>
               )}
               <span
-                className={
-                  feature.included ? 'text-gray-700' : 'text-gray-400'
-                }
+                className={feature.included ? 'text-gray-700' : 'text-gray-400'}
               >
                 {feature.text}
               </span>
@@ -136,4 +139,3 @@ export const PricingCard: React.FC<PricingCardProps> = ({
     </div>
   )
 }
-

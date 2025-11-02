@@ -84,4 +84,3 @@ public class ApplicationSettings : BaseEntity
             maxApplicationsPerUser: null);
     }
 }
-

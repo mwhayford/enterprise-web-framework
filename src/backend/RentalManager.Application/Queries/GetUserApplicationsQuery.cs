@@ -6,4 +6,3 @@ using RentalManager.Application.DTOs;
 namespace RentalManager.Application.Queries;
 
 public record GetUserApplicationsQuery(Guid UserId) : IRequest<List<PropertyApplicationDto>>;
-

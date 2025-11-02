@@ -7,6 +7,8 @@ using RentalManager.Application.Commands;
 using RentalManager.Application.DTOs;
 using RentalManager.Application.Interfaces;
 using RentalManager.Application.Queries;
+using RentalManager.Domain.Constants;
+using RentalManager.Domain.ValueObjects;
 
 namespace RentalManager.API.Controllers;
 
@@ -62,8 +64,29 @@ public class ApplicationsController : ControllerBase
         return Ok(result);
     }
 
+    /// <summary>
+    /// Gets all applications for properties owned by the current user (Owner).
+    /// </summary>
+    /// <param name="status">Optional status filter.</param>
+    /// <returns>List of applications.</returns>
+    [HttpGet("owner/my")]
+    [Authorize(Roles = $"{Roles.Owner},{Roles.Admin}")]
+    public async Task<ActionResult<List<PropertyApplicationDto>>> GetMyOwnerApplications([FromQuery] ApplicationStatus? status = null)
+    {
+        var userId = _currentUserService.UserId;
+        if (!userId.HasValue)
+        {
+            return Unauthorized();
+        }
+
+        var query = new GetApplicationsByOwnerIdQuery(userId.Value, status);
+        var result = await _mediator.Send(query);
+
+        return Ok(result);
+    }
+
     [HttpPost("{id}/approve")]
-    [Authorize(Roles = "Admin,PropertyOwner")]
+    [Authorize(Roles = "Admin,Owner")]
     public async Task<ActionResult<PropertyApplicationDto>> ApproveApplication(Guid id, [FromBody] DecisionRequest request)
     {
         var command = new ApproveApplicationCommand(id, request.DecisionNotes);
@@ -73,7 +96,7 @@ public class ApplicationsController : ControllerBase
     }
 
     [HttpPost("{id}/reject")]
-    [Authorize(Roles = "Admin,PropertyOwner")]
+    [Authorize(Roles = "Admin,Owner")]
     public async Task<ActionResult<PropertyApplicationDto>> RejectApplication(Guid id, [FromBody] DecisionRequest request)
     {
         var command = new RejectApplicationCommand(id, request.DecisionNotes);
@@ -115,4 +138,3 @@ public class ConfirmPaymentRequest
 {
     public string PaymentIntentId { get; set; } = string.Empty;
 }
-

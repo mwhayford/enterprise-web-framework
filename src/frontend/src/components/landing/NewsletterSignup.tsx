@@ -7,12 +7,14 @@ import { subscribeToNewsletter } from '../../services/newsletterService'
 export const NewsletterSignup: React.FC = () => {
   const [email, setEmail] = useState('')
   const [consent, setConsent] = useState(false)
-  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
+  const [status, setStatus] = useState<
+    'idle' | 'loading' | 'success' | 'error'
+  >('idle')
   const [errorMessage, setErrorMessage] = useState('')
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    
+
     if (!email || !consent) {
       setStatus('error')
       setErrorMessage('Please provide your email and consent to continue.')
@@ -30,7 +32,9 @@ export const NewsletterSignup: React.FC = () => {
     } catch (error) {
       setStatus('error')
       setErrorMessage(
-        error instanceof Error ? error.message : 'Failed to subscribe. Please try again.'
+        error instanceof Error
+          ? error.message
+          : 'Failed to subscribe. Please try again.'
       )
     }
   }
@@ -61,7 +65,8 @@ export const NewsletterSignup: React.FC = () => {
               Stay up to date
             </h2>
             <p className="text-lg text-gray-600">
-              Get the latest product updates, tips, and exclusive offers delivered to your inbox.
+              Get the latest product updates, tips, and exclusive offers
+              delivered to your inbox.
             </p>
           </div>
 
@@ -124,8 +129,8 @@ export const NewsletterSignup: React.FC = () => {
                   htmlFor="newsletter-consent"
                   className="ml-3 text-sm text-gray-600"
                 >
-                  I agree to receive marketing emails from RentalManager. You can
-                  unsubscribe at any time. View our{' '}
+                  I agree to receive marketing emails from RentalManager. You
+                  can unsubscribe at any time. View our{' '}
                   <a href="#" className="text-blue-600 hover:text-blue-700">
                     Privacy Policy
                   </a>
@@ -147,7 +152,9 @@ export const NewsletterSignup: React.FC = () => {
                 className="w-full"
                 disabled={status === 'loading'}
               >
-                {status === 'loading' ? 'Subscribing...' : 'Subscribe to Newsletter'}
+                {status === 'loading'
+                  ? 'Subscribing...'
+                  : 'Subscribe to Newsletter'}
               </Button>
 
               {/* Privacy Note */}
@@ -161,4 +168,3 @@ export const NewsletterSignup: React.FC = () => {
     </section>
   )
 }
-

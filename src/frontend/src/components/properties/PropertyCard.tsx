@@ -1,9 +1,9 @@
-import { Link } from 'react-router-dom';
-import { Home, Bed, Bath, Square, DollarSign, Calendar } from 'lucide-react';
-import type { PropertyListDto } from '../../services/propertyService';
+import { Link } from 'react-router-dom'
+import { Home, Bed, Bath, Square, DollarSign, Calendar } from 'lucide-react'
+import type { PropertyListDto } from '../../services/propertyService'
 
 interface PropertyCardProps {
-  property: PropertyListDto;
+  property: PropertyListDto
 }
 
 const propertyTypeLabels: Record<number, string> = {
@@ -13,23 +13,29 @@ const propertyTypeLabels: Record<number, string> = {
   3: 'Townhouse',
   4: 'Studio',
   5: 'Other',
-};
+}
 
 const propertyStatusLabels: Record<number, string> = {
   0: 'Available',
   1: 'Rented',
   2: 'Maintenance',
   3: 'Unlisted',
-};
+}
 
 export const PropertyCard = ({ property }: PropertyCardProps) => {
-  const availableDate = new Date(property.availableDate).toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-  });
+  const availableDate = new Date(property.availableDate).toLocaleDateString(
+    'en-US',
+    {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+    }
+  )
 
-  const statusColor = property.status === 0 ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800';
+  const statusColor =
+    property.status === 0
+      ? 'bg-green-100 text-green-800'
+      : 'bg-gray-100 text-gray-800'
 
   return (
     <Link
@@ -49,7 +55,9 @@ export const PropertyCard = ({ property }: PropertyCardProps) => {
             <Home className="w-16 h-16 text-gray-400" />
           </div>
         )}
-        <div className={`absolute top-2 right-2 px-3 py-1 rounded-full text-sm font-semibold ${statusColor}`}>
+        <div
+          className={`absolute top-2 right-2 px-3 py-1 rounded-full text-sm font-semibold ${statusColor}`}
+        >
           {propertyStatusLabels[property.status]}
         </div>
       </div>
@@ -96,6 +104,5 @@ export const PropertyCard = ({ property }: PropertyCardProps) => {
         </div>
       </div>
     </Link>
-  );
-};
-
+  )
+}

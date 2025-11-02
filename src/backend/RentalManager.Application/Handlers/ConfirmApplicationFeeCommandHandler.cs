@@ -40,4 +40,3 @@ public class ConfirmApplicationFeeCommandHandler : IRequestHandler<ConfirmApplic
         return Unit.Value;
     }
 }
-
