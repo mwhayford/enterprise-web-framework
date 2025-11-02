@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
   Elements,
@@ -166,11 +166,7 @@ export const ApplicationFeePayment = (props: ApplicationFeePaymentProps) => {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-  useEffect(() => {
-    initializePayment()
-  }, [])
-
-  const initializePayment = async () => {
+  const initializePayment = useCallback(async () => {
     try {
       setLoading(true)
       const API_BASE_URL =
@@ -192,7 +188,11 @@ export const ApplicationFeePayment = (props: ApplicationFeePaymentProps) => {
     } finally {
       setLoading(false)
     }
-  }
+  }, [props.applicationId])
+
+  useEffect(() => {
+    initializePayment()
+  }, [initializePayment])
 
   if (loading) {
     return (
