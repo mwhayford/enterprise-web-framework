@@ -43,14 +43,10 @@ test.describe('Property Application Flow', () => {
     await page.click('text=Properties');
     await expect(page).toHaveURL('/properties');
 
-    // Wait for page to finish loading (wait for loading state to disappear)
+    // Wait for page to finish loading
     await page.waitForLoadState('networkidle');
     
-    // Wait for either property cards to appear or error message
-    // Check if loading spinner is gone
-    await page.waitForTimeout(2000); // Give time for API call
-
-    // Check for property listings - wait for the API response to render
+    // Wait for property cards to appear (replaces fixed timeout)
     await expect(page.locator('[data-testid="property-card"]').first()).toBeVisible({ timeout: 15000 });
   });
 
@@ -119,7 +115,6 @@ test.describe('Property Application Flow', () => {
     // Navigate to properties page
     await page.goto('/properties');
     await page.waitForLoadState('networkidle');
-    await page.waitForTimeout(1000); // Wait for properties to load
 
     // Wait for at least one property card to be visible
     await expect(page.locator('[data-testid="property-card"]').first()).toBeVisible({ timeout: 15000 });
@@ -130,9 +125,8 @@ test.describe('Property Application Flow', () => {
     // Wait for navigation to property detail page
     await page.waitForURL(/\/properties\/.*/, { timeout: 10000 });
     await page.waitForLoadState('domcontentloaded');
-    await page.waitForTimeout(2000); // Wait for property details to load
-
-    // Check for property details heading
+    
+    // Wait for property details heading to appear (replaces fixed timeout)
     await expect(page.locator('text=Property Details').or(page.locator('h1')).first()).toBeVisible({ timeout: 10000 });
     
     // Check if Apply Now button is visible (property might be available or not)
@@ -213,7 +207,6 @@ test.describe('Property Application Flow', () => {
     // Navigate to a property
     await page.goto('/properties');
     await page.waitForLoadState('networkidle');
-    await page.waitForTimeout(1000); // Wait for properties to load
 
     // Wait for at least one property card to be visible
     await expect(page.locator('[data-testid="property-card"]').first()).toBeVisible({ timeout: 15000 });
@@ -224,7 +217,11 @@ test.describe('Property Application Flow', () => {
     // Wait for navigation to property detail page
     await page.waitForURL(/\/properties\/.*/, { timeout: 10000 });
     await page.waitForLoadState('domcontentloaded');
-    await page.waitForTimeout(2000); // Wait for property details to load
+    
+    // Wait for Apply Now button or unavailable message to appear
+    await expect(
+      page.locator('button:has-text("Apply Now")').or(page.locator('text=not currently available'))
+    ).toBeVisible({ timeout: 10000 });
 
     // Check if Apply Now button exists (property might be available or not)
     const applyButton = page.locator('button:has-text("Apply Now")');
@@ -381,19 +378,17 @@ test.describe('Property Application Flow', () => {
       return user !== null && authToken !== null && token !== null;
     }, { timeout: 5000 });
     
-    // Wait for AuthContext to initialize and recognize authenticated state
-    await page.waitForTimeout(2000);
-    
     // Navigate to dashboard first to let AuthContext fully initialize
     await page.goto('/dashboard');
     await page.waitForLoadState('networkidle');
-    await page.waitForTimeout(1000);
+    
+    // Wait for dashboard content to appear (confirms auth is working)
+    await expect(page.locator('text=Dashboard').or(page.locator('h1')).first()).toBeVisible({ timeout: 10000 });
 
     // Navigate to property and apply
     await page.goto('/properties');
     await page.waitForLoadState('networkidle');
-    await page.waitForTimeout(1000); // Wait for properties to load
-
+    
     // Wait for property cards to be visible
     await expect(page.locator('[data-testid="property-card"]').first()).toBeVisible({ timeout: 15000 });
     
@@ -403,7 +398,11 @@ test.describe('Property Application Flow', () => {
     // Wait for navigation to property detail page
     await page.waitForURL(/\/properties\/.*/, { timeout: 10000 });
     await page.waitForLoadState('domcontentloaded');
-    await page.waitForTimeout(2000); // Wait for property details to load
+    
+    // Wait for property details to load (Apply Now button or unavailable message)
+    await expect(
+      page.locator('button:has-text("Apply Now")').or(page.locator('text=not currently available'))
+    ).toBeVisible({ timeout: 10000 });
 
     // Check if Apply Now button exists and is visible
     const applyButton = page.locator('button:has-text("Apply Now")');
@@ -442,9 +441,8 @@ test.describe('Property Application Flow', () => {
       throw new Error(`Unexpected navigation to: ${currentUrl}`);
     }
     await page.waitForLoadState('domcontentloaded');
-    await page.waitForTimeout(2000); // Wait for form to fully render
     
-    // Wait for the form to be visible (check for Step 1 heading)
+    // Wait for the form to be visible (check for Step 1 heading) - replaces fixed timeout
     await page.waitForSelector('h2:has-text("Personal Information")', { timeout: 10000 });
     
     // Verify we're on step 1
@@ -463,7 +461,9 @@ test.describe('Property Application Flow', () => {
     // Step 2: Employment Info
     // Wait for step 2 to appear after clicking Next
     await page.waitForSelector('h2:has-text("Employment Information")', { timeout: 10000 });
-    await page.waitForTimeout(1000); // Wait for form fields to render
+    
+    // Wait for first input field to be visible (replaces fixed timeout)
+    await expect(page.locator('input[aria-label="Employer name"]')).toBeVisible({ timeout: 5000 });
     
     await page.fill('input[aria-label="Employer name"]', 'Tech Corp');
     await page.fill('input[aria-label="Job title"]', 'Software Engineer');
@@ -474,13 +474,14 @@ test.describe('Property Application Flow', () => {
     // Step 3: Rental History
     // Wait for step 3 to appear
     await page.waitForSelector('h2:has-text("Rental History")', { timeout: 10000 });
-    await page.waitForTimeout(1000); // Wait for form to render
     await page.click('text=Next');
 
     // Step 4: Review & Submit
     // Wait for step 4 to appear
     await page.waitForSelector('h2:has-text("Review & Submit")', { timeout: 10000 });
-    await page.waitForTimeout(1000); // Wait for review content to render
+    
+    // Wait for terms checkbox to be visible (replaces fixed timeout)
+    await expect(page.locator('input[type="checkbox"][id="terms"]')).toBeVisible({ timeout: 5000 });
     
     // Accept terms and conditions
     const termsCheckbox = page.locator('input[type="checkbox"][id="terms"]');
@@ -558,7 +559,6 @@ test.describe('Property Application Flow', () => {
 
     await page.goto('/properties');
     await page.waitForLoadState('networkidle');
-    await page.waitForTimeout(1000);
     
     // Wait for properties to load
     await page.waitForSelector('[data-testid="property-card"]', { timeout: 15000 });
@@ -566,20 +566,45 @@ test.describe('Property Application Flow', () => {
     // Use desktop sidebar filters (always visible on desktop viewport)
     // Fill in minimum bedrooms filter
     const minBedroomsInput = page.locator('input[placeholder="Min"]').first();
+    await expect(minBedroomsInput).toBeVisible({ timeout: 5000 });
     await minBedroomsInput.fill('2');
 
     // Apply filters
     await page.click('button:has-text("Apply Filters")');
 
-    // Wait for filtered results
-    await page.waitForTimeout(1000);
-
-    // Check that filtered results are shown (at least one property)
-    const propertyCards = page.locator('[data-testid="property-card"]');
-    await expect(propertyCards.first()).toBeVisible({ timeout: 5000 });
+    // Wait for filtered results to update (replaces fixed timeout)
+    await expect(page.locator('[data-testid="property-card"]').first()).toBeVisible({ timeout: 10000 });
   });
 
   test('should view submitted applications', async ({ page }) => {
+    // Mock the /users/me API call to prevent 401 redirect
+    await page.route(/.*\/api\/users\/me.*/, async route => {
+      const mockUser = {
+        id: 'test-user-id',
+        email: 'test@example.com',
+        firstName: 'Test',
+        lastName: 'User',
+        displayName: 'Test User',
+        isActive: true,
+        createdAt: new Date().toISOString(),
+        lastLoginAt: new Date().toISOString(),
+      };
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify(mockUser),
+      });
+    });
+
+    // Mock the applications API endpoint
+    await page.route(/.*\/api\/applications\/my.*/, async route => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify([]),
+      });
+    });
+
     // Set up authenticated user via localStorage (simulating OAuth login)
     await page.goto('/');
     await page.evaluate(() => {
@@ -595,14 +620,23 @@ test.describe('Property Application Flow', () => {
         lastLoginAt: new Date().toISOString(),
       };
       localStorage.setItem('auth_token', mockToken);
+      localStorage.setItem('token', mockToken); // PropertyDetailPage checks for 'token'
       localStorage.setItem('user', JSON.stringify(mockUser));
     });
 
+    // Wait for auth to initialize
+    await page.waitForFunction(() => {
+      const user = localStorage.getItem('user');
+      const token = localStorage.getItem('auth_token');
+      return user !== null && token !== null;
+    }, { timeout: 5000 });
+
     // Navigate to My Applications
     await page.goto('/applications/my');
+    await page.waitForURL(/\/applications/, { timeout: 10000 });
 
-    // Check for applications list
-    await expect(page.locator('text=My Applications')).toBeVisible();
+    // Check for applications list heading
+    await expect(page.locator('text=My Applications')).toBeVisible({ timeout: 10000 });
   });
 });
 
@@ -679,21 +713,22 @@ test.describe('Admin Application Management', () => {
       return user !== null && token !== null;
     }, { timeout: 5000 });
     
-    await page.waitForTimeout(1000); // Wait for AuthContext to initialize
+    // Navigate to dashboard to let AuthContext initialize
+    await page.goto('/dashboard');
+    await expect(page.locator('text=Dashboard').or(page.locator('h1')).first()).toBeVisible({ timeout: 10000 });
   });
 
   test('admin can view all applications', async ({ page }) => {
     await page.goto('/admin/applications');
     await page.waitForURL('**/admin/applications', { timeout: 10000 });
     
-    // Wait for page to load (may show loading state first)
+    // Wait for page to load
     await page.waitForLoadState('domcontentloaded');
-    await page.waitForTimeout(2000); // Wait for React to render and API call to complete
 
     // Verify we're on the admin applications page (not redirected)
     expect(page.url()).toContain('/admin/applications');
 
-    // Wait for the heading to be visible
+    // Wait for the heading to be visible (replaces fixed timeout)
     await expect(page.locator('text=Application Management')).toBeVisible({ timeout: 10000 });
     
     // Check if table is visible (might be empty state if no applications)
@@ -741,7 +776,9 @@ test.describe('Admin Application Management', () => {
     await page.goto('/admin/applications');
     await page.waitForURL('**/admin/applications', { timeout: 10000 });
     await page.waitForLoadState('domcontentloaded');
-    await page.waitForTimeout(2000);
+    
+    // Wait for page heading to appear
+    await expect(page.locator('text=Application Management')).toBeVisible({ timeout: 10000 });
 
     // Only proceed if we have applications (table visible)
     const hasTable = await page.locator('table').count() > 0;
@@ -751,11 +788,13 @@ test.describe('Admin Application Management', () => {
     }
 
     // Click on first application to review
+    await expect(page.locator('text=Review').first()).toBeVisible({ timeout: 5000 });
     await page.locator('text=Review').first().click();
     await page.waitForURL(/\/admin\/applications\/.*/, { timeout: 10000 });
 
-    // Wait for review page to load
-    await page.waitForTimeout(2000);
+    // Wait for review page to load (wait for content to appear)
+    await page.waitForLoadState('domcontentloaded');
+    await expect(page.locator('body')).not.toContainText('Loading...', { timeout: 5000 });
 
     // Add decision notes if textarea exists
     const textarea = page.locator('textarea[id="decisionNotes"]');
@@ -810,7 +849,9 @@ test.describe('Admin Application Management', () => {
     await page.goto('/admin/applications');
     await page.waitForURL('**/admin/applications', { timeout: 10000 });
     await page.waitForLoadState('domcontentloaded');
-    await page.waitForTimeout(2000);
+    
+    // Wait for page heading
+    await expect(page.locator('text=Application Management')).toBeVisible({ timeout: 10000 });
 
     // Only proceed if we have applications
     const hasTable = await page.locator('table').count() > 0;
@@ -819,9 +860,12 @@ test.describe('Admin Application Management', () => {
     }
 
     // Click on first application to review
+    await expect(page.locator('text=Review').first()).toBeVisible({ timeout: 5000 });
     await page.locator('text=Review').first().click();
     await page.waitForURL(/\/admin\/applications\/.*/, { timeout: 10000 });
-    await page.waitForTimeout(2000);
+    
+    // Wait for review page content
+    await page.waitForLoadState('domcontentloaded');
 
     // Add decision notes if textarea exists
     const textarea = page.locator('textarea[id="decisionNotes"]');
@@ -843,13 +887,23 @@ test.describe('Admin Application Management', () => {
     await page.goto('/admin/applications');
     await page.waitForURL('**/admin/applications', { timeout: 10000 });
     await page.waitForLoadState('domcontentloaded');
-    await page.waitForTimeout(2000);
+    
+    // Wait for page heading
+    await expect(page.locator('text=Application Management')).toBeVisible({ timeout: 10000 });
 
     // Click on filter button for "Approved" status
     const approvedFilter = page.locator('button:has-text("Approved")').first();
     if (await approvedFilter.count() > 0) {
       await approvedFilter.click();
-      await page.waitForTimeout(1000); // Wait for filter to apply
+      // Wait for filter state change (button style change) instead of fixed timeout
+      await page.waitForFunction(() => {
+        const btn = document.querySelector('button:has-text("Approved")') as HTMLElement;
+        if (!btn) return false;
+        const style = window.getComputedStyle(btn);
+        return btn.classList.contains('bg-blue-600') || style.backgroundColor !== 'rgba(0, 0, 0, 0)';
+      }, { timeout: 5000 }).catch(() => {
+        // Filter may already be active or filter UI may work differently
+      });
       
       // Verify filter is active (button should be highlighted)
       const isActive = await approvedFilter.evaluate(el => {

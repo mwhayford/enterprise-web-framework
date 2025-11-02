@@ -43,7 +43,7 @@ test.describe('Authentication Flow', () => {
 
     // Try to access dashboard
     await page.goto('/dashboard');
-    await page.waitForTimeout(1000);
+    await page.waitForURL(/\/login|\/dashboard/, { timeout: 10000 });
 
     // Should be redirected to login (depending on your auth implementation)
     const url = page.url();

@@ -50,8 +50,9 @@ test.describe('Subscription Management', () => {
       return user !== null && token !== null;
     }, { timeout: 5000 });
     
-    // Wait a bit for AuthContext useEffect to complete
-    await page.waitForTimeout(1000);
+    // Navigate to dashboard first to initialize auth
+    await page.goto('/dashboard');
+    await expect(page.locator('text=Dashboard').or(page.locator('h1')).first()).toBeVisible({ timeout: 10000 });
     
     // Navigate directly to subscription page
     await page.goto('/subscription');
@@ -76,8 +77,10 @@ test.describe('Subscription Management', () => {
     expect(currentUrl).toContain('/subscription');
     await page.waitForLoadState('domcontentloaded');
     
-    // Wait longer for React to fully render (ProtectedRoute may have loading state)
-    await page.waitForTimeout(3000);
+    // Wait for subscription page content to appear (replaces fixed timeout)
+    await expect(
+      page.locator('h1').or(page.locator('h2')).or(page.locator('div')).first()
+    ).toBeVisible({ timeout: 10000 });
     
     // Check if page has ANY content at all (even loading state)
     const bodyText = await page.locator('body').textContent() || '';
@@ -107,7 +110,9 @@ test.describe('Subscription Management', () => {
 
   test('should show subscription plans or current subscription', async ({ page }) => {
     await page.waitForLoadState('networkidle');
-    await page.waitForTimeout(1000);
+    
+    // Wait for subscription page content
+    await expect(page.locator('body')).toBeVisible({ timeout: 5000 });
     
     // Check that we're on the subscription page with content loaded
     const url = page.url();
@@ -116,7 +121,9 @@ test.describe('Subscription Management', () => {
 
   test('should display Stripe payment form for new subscription', async ({ page }) => {
     await page.waitForLoadState('networkidle');
-    await page.waitForTimeout(2000);
+    
+    // Wait for page content
+    await expect(page.locator('body')).toBeVisible({ timeout: 5000 });
     
     // Check that we're on the subscription page and it has loaded
     const url = page.url();
@@ -168,7 +175,11 @@ test.describe('Subscription Management', () => {
     // We're on subscription page
     expect(currentUrl).toContain('/subscription');
     await page.waitForLoadState('domcontentloaded');
-    await page.waitForTimeout(3000); // Wait for React to render
+    
+    // Wait for subscription page content (replaces fixed timeout)
+    await expect(
+      page.locator('h1').or(page.locator('h2')).or(page.locator('div')).first()
+    ).toBeVisible({ timeout: 10000 });
     
     // Check if page has ANY content at all (even loading state)
     const bodyText = await page.locator('body').textContent() || '';

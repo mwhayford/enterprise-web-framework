@@ -33,7 +33,8 @@ export class SearchPage extends BasePage {
     await this.page.selectOption(this.indexSelect, index);
     await this.page.fill(this.searchInput, query);
     await this.page.click(this.searchButton);
-    await this.page.waitForTimeout(1000); // Wait for results
+    // Wait for search results to load (replaces fixed timeout)
+    await this.page.waitForLoadState('networkidle');
   }
 
   /**

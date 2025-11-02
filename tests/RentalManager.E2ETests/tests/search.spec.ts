@@ -33,8 +33,8 @@ test.describe('Search Functionality', () => {
   test('should perform search and display results', async ({ page }) => {
     await searchPage.search('test', 'core-index');
     
-    // Wait for search to complete
-    await searchPage.page.waitForTimeout(2000);
+    // Wait for search to complete (replaces fixed timeout)
+    await page.waitForLoadState('networkidle');
     
     // Check that search was executed (URL should contain query params)
     const url = page.url();
@@ -46,8 +46,8 @@ test.describe('Search Functionality', () => {
   test('should handle empty search query', async ({ page }) => {
     await searchPage.search('', 'core-index');
     
-    // Should either show validation message or all results
-    await page.waitForTimeout(1000);
+    // Should either show validation message or all results (wait for page state)
+    await page.waitForLoadState('networkidle');
     const pageContent = await page.content();
     expect(pageContent).toBeTruthy();
   });
@@ -55,7 +55,9 @@ test.describe('Search Functionality', () => {
   test('should filter search by index type', async ({ page }) => {
     // Search in users index
     await searchPage.search('john', 'users');
-    await searchPage.page.waitForTimeout(1000);
+    
+    // Wait for search to complete
+    await page.waitForLoadState('networkidle');
     
     // Check that we're on the search page (search executed)
     const url = page.url();
@@ -64,7 +66,9 @@ test.describe('Search Functionality', () => {
 
   test('should display pagination controls when results exceed page size', async ({ page }) => {
     await searchPage.search('test', 'core-index');
-    await page.waitForTimeout(2000);
+    
+    // Wait for search results to load
+    await page.waitForLoadState('networkidle');
     
     // Check for pagination controls (if results are numerous)
     const paginationButtons = page.locator('button:has-text("Next")');

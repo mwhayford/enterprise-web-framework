@@ -48,7 +48,9 @@ test.describe('Payment Processing', () => {
       return user !== null && token !== null;
     }, { timeout: 5000 });
     
-    await page.waitForTimeout(1000); // Wait for AuthContext to initialize
+    // Navigate to dashboard first to let AuthContext initialize
+    await page.goto('/dashboard');
+    await expect(page.locator('text=Dashboard').or(page.locator('h1')).first()).toBeVisible({ timeout: 10000 });
 
     await authenticatedPage.goToPayment();
   });
@@ -69,7 +71,11 @@ test.describe('Payment Processing', () => {
     // We're on payment page
     expect(currentUrl).toContain('/payment');
     await page.waitForLoadState('domcontentloaded');
-    await page.waitForTimeout(3000); // Wait for React and Stripe to render
+    
+    // Wait for payment form elements to appear (replaces fixed timeout)
+    await expect(
+      page.locator('h1').or(page.locator('input')).or(page.locator('button')).first()
+    ).toBeVisible({ timeout: 10000 });
 
     // Check if page has ANY content at all (even loading state)
     const bodyText = await page.locator('body').textContent() || '';
@@ -105,7 +111,9 @@ test.describe('Payment Processing', () => {
       // Try to enter invalid amount
       await amountInput.fill('-10');
       await page.locator('button[type="submit"]').first().click();
-      await page.waitForTimeout(500);
+      
+      // Wait for validation message or form state change
+      await page.waitForLoadState('networkidle');
       
       // Should show validation error or prevent submission
       const pageContent = await page.content();
@@ -115,7 +123,9 @@ test.describe('Payment Processing', () => {
 
   test('should load Stripe Elements iframe', async ({ page }) => {
     await page.waitForLoadState('networkidle');
-    await page.waitForTimeout(2000); // Wait for Stripe to load
+    
+    // Wait for page to be interactive (replaces fixed timeout)
+    await expect(page.locator('body')).toBeVisible({ timeout: 5000 });
     
     // Check if Stripe iframe is loaded (Stripe injects iframes)
     const frames = page.frames();
@@ -170,13 +180,19 @@ test.describe('Payment Processing', () => {
       return user !== null && token !== null;
     }, { timeout: 5000 });
     
-    await page.waitForTimeout(1000);
+    // Navigate to dashboard first to initialize auth
+    await page.goto('/dashboard');
+    await expect(page.locator('text=Dashboard').or(page.locator('h1')).first()).toBeVisible({ timeout: 10000 });
 
     // Navigate to success page to test the flow
     await page.goto('/payment-success');
     await page.waitForURL('**/payment-success', { timeout: 10000 });
     await page.waitForLoadState('domcontentloaded');
-    await page.waitForTimeout(2000);
+    
+    // Wait for success page content (replaces fixed timeout)
+    await expect(
+      page.locator('h1').or(page.locator('h2')).or(page.locator('button')).first()
+    ).toBeVisible({ timeout: 10000 });
     
     // Check for success indicators - be flexible
     const pageContent = await page.locator('body').textContent() || '';
