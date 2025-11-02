@@ -154,14 +154,32 @@ jobs:
       - name: Start Docker services
         run: docker compose -f docker-compose.ci.yml up -d
       
+      - name: Capture container logs immediately
+        run: |
+          echo "=== Container Status (after startup) ==="
+          docker ps -a
+          echo ""
+          echo "=== Backend Container Exit Code ==="
+          docker inspect rentalmanager-backend-ci --format='{{.State.ExitCode}}' || echo "Container not found"
+          echo ""
+          echo "=== Full Backend Container Logs ==="
+          docker logs rentalmanager-backend-ci 2>&1 || true
+          echo ""
+          echo "=== Backend Container Environment ==="
+          docker inspect rentalmanager-backend-ci --format='{{range .Config.Env}}{{println .}}{{end}}' || true
+          echo ""
+          echo "=== All Container Logs (for debugging) ==="
+          docker compose -f docker-compose.ci.yml logs --tail=100 || true
+      
       - name: Wait for containers to initialize
         run: |
           echo "Waiting 60 seconds for containers to initialize..."
           sleep 60
-          echo "=== Container Status ==="
+          echo "=== Container Status (after wait) ==="
           docker ps -a
-          echo "=== Backend Container Logs (last 50 lines) ==="
-          docker logs --tail 50 rentalmanager-backend-ci || true
+          echo ""
+          echo "=== Backend Container Logs (last 100 lines) ==="
+          docker logs --tail 100 rentalmanager-backend-ci || true
       
       - name: Wait for services to be healthy
         run: |
@@ -192,8 +210,15 @@ jobs:
         run: |
           echo "=== Full Backend Container Logs ==="
           docker logs rentalmanager-backend-ci || true
-          echo "=== Backend Container Inspect ==="
+          echo ""
+          echo "=== Backend Container Inspect (complete) ==="
           docker inspect rentalmanager-backend-ci || true
+          echo ""
+          echo "=== Backend Container Exit Code ==="
+          docker inspect rentalmanager-backend-ci --format='Exit Code: {{.State.ExitCode}}, Status: {{.State.Status}}, Error: {{.State.Error}}' || true
+          echo ""
+          echo "=== Docker Compose Logs ==="
+          docker compose -f docker-compose.ci.yml logs backend || true
       
       - name: Install E2E test dependencies
         working-directory: tests/RentalManager.E2ETests
