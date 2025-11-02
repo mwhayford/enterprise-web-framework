@@ -163,12 +163,16 @@ jobs:
           dotnet-version: '9.0.x'
       
       - name: Restore dependencies
-        run: dotnet restore tests/RentalManager.UnitTests/RentalManager.UnitTests.csproj
+        run: dotnet restore src/backend/RentalManager.sln
+      
+      - name: Build solution
+        run: dotnet build src/backend/RentalManager.sln --configuration Release --no-restore
       
       - name: Run tests with coverage
         run: |
           dotnet test tests/RentalManager.UnitTests/RentalManager.UnitTests.csproj \
             --configuration Release \
+            --no-build \
             --collect:"XPlat Code Coverage" \
             --results-directory ./coverage
       
