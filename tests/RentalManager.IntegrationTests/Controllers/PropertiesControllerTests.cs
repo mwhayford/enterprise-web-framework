@@ -8,6 +8,8 @@ using System.Text.Json;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 using RentalManager.Application.DTOs;
+using RentalManager.Domain.Entities;
+using RentalManager.Domain.ValueObjects;
 using RentalManager.Infrastructure.Persistence;
 using RentalManager.IntegrationTests.Infrastructure;
 
@@ -126,9 +128,41 @@ public class PropertiesControllerTests
         using var scope = _factory.Services.CreateScope();
         var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
-        // Create and save a test property
-        // Return the property ID
-        await Task.CompletedTask; // satisfy async method until implemented
-        return Guid.NewGuid(); // Placeholder
+        // Create a test owner ID (for test purposes, we'll use a random GUID)
+        // In a real scenario, you might want to create a test user first
+        var ownerId = Guid.NewGuid();
+
+        // Create address
+        var address = PropertyAddress.Create(
+            street: "123 Test St",
+            city: "Test City",
+            state: "TS",
+            zipCode: "12345");
+
+        // Create money values
+        var monthlyRent = Money.Create(1500m, "USD");
+        var securityDeposit = Money.Create(1500m, "USD");
+
+        // Create property
+        var property = new Property(
+            ownerId: ownerId,
+            address: address,
+            propertyType: PropertyType.Apartment,
+            bedrooms: 2,
+            bathrooms: 2,
+            squareFeet: 1000m,
+            monthlyRent: monthlyRent,
+            securityDeposit: securityDeposit,
+            availableDate: DateTime.UtcNow.AddDays(30),
+            description: "Test property for integration testing");
+
+        // Mark as available
+        property.MarkAsAvailable();
+
+        // Add to context and save
+        context.Properties.Add(property);
+        await context.SaveChangesAsync();
+
+        return property.Id;
     }
 }
