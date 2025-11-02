@@ -43,10 +43,8 @@ test.describe('Property Application Flow', () => {
     await page.click('text=Properties');
     await expect(page).toHaveURL('/properties');
 
-    // Wait for page to finish loading
-    await page.waitForLoadState('networkidle');
-    
-    // Wait for property cards to appear (replaces fixed timeout)
+    // Wait for property cards to appear (skip networkidle as it can timeout with mocked APIs)
+    // The mocked API will respond immediately, so we can wait directly for the UI element
     await expect(page.locator('[data-testid="property-card"]').first()).toBeVisible({ timeout: 15000 });
   });
 
@@ -206,8 +204,8 @@ test.describe('Property Application Flow', () => {
 
     // Navigate to a property
     await page.goto('/properties');
-    await page.waitForLoadState('networkidle');
-
+    // Skip networkidle - wait directly for property cards (mocked API responds immediately)
+    
     // Wait for at least one property card to be visible
     await expect(page.locator('[data-testid="property-card"]').first()).toBeVisible({ timeout: 15000 });
     
@@ -387,7 +385,7 @@ test.describe('Property Application Flow', () => {
 
     // Navigate to property and apply
     await page.goto('/properties');
-    await page.waitForLoadState('networkidle');
+    // Skip networkidle - wait directly for property cards (mocked API responds immediately)
     
     // Wait for property cards to be visible
     await expect(page.locator('[data-testid="property-card"]').first()).toBeVisible({ timeout: 15000 });
@@ -445,9 +443,9 @@ test.describe('Property Application Flow', () => {
     // Wait for the form to be visible (check for Step 1 heading) - replaces fixed timeout
     await page.waitForSelector('h2:has-text("Personal Information")', { timeout: 10000 });
     
-    // Verify we're on step 1 - wait for step indicator or any form element
+    // Verify we're on step 1 - use first() to avoid strict mode violation (both elements exist)
     await expect(
-      page.locator('text=Personal Info').or(page.locator('h2:has-text("Personal Information")'))
+      page.locator('h2:has-text("Personal Information")').first()
     ).toBeVisible({ timeout: 10000 });
 
     // Fill out application form - Step 1: Personal Info
@@ -596,7 +594,7 @@ test.describe('Property Application Flow', () => {
     });
 
     await page.goto('/properties');
-    await page.waitForLoadState('networkidle');
+    // Skip networkidle - wait directly for property cards (mocked API responds immediately)
     
     // Wait for properties to load
     await page.waitForSelector('[data-testid="property-card"]', { timeout: 15000 });
