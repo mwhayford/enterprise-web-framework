@@ -39,7 +39,9 @@ export const UserMenu: React.FC<UserMenuProps> = ({ user }) => {
   }
 
   const displayName =
-    user.displayName || `${user.firstName} ${user.lastName}`.trim() || user.email
+    user.displayName ||
+    `${user.firstName} ${user.lastName}`.trim() ||
+    user.email
 
   const menuItems = [
     {
@@ -130,4 +132,3 @@ export const UserMenu: React.FC<UserMenuProps> = ({ user }) => {
     </div>
   )
 }
-

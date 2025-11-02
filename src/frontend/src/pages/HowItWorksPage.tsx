@@ -129,37 +129,43 @@ const HowItWorksPage: React.FC = () => {
     {
       icon: Zap,
       title: 'Lightning Fast',
-      description: 'Powered by modern technology for instant results and smooth user experience.',
+      description:
+        'Powered by modern technology for instant results and smooth user experience.',
       color: 'bg-yellow-100 text-yellow-600',
     },
     {
       icon: Shield,
       title: 'Secure & Private',
-      description: 'Bank-level security with encrypted data and secure payment processing.',
+      description:
+        'Bank-level security with encrypted data and secure payment processing.',
       color: 'bg-blue-100 text-blue-600',
     },
     {
       icon: BarChart3,
       title: 'Smart Analytics',
-      description: 'Track your rental performance with comprehensive reports and insights.',
+      description:
+        'Track your rental performance with comprehensive reports and insights.',
       color: 'bg-green-100 text-green-600',
     },
     {
       icon: Users,
       title: 'Tenant Portal',
-      description: 'Give tenants self-service access to pay rent, submit maintenance requests, and view lease info.',
+      description:
+        'Give tenants self-service access to pay rent, submit maintenance requests, and view lease info.',
       color: 'bg-purple-100 text-purple-600',
     },
     {
       icon: Wrench,
       title: 'Maintenance Management',
-      description: 'Track maintenance requests from submission to completion. Assign contractors and monitor progress.',
+      description:
+        'Track maintenance requests from submission to completion. Assign contractors and monitor progress.',
       color: 'bg-orange-100 text-orange-600',
     },
     {
       icon: Calendar,
       title: 'Automated Reminders',
-      description: 'Never miss a payment or renewal. Automated reminders keep everyone informed.',
+      description:
+        'Never miss a payment or renewal. Automated reminders keep everyone informed.',
       color: 'bg-pink-100 text-pink-600',
     },
   ]
@@ -184,8 +190,8 @@ const HowItWorksPage: React.FC = () => {
                 Works
               </h1>
               <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-8">
-                Everything you need to know about using RentalManager to simplify
-                your rental property management or find your next home.
+                Everything you need to know about using RentalManager to
+                simplify your rental property management or find your next home.
               </p>
             </motion.div>
           </div>
@@ -323,13 +329,17 @@ const HowItWorksPage: React.FC = () => {
                     transition={{ duration: 0.5, delay: index * 0.1 }}
                     className="bg-gray-50 p-6 rounded-xl hover:shadow-md transition-shadow"
                   >
-                    <div className={`${feature.color} w-12 h-12 rounded-lg flex items-center justify-center mb-4`}>
+                    <div
+                      className={`${feature.color} w-12 h-12 rounded-lg flex items-center justify-center mb-4`}
+                    >
                       <Icon className="w-6 h-6" />
                     </div>
                     <h3 className="text-lg font-semibold text-gray-900 mb-2">
                       {feature.title}
                     </h3>
-                    <p className="text-gray-600 text-sm">{feature.description}</p>
+                    <p className="text-gray-600 text-sm">
+                      {feature.description}
+                    </p>
                   </motion.div>
                 )
               })}
@@ -395,8 +405,8 @@ const HowItWorksPage: React.FC = () => {
               Ready to Get Started?
             </h2>
             <p className="text-xl text-gray-600 mb-8">
-              Join thousands of property managers and tenants using RentalManager
-              to simplify their rental experience.
+              Join thousands of property managers and tenants using
+              RentalManager to simplify their rental experience.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button
@@ -426,4 +436,3 @@ const HowItWorksPage: React.FC = () => {
 }
 
 export default HowItWorksPage
-

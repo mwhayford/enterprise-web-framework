@@ -24,4 +24,3 @@ export const AuthenticatedLayout: React.FC<AuthenticatedLayoutProps> = ({
     </div>
   )
 }
-

@@ -254,8 +254,9 @@ builder.Services.Configure<KafkaSettings>(
     builder.Configuration.GetSection("Kafka"));
 
 // Only register Kafka producer/consumer if bootstrap servers are configured
-var kafkaSettings = builder.Configuration.GetSection("Kafka").Get<KafkaSettings>();
-var kafkaEnabled = !string.IsNullOrWhiteSpace(kafkaSettings?.BootstrapServers);
+// Check configuration directly (not from bound object) to avoid default values
+var kafkaBootstrapServers = builder.Configuration["Kafka:BootstrapServers"];
+var kafkaEnabled = !string.IsNullOrWhiteSpace(kafkaBootstrapServers);
 
 if (kafkaEnabled)
 {

@@ -13,11 +13,8 @@ export const PublicLayout: React.FC<PublicLayoutProps> = ({ children }) => {
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       <PublicNavigation />
-      <main className="flex-1 pt-20">
-        {children}
-      </main>
+      <main className="flex-1 pt-20">{children}</main>
       <PublicFooter />
     </div>
   )
 }
-

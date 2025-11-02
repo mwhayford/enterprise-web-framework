@@ -26,9 +26,7 @@ export const Breadcrumbs: React.FC = () => {
   const location = useLocation()
   const pathnames = location.pathname.split('/').filter(x => x)
 
-  const breadcrumbs: BreadcrumbItem[] = [
-    { label: 'Home', path: '/dashboard' },
-  ]
+  const breadcrumbs: BreadcrumbItem[] = [{ label: 'Home', path: '/dashboard' }]
 
   // Build breadcrumbs from path
   pathnames.forEach((value, index) => {
@@ -44,8 +42,7 @@ export const Breadcrumbs: React.FC = () => {
 
   // Remove duplicates (e.g., "my" in /applications/my)
   const uniqueBreadcrumbs = breadcrumbs.filter(
-    (crumb, index, self) =>
-      index === self.findIndex(c => c.path === crumb.path)
+    (crumb, index, self) => index === self.findIndex(c => c.path === crumb.path)
   )
 
   if (uniqueBreadcrumbs.length <= 1) {
@@ -87,4 +84,3 @@ export const Breadcrumbs: React.FC = () => {
     </nav>
   )
 }
-

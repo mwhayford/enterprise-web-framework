@@ -120,12 +120,9 @@ export const PublicFooter: React.FC = () => {
         </div>
 
         <div className="mt-8 pt-8 border-t border-gray-800 text-center text-sm">
-          <p>
-            © {currentYear} RentalManager. All rights reserved.
-          </p>
+          <p>© {currentYear} RentalManager. All rights reserved.</p>
         </div>
       </div>
     </footer>
   )
 }
-

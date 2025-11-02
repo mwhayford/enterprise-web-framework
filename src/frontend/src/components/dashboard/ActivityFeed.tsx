@@ -133,4 +133,3 @@ export const ActivityFeed: React.FC<ActivityFeedProps> = ({ activities }) => {
     </Card>
   )
 }
-

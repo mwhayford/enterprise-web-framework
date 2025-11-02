@@ -13,13 +13,13 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
     {
         builder.ConfigureAppConfiguration((context, config) =>
         {
-            // Configure test settings
+            // Add in-memory configuration (will override appsettings.json values)
             config.AddInMemoryCollection(new Dictionary<string, string?>
             {
                 ["ConnectionStrings:DefaultConnection"] = "Host=localhost;Port=5433;Database=RentalManagerDb;Username=postgres;Password=password",
                 // Disable Kafka by setting empty bootstrap servers (prevents connection attempts)
                 // Program.cs will automatically register NullEventBus instead of KafkaEventBus
-                ["Kafka:BootstrapServers"] = "",
+                ["Kafka:BootstrapServers"] = string.Empty,
                 ["Kafka:GroupId"] = "test-group",
                 ["Kafka:SecurityProtocol"] = "Plaintext",
                 // Add JWT configuration for authentication tests

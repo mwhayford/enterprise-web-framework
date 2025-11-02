@@ -2,7 +2,15 @@
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 import React, { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import { Home, FileText, Calendar, CreditCard, Search, Menu, X } from 'lucide-react'
+import {
+  Home,
+  FileText,
+  Calendar,
+  CreditCard,
+  Search,
+  Menu,
+  X,
+} from 'lucide-react'
 import { useAuth } from '../../contexts/AuthContext'
 import { UserMenu } from './UserMenu'
 import { cn } from '../../utils/cn'
@@ -118,4 +126,3 @@ export const MainNavigation: React.FC = () => {
     </nav>
   )
 }
-
