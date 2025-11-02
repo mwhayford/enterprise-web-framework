@@ -487,7 +487,16 @@ builder.Services.AddScoped<IPaymentService, StripePaymentService>();
 builder.Services.AddScoped<IPaymentMethodService, RentalManager.Infrastructure.Services.PaymentMethodService>();
 builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 builder.Services.AddScoped<IDateTime, DateTimeService>();
-builder.Services.AddScoped<ISearchService, ElasticsearchService>();
+
+// Register search service conditionally based on Elasticsearch availability
+if (!elasticsearchDisabled)
+{
+    builder.Services.AddScoped<ISearchService, ElasticsearchService>();
+}
+else
+{
+    builder.Services.AddScoped<ISearchService, NullSearchService>();
+}
 
 // Register EventBus conditionally based on Kafka availability
 if (kafkaEnabled)
