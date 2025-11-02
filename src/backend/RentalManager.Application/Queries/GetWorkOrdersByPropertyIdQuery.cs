@@ -6,5 +6,3 @@ using RentalManager.Application.DTOs;
 namespace RentalManager.Application.Queries;
 
 public record GetWorkOrdersByPropertyIdQuery(Guid PropertyId) : IRequest<List<WorkOrderDto>>;
-
-

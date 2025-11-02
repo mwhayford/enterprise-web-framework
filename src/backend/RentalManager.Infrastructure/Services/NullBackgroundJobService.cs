@@ -85,4 +85,3 @@ public class NullBackgroundJobService : IBackgroundJobService
         _logger.LogWarning("Background job service is not available. Hangfire is not configured. Cannot trigger recurring job '{RecurringJobId}'.", recurringJobId);
     }
 }
-

@@ -28,5 +28,3 @@ public class GetWorkOrdersByPropertyIdQueryHandler : IRequestHandler<GetWorkOrde
         return workOrders.Select(WorkOrderMappingHelper.MapToDto).ToList();
     }
 }
-
-

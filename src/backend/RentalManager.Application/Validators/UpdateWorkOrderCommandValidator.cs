@@ -29,5 +29,3 @@ public class UpdateWorkOrderCommandValidator : AbstractValidator<UpdateWorkOrder
             .WithMessage("Notes cannot exceed 5000 characters");
     }
 }
-
-

@@ -42,5 +42,3 @@ public class CompleteWorkOrderCommandHandler : IRequestHandler<CompleteWorkOrder
         return WorkOrderMappingHelper.MapToDto(workOrder);
     }
 }
-
-

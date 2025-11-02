@@ -35,5 +35,3 @@ public static class WorkOrderMappingHelper
         };
     }
 }
-
-

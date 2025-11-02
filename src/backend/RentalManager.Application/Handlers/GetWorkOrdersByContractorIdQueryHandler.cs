@@ -28,5 +28,3 @@ public class GetWorkOrdersByContractorIdQueryHandler : IRequestHandler<GetWorkOr
         return workOrders.Select(WorkOrderMappingHelper.MapToDto).ToList();
     }
 }
-
-

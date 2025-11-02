@@ -257,4 +257,3 @@ public static class MetroAreaData
             .ToDictionary(g => g.Key, g => g.ToList());
     }
 }
-

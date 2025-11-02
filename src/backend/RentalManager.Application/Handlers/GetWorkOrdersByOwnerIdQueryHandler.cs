@@ -34,5 +34,3 @@ public class GetWorkOrdersByOwnerIdQueryHandler : IRequestHandler<GetWorkOrdersB
         return workOrders.Select(WorkOrderMappingHelper.MapToDto).ToList();
     }
 }
-
-

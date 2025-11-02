@@ -46,4 +46,3 @@ public class NullEventBus : IEventBus
         return Task.CompletedTask;
     }
 }
-

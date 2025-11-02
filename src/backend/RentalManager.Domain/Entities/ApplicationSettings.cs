@@ -6,6 +6,16 @@ namespace RentalManager.Domain.Entities;
 
 public class ApplicationSettings : BaseEntity
 {
+    public static ApplicationSettings CreateDefault()
+    {
+        return new ApplicationSettings(
+            Money.Create(35.00m, "USD"),
+            applicationFeeEnabled: true,
+            requirePaymentUpfront: true,
+            applicationFormFields: null,
+            maxApplicationsPerUser: null);
+    }
+
     public ApplicationSettings(
         Money defaultApplicationFee,
         bool applicationFeeEnabled,
@@ -72,15 +82,5 @@ public class ApplicationSettings : BaseEntity
         ApplicationFormFields = applicationFormFields;
         UpdatedBy = updatedBy;
         UpdateTimestamp();
-    }
-
-    public static ApplicationSettings CreateDefault()
-    {
-        return new ApplicationSettings(
-            Money.Create(35.00m, "USD"),
-            applicationFeeEnabled: true,
-            requirePaymentUpfront: true,
-            applicationFormFields: null,
-            maxApplicationsPerUser: null);
     }
 }

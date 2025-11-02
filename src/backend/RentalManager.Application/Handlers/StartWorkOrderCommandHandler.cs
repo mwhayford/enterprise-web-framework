@@ -42,5 +42,3 @@ public class StartWorkOrderCommandHandler : IRequestHandler<StartWorkOrderComman
         return WorkOrderMappingHelper.MapToDto(workOrder);
     }
 }
-
-

@@ -48,5 +48,3 @@ public class CancelWorkOrderCommandHandler : IRequestHandler<CancelWorkOrderComm
         return WorkOrderMappingHelper.MapToDto(workOrder);
     }
 }
-
-

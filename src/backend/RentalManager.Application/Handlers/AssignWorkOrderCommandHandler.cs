@@ -46,5 +46,3 @@ public class AssignWorkOrderCommandHandler : IRequestHandler<AssignWorkOrderComm
         return WorkOrderMappingHelper.MapToDto(workOrder);
     }
 }
-
-
