@@ -100,7 +100,8 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:80
-      - ConnectionStrings__DefaultConnection=Host=postgres;Port=5432;Database=RentalManagerDb;Username=postgres;Password=password
+      - ConnectionStrings__DefaultConnection=
+      - Hangfire__Disabled=true
       - Redis__Configuration=redis:6379
       - Jwt__Key=YourSuperSecretKeyThatIsAtLeast32CharactersLong!
       - Jwt__Issuer=RentalManager.API

@@ -440,18 +440,21 @@ if (kafkaEnabled)
     {
         // If Kafka registration fails, disable it and use NullEventBus
         // Log the error, but don't crash the application
-        var logger = builder.Services.BuildServiceProvider().GetService<ILogger<Program>>();
-        logger?.LogWarning(ex, "Failed to register Kafka services. EventBus will use NullEventBus. Application will continue without Kafka.");
+        // Don't use BuildServiceProvider() here as it can cause crashes
+        Console.WriteLine($"[DEBUG] Failed to register Kafka services: {ex.Message}");
+        Console.WriteLine("[DEBUG] EventBus will use NullEventBus. Application will continue without Kafka.");
         kafkaEnabled = false;
     }
 }
 
 // Configure Hangfire - make it optional to prevent startup crashes
-// Hangfire will only be enabled if postgres connection works
+// Hangfire will only be enabled if postgres connection works and not explicitly disabled
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+var hangfireDisabled = builder.Configuration["Hangfire:Disabled"] == "true" ||
+                       Environment.GetEnvironmentVariable("HANGFIRE_DISABLED") == "true";
 var hangfireEnabled = false;
 
-if (!string.IsNullOrWhiteSpace(connectionString))
+if (!hangfireDisabled && !string.IsNullOrWhiteSpace(connectionString))
 {
     // Test if we can connect to postgres before registering Hangfire
     // This prevents startup crashes if postgres isn't available
@@ -473,6 +476,7 @@ if (!string.IsNullOrWhiteSpace(connectionString))
     {
         try
         {
+#pragma warning disable CS0618 // Hangfire.PostgreSql will update API in v2.0
             builder.Services.AddHangfire(configuration => configuration
                 .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
                 .UseSimpleAssemblyNameTypeSerializer()
@@ -482,6 +486,7 @@ if (!string.IsNullOrWhiteSpace(connectionString))
                     SchemaName = "hangfire",
                     EnableTransactionScopeEnlistment = true,
                 }));
+#pragma warning restore CS0618
 
             builder.Services.AddHangfireServer(options =>
             {
