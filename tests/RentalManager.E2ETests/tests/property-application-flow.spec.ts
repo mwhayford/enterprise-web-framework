@@ -477,16 +477,34 @@ test.describe('Property Application Flow', () => {
     await page.waitForTimeout(1000); // Wait for form to render
     await page.click('text=Next');
 
-    // Step 4: References and submission
-    await page.check('input[type="checkbox"]');
-    await page.click('text=Submit Application');
-
-    // Check for success message or redirect - be flexible with success indicators
-    const hasSuccessMessage = await page.locator('text=/Application.*submitted|Success|submitted.*successfully/i').count() > 0;
-    const hasRedirect = page.url().includes('/applications') || page.url().includes('/dashboard');
+    // Step 4: Review & Submit
+    // Wait for step 4 to appear
+    await page.waitForSelector('h2:has-text("Review & Submit")', { timeout: 10000 });
+    await page.waitForTimeout(1000); // Wait for review content to render
     
-    // Test passes if we see success message or get redirected after submission
-    expect(hasSuccessMessage || hasRedirect).toBeTruthy();
+    // Accept terms and conditions
+    const termsCheckbox = page.locator('input[type="checkbox"][id="terms"]');
+    await expect(termsCheckbox).toBeVisible({ timeout: 5000 });
+    await termsCheckbox.check();
+    
+    // Submit the application
+    await page.click('button:has-text("Submit Application")');
+    
+    // Wait for submission to complete (either redirect or success message)
+    try {
+      await page.waitForURL(/\/applications/, { timeout: 15000 });
+    } catch {
+      // Check if there's a success message on the same page
+      const successIndicator = await page.locator('text=/application submitted|success/i').count() > 0;
+      if (!successIndicator) {
+        throw new Error('Application submission did not redirect or show success message');
+      }
+    }
+    
+    // Verify we're on the applications page or see success message
+    const isOnApplicationsPage = page.url().includes('/applications');
+    const hasSuccessMessage = await page.locator('text=/Application.*submitted|Success|submitted.*successfully/i').count() > 0;
+    expect(isOnApplicationsPage || hasSuccessMessage).toBeTruthy();
   });
 
   test('should filter properties by criteria', async ({ page }) => {
