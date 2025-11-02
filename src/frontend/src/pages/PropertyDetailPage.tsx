@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import {
   ArrowLeft,
@@ -38,14 +38,7 @@ export const PropertyDetailPage = () => {
   const [selectedImageIndex, setSelectedImageIndex] = useState(0)
   const [applicationFee, setApplicationFee] = useState<number | null>(null)
 
-  useEffect(() => {
-    if (id) {
-      loadProperty()
-      loadApplicationSettings()
-    }
-  }, [id])
-
-  const loadProperty = async () => {
+  const loadProperty = useCallback(async () => {
     if (!id) return
 
     try {
@@ -59,16 +52,23 @@ export const PropertyDetailPage = () => {
     } finally {
       setLoading(false)
     }
-  }
+  }, [id])
 
-  const loadApplicationSettings = async () => {
+  const loadApplicationSettings = useCallback(async () => {
     try {
       const settings = await applicationSettingsService.getSettings()
       setApplicationFee(settings.defaultApplicationFee)
     } catch (err) {
       console.error('Error loading application settings:', err)
     }
-  }
+  }, [])
+
+  useEffect(() => {
+    if (id) {
+      loadProperty()
+      loadApplicationSettings()
+    }
+  }, [id, loadProperty, loadApplicationSettings])
 
   const handleApplyNow = () => {
     if (!property) return

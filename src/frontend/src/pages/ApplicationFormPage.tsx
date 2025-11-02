@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { ArrowLeft, ChevronRight, ChevronLeft, Plus, X } from 'lucide-react'
 import { propertyService, type PropertyDto } from '../services/propertyService'
@@ -36,14 +36,7 @@ export const ApplicationFormPage = () => {
     termsAccepted: false,
   })
 
-  useEffect(() => {
-    if (id) {
-      loadProperty()
-      loadApplicationSettings()
-    }
-  }, [id])
-
-  const loadProperty = async () => {
+  const loadProperty = useCallback(async () => {
     if (!id) return
     try {
       const data = await propertyService.getPropertyById(id)
@@ -52,16 +45,23 @@ export const ApplicationFormPage = () => {
       setError('Failed to load property details.')
       console.error('Error loading property:', err)
     }
-  }
+  }, [id])
 
-  const loadApplicationSettings = async () => {
+  const loadApplicationSettings = useCallback(async () => {
     try {
       const settings = await applicationSettingsService.getSettings()
       setApplicationFee(settings.defaultApplicationFee)
     } catch (err) {
       console.error('Error loading application settings:', err)
     }
-  }
+  }, [])
+
+  useEffect(() => {
+    if (id) {
+      loadProperty()
+      loadApplicationSettings()
+    }
+  }, [id, loadProperty, loadApplicationSettings])
 
   const handleInputChange = (
     field: keyof ApplicationDataDto,

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useLocation, useNavigate, Link } from 'react-router-dom'
 import {
   FileText,
@@ -45,18 +45,7 @@ export const MyApplicationsPage = () => {
   const [error, setError] = useState<string | null>(null)
   const [successMessage, setSuccessMessage] = useState<string | null>(null)
 
-  useEffect(() => {
-    loadApplications()
-
-    // Show success message if redirected after submission
-    if (location.state && location.state.message) {
-      setSuccessMessage(location.state.message)
-      // Clear the message from location state
-      navigate(location.pathname, { replace: true })
-    }
-  }, [])
-
-  const loadApplications = async () => {
+  const loadApplications = useCallback(async () => {
     try {
       setLoading(true)
       setError(null)
@@ -68,7 +57,18 @@ export const MyApplicationsPage = () => {
     } finally {
       setLoading(false)
     }
-  }
+  }, [])
+
+  useEffect(() => {
+    loadApplications()
+
+    // Show success message if redirected after submission
+    if (location.state && location.state.message) {
+      setSuccessMessage(location.state.message)
+      // Clear the message from location state
+      navigate(location.pathname, { replace: true })
+    }
+  }, [loadApplications, location.pathname, location.state, navigate])
 
   const formatDate = (dateString: string | undefined) => {
     if (!dateString) return 'N/A'

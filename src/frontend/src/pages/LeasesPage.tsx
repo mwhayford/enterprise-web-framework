@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
   leaseService,
@@ -53,11 +53,7 @@ const LeasesPage = () => {
   // Get current user ID from localStorage (you might have this in a context)
   const currentUserId = localStorage.getItem('user_id') || ''
 
-  useEffect(() => {
-    loadLeases()
-  }, [viewMode, currentUserId])
-
-  const loadLeases = async () => {
+  const loadLeases = useCallback(async () => {
     try {
       setLoading(true)
       setError(null)
@@ -74,7 +70,11 @@ const LeasesPage = () => {
     } finally {
       setLoading(false)
     }
-  }
+  }, [viewMode, currentUserId])
+
+  useEffect(() => {
+    loadLeases()
+  }, [loadLeases])
 
   const handleViewLease = (leaseId: string) => {
     navigate(`/leases/${leaseId}`)

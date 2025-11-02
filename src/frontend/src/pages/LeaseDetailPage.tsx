@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import {
   leaseService,
@@ -17,13 +17,7 @@ const LeaseDetailPage = () => {
   const [showTerminateModal, setShowTerminateModal] = useState(false)
   const [terminationReason, setTerminationReason] = useState('')
 
-  useEffect(() => {
-    if (id) {
-      loadLease()
-    }
-  }, [id])
-
-  const loadLease = async () => {
+  const loadLease = useCallback(async () => {
     if (!id) return
 
     try {
@@ -37,7 +31,13 @@ const LeaseDetailPage = () => {
     } finally {
       setLoading(false)
     }
-  }
+  }, [id])
+
+  useEffect(() => {
+    if (id) {
+      loadLease()
+    }
+  }, [id, loadLease])
 
   const handleActivate = async () => {
     if (!id || !lease) return

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import {
   ArrowLeft,
@@ -41,13 +41,7 @@ export const ApplicationReviewPage = () => {
   const [decisionNotes, setDecisionNotes] = useState('')
   const [submitting, setSubmitting] = useState(false)
 
-  useEffect(() => {
-    if (id) {
-      loadApplication()
-    }
-  }, [id])
-
-  const loadApplication = async () => {
+  const loadApplication = useCallback(async () => {
     if (!id) return
 
     try {
@@ -64,7 +58,13 @@ export const ApplicationReviewPage = () => {
     } finally {
       setLoading(false)
     }
-  }
+  }, [id])
+
+  useEffect(() => {
+    if (id) {
+      loadApplication()
+    }
+  }, [id, loadApplication])
 
   const handleApprove = async () => {
     if (!id || !application) return

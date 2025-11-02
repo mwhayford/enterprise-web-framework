@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Filter, ChevronLeft, ChevronRight, Home } from 'lucide-react'
 import { PropertyCard } from '../components/properties/PropertyCard'
@@ -23,11 +23,7 @@ export const PropertiesPage = () => {
   })
   const [showMobileFilters, setShowMobileFilters] = useState(false)
 
-  useEffect(() => {
-    loadProperties()
-  }, [filters.pageNumber])
-
-  const loadProperties = async () => {
+  const loadProperties = useCallback(async () => {
     try {
       setLoading(true)
       setError(null)
@@ -39,7 +35,11 @@ export const PropertiesPage = () => {
     } finally {
       setLoading(false)
     }
-  }
+  }, [filters])
+
+  useEffect(() => {
+    loadProperties()
+  }, [loadProperties])
 
   const handleFilterChange = (newFilters: PropertyFiltersType) => {
     setFilters({ ...newFilters, pageNumber: 1, pageSize: 12 })
