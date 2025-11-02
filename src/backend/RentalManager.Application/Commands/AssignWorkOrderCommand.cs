@@ -6,5 +6,3 @@ using RentalManager.Application.DTOs;
 namespace RentalManager.Application.Commands;
 
 public record AssignWorkOrderCommand(Guid WorkOrderId, Guid ContractorId) : IRequest<WorkOrderDto>;
-
-

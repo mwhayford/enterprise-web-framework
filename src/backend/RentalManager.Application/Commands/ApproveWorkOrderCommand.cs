@@ -6,5 +6,3 @@ using RentalManager.Application.DTOs;
 namespace RentalManager.Application.Commands;
 
 public record ApproveWorkOrderCommand(Guid WorkOrderId) : IRequest<WorkOrderDto>;
-
-
