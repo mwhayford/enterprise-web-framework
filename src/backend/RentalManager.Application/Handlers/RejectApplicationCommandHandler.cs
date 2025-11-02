@@ -57,4 +57,3 @@ public class RejectApplicationCommandHandler : IRequestHandler<RejectApplication
         };
     }
 }
-

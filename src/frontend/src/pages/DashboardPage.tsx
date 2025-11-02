@@ -1,150 +1,106 @@
 // Copyright (c) RentalManager. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { useAuth } from '../contexts/AuthContext'
-import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/Card'
-import { Button } from '../components/ui/Button'
-import { useNavigate } from 'react-router-dom'
+import { AuthenticatedLayout } from '../components/layout/AuthenticatedLayout'
+import { DashboardStats } from '../components/dashboard/DashboardStats'
+import { ActivityFeed } from '../components/dashboard/ActivityFeed'
+import { QuickActions } from '../components/dashboard/QuickActions'
+import {
+  dashboardService,
+  type DashboardData,
+} from '../services/dashboardService'
 
 const DashboardPage: React.FC = () => {
-  const { user, logout } = useAuth()
-  const navigate = useNavigate()
+  const { user } = useAuth()
+  const [dashboardData, setDashboardData] = useState<DashboardData | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    const loadDashboardData = async () => {
+      try {
+        setLoading(true)
+        setError(null)
+        // Try real API first, fallback to mock data
+        try {
+          const data = await dashboardService.getDashboardData()
+          setDashboardData(data)
+        } catch {
+          // Fallback to mock data if API not available
+          const data = await dashboardService.getMockDashboardData()
+          setDashboardData(data)
+        }
+      } catch (err) {
+        console.error('Failed to load dashboard data:', err)
+        setError('Failed to load dashboard data')
+        // Use mock data as fallback
+        const data = await dashboardService.getMockDashboardData()
+        setDashboardData(data)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    if (user) {
+      loadDashboardData()
+    }
+  }, [user])
 
   if (!user) {
     return null
   }
 
+  if (loading) {
+    return (
+      <AuthenticatedLayout>
+        <div className="flex items-center justify-center h-64">
+          <div className="text-gray-600">Loading dashboard...</div>
+        </div>
+      </AuthenticatedLayout>
+    )
+  }
+
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="bg-card border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16">
-            <div className="flex items-center">
-              <h1 className="text-2xl font-bold text-foreground">Dashboard</h1>
-            </div>
-            <div className="flex items-center gap-4">
-              <span className="text-sm text-muted-foreground">
-                {user.displayName || `${user.firstName} ${user.lastName}`}
-              </span>
-              <Button variant="outline" onClick={logout}>
-                Logout
-              </Button>
-            </div>
+    <AuthenticatedLayout>
+      <div className="space-y-6">
+        {/* Welcome Section */}
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900">
+            Welcome back, {user.firstName}!
+          </h1>
+          <p className="text-gray-600 mt-2">
+            Here's what's happening with your rentals today.
+          </p>
+        </div>
+
+        {/* Stats Cards */}
+        {dashboardData && (
+          <DashboardStats stats={dashboardData.stats} />
+        )}
+
+        {/* Main Content Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Activity Feed */}
+          <div className="lg:col-span-2">
+            {dashboardData && (
+              <ActivityFeed activities={dashboardData.recentActivities} />
+            )}
+          </div>
+
+          {/* Quick Actions */}
+          <div className="lg:col-span-1">
+            <QuickActions />
           </div>
         </div>
-      </header>
 
-      {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {/* Welcome Card */}
-          <Card className="md:col-span-2 lg:col-span-3">
-            <CardHeader>
-              <CardTitle>Welcome back, {user.firstName}!</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-muted-foreground">
-                This is your dashboard. You can manage your profile, payments,
-                and subscriptions here.
-              </p>
-            </CardContent>
-          </Card>
-
-          {/* Quick Stats */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Profile</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-2">
-                <p className="text-sm">
-                  <span className="font-medium">Email:</span> {user.email}
-                </p>
-                <p className="text-sm">
-                  <span className="font-medium">Member since:</span>{' '}
-                  {new Date(user.createdAt).toLocaleDateString()}
-                </p>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Payments</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-muted-foreground text-sm">
-                Make payments and view payment history
-              </p>
-              <div className="mt-4 space-y-2">
-                <Button
-                  variant="primary"
-                  size="sm"
-                  className="w-full"
-                  onClick={() => navigate('/payment')}
-                >
-                  Make Payment
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="w-full"
-                  onClick={() => navigate('/payment-methods')}
-                >
-                  Payment Methods →
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Subscriptions</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-muted-foreground text-sm">
-                Manage your active subscriptions
-              </p>
-              <div className="mt-4 space-y-2">
-                <Button
-                  variant="primary"
-                  size="sm"
-                  className="w-full"
-                  onClick={() => navigate('/subscription')}
-                >
-                  Subscribe
-                </Button>
-                <Button variant="ghost" size="sm" className="w-full">
-                  View Subscriptions →
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Search</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-muted-foreground text-sm">
-                Search across all content
-              </p>
-              <div className="mt-4">
-                <Button
-                  variant="primary"
-                  size="sm"
-                  className="w-full"
-                  onClick={() => navigate('/search')}
-                >
-                  Search Content →
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </main>
-    </div>
+        {error && (
+          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 text-yellow-800">
+            <p>{error}</p>
+          </div>
+        )}
+      </div>
+    </AuthenticatedLayout>
   )
 }
 

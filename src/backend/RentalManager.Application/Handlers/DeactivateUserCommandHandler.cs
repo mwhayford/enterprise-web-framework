@@ -1,8 +1,8 @@
 // Copyright (c) Core. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
+using MediatR;
 using RentalManager.Application.Commands;
 using RentalManager.Application.Interfaces;
-using MediatR;
 
 namespace RentalManager.Application.Handlers;
 

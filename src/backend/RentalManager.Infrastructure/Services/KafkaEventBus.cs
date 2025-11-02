@@ -2,10 +2,10 @@
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 using System.Text.Json;
 using Confluent.Kafka;
-using RentalManager.Application.Interfaces;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using RentalManager.Application.Interfaces;
 
 namespace RentalManager.Infrastructure.Services;
 

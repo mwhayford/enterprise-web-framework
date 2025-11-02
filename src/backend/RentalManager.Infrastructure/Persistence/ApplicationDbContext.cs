@@ -27,6 +27,10 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IApplica
 
     public DbSet<PropertyApplication> PropertyApplications { get; set; }
 
+    public DbSet<Lease> Leases { get; set; }
+
+    public DbSet<WorkOrder> WorkOrders { get; set; }
+
     public DbSet<ApplicationSettings> ApplicationSettings { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -39,6 +43,8 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IApplica
         modelBuilder.ApplyConfiguration(new PaymentMethodConfiguration());
         modelBuilder.ApplyConfiguration(new PropertyConfiguration());
         modelBuilder.ApplyConfiguration(new PropertyApplicationConfiguration());
+        modelBuilder.ApplyConfiguration(new LeaseConfiguration());
+        modelBuilder.ApplyConfiguration(new WorkOrderConfiguration());
         modelBuilder.ApplyConfiguration(new ApplicationSettingsConfiguration());
     }
 }

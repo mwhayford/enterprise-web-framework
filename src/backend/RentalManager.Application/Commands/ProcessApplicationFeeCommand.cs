@@ -6,4 +6,3 @@ using MediatR;
 namespace RentalManager.Application.Commands;
 
 public record ProcessApplicationFeeCommand(Guid ApplicationId) : IRequest<string>;
-

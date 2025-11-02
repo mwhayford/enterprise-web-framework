@@ -1,9 +1,9 @@
 // Copyright (c) RentalManager. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-using Nest;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Nest;
 using RentalManager.Domain.Entities;
 
 namespace RentalManager.Infrastructure.Services;
@@ -208,4 +208,3 @@ public class PropertySearchDocument
 
     public DateTime UpdatedAt { get; set; }
 }
-

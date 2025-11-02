@@ -11,6 +11,5 @@ public interface IApplicationNotificationJobs
 
     Task SendApplicationStatusUpdateEmailAsync(Guid applicationId, string status);
 
-    Task SendPropertyOwnerNewApplicationNotificationAsync(Guid applicationId);
+    Task SendOwnerNewApplicationNotificationAsync(Guid applicationId);
 }
-

@@ -67,5 +67,3 @@ public record PropertyAddress
         return new PropertyAddress(street, city, state, zipCode, unit, country);
     }
 }
-
-

@@ -1,7 +1,10 @@
-import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { FileText, Filter, Eye } from 'lucide-react';
-import { applicationService, type PropertyApplicationDto } from '../services/applicationService';
+import { useState, useEffect } from 'react'
+import { Link } from 'react-router-dom'
+import { FileText, Filter, Eye } from 'lucide-react'
+import {
+  applicationService,
+  type PropertyApplicationDto,
+} from '../services/applicationService'
 
 const statusLabels: Record<number, string> = {
   0: 'Pending',
@@ -9,7 +12,7 @@ const statusLabels: Record<number, string> = {
   2: 'Approved',
   3: 'Rejected',
   4: 'Withdrawn',
-};
+}
 
 const statusColors: Record<number, string> = {
   0: 'bg-yellow-100 text-yellow-800',
@@ -17,54 +20,57 @@ const statusColors: Record<number, string> = {
   2: 'bg-green-100 text-green-800',
   3: 'bg-red-100 text-red-800',
   4: 'bg-gray-100 text-gray-800',
-};
+}
 
 export const AdminApplicationsPage = () => {
-  const [applications, setApplications] = useState<PropertyApplicationDto[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [filterStatus, setFilterStatus] = useState<number | null>(null);
+  const [applications, setApplications] = useState<PropertyApplicationDto[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [filterStatus, setFilterStatus] = useState<number | null>(null)
 
   useEffect(() => {
-    loadApplications();
-  }, []);
+    loadApplications()
+  }, [])
 
   const loadApplications = async () => {
     try {
-      setLoading(true);
-      setError(null);
+      setLoading(true)
+      setError(null)
       // Note: This would need an admin endpoint in the future
-      const data = await applicationService.getMyApplications();
-      setApplications(data);
+      const data = await applicationService.getMyApplications()
+      setApplications(data)
     } catch (err) {
-      setError('Failed to load applications. Please try again later.');
-      console.error('Error loading applications:', err);
+      setError('Failed to load applications. Please try again later.')
+      console.error('Error loading applications:', err)
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   const formatDate = (dateString: string | undefined) => {
-    if (!dateString) return 'N/A';
+    if (!dateString) return 'N/A'
     return new Date(dateString).toLocaleDateString('en-US', {
       month: 'short',
       day: 'numeric',
       year: 'numeric',
       hour: '2-digit',
       minute: '2-digit',
-    });
-  };
+    })
+  }
 
-  const filteredApplications = filterStatus !== null
-    ? applications.filter(app => app.status === filterStatus)
-    : applications;
+  const filteredApplications =
+    filterStatus !== null
+      ? applications.filter(app => app.status === filterStatus)
+      : applications
 
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <div className="bg-white border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <h1 className="text-3xl font-bold text-gray-900">Application Management</h1>
+          <h1 className="text-3xl font-bold text-gray-900">
+            Application Management
+          </h1>
           <p className="mt-2 text-gray-600">
             Review and manage rental applications
           </p>
@@ -77,7 +83,9 @@ export const AdminApplicationsPage = () => {
         <div className="bg-white rounded-lg shadow-md p-4 mb-6">
           <div className="flex items-center gap-4">
             <Filter className="w-5 h-5 text-gray-600" />
-            <span className="text-sm font-medium text-gray-700">Filter by status:</span>
+            <span className="text-sm font-medium text-gray-700">
+              Filter by status:
+            </span>
             <div className="flex gap-2 flex-wrap">
               <button
                 onClick={() => setFilterStatus(null)}
@@ -121,7 +129,9 @@ export const AdminApplicationsPage = () => {
         {!loading && !error && filteredApplications.length === 0 && (
           <div className="bg-white rounded-lg shadow-md p-12 text-center">
             <FileText className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-            <h2 className="text-xl font-semibold text-gray-900 mb-2">No Applications Found</h2>
+            <h2 className="text-xl font-semibold text-gray-900 mb-2">
+              No Applications Found
+            </h2>
             <p className="text-gray-600">
               {filterStatus !== null
                 ? 'No applications with this status.'
@@ -156,18 +166,21 @@ export const AdminApplicationsPage = () => {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {filteredApplications.map((application) => {
+                {filteredApplications.map(application => {
                   const applicationData = application.applicationData
                     ? JSON.parse(application.applicationData)
-                    : null;
+                    : null
 
                   return (
                     <tr key={application.id} className="hover:bg-gray-50">
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-sm font-medium text-gray-900">
-                          {applicationData?.firstName} {applicationData?.lastName}
+                          {applicationData?.firstName}{' '}
+                          {applicationData?.lastName}
                         </div>
-                        <div className="text-sm text-gray-500">{applicationData?.email}</div>
+                        <div className="text-sm text-gray-500">
+                          {applicationData?.email}
+                        </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-sm text-gray-900">
@@ -187,7 +200,8 @@ export const AdminApplicationsPage = () => {
                         {formatDate(application.submittedAt)}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {application.applicationFeeCurrency} {application.applicationFee.toLocaleString()}
+                        {application.applicationFeeCurrency}{' '}
+                        {application.applicationFee.toLocaleString()}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                         <Link
@@ -199,7 +213,7 @@ export const AdminApplicationsPage = () => {
                         </Link>
                       </td>
                     </tr>
-                  );
+                  )
                 })}
               </tbody>
             </table>
@@ -207,6 +221,5 @@ export const AdminApplicationsPage = () => {
         )}
       </div>
     </div>
-  );
-};
-
+  )
+}

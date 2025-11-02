@@ -56,4 +56,3 @@ public class PropertyDto
 
     public DateTime UpdatedAt { get; set; }
 }
-

@@ -20,7 +20,12 @@ public class GetAvailablePropertiesQueryHandler : IRequestHandler<GetAvailablePr
 
     public async Task<PagedResult<PropertyListDto>> Handle(GetAvailablePropertiesQuery request, CancellationToken cancellationToken)
     {
+        // Validate pagination parameters
+        var pageNumber = Math.Max(1, request.PageNumber);
+        var pageSize = Math.Max(1, Math.Min(100, request.PageSize)); // Limit to 100 items per page
+
         var query = _context.Properties
+            .AsNoTracking()
             .Where(p => p.Status == PropertyStatus.Available)
             .AsQueryable();
 
@@ -57,7 +62,8 @@ public class GetAvailablePropertiesQueryHandler : IRequestHandler<GetAvailablePr
 
         if (!string.IsNullOrWhiteSpace(request.City))
         {
-            query = query.Where(p => p.Address.City.Contains(request.City));
+            var cityLower = request.City.ToLowerInvariant();
+            query = query.Where(p => p.Address.City.ToLower().Contains(cityLower));
         }
 
         if (!string.IsNullOrWhiteSpace(request.State))
@@ -72,10 +78,11 @@ public class GetAvailablePropertiesQueryHandler : IRequestHandler<GetAvailablePr
 
         if (!string.IsNullOrWhiteSpace(request.SearchTerm))
         {
+            var searchTermLower = request.SearchTerm.ToLowerInvariant();
             query = query.Where(p =>
-                p.Description.Contains(request.SearchTerm) ||
-                p.Address.Street.Contains(request.SearchTerm) ||
-                p.Address.City.Contains(request.SearchTerm));
+                p.Description.ToLower().Contains(searchTermLower) ||
+                p.Address.Street.ToLower().Contains(searchTermLower) ||
+                p.Address.City.ToLower().Contains(searchTermLower));
         }
 
         // Apply sorting
@@ -100,33 +107,44 @@ public class GetAvailablePropertiesQueryHandler : IRequestHandler<GetAvailablePr
 
         var totalCount = await query.CountAsync(cancellationToken);
 
-        var properties = await query
-            .Skip((request.PageNumber - 1) * request.PageSize)
-            .Take(request.PageSize)
-            .Select(p => new PropertyListDto
-            {
-                Id = p.Id,
-                Address = p.Address.FullAddress,
-                PropertyType = p.PropertyType,
-                Bedrooms = p.Bedrooms,
-                Bathrooms = p.Bathrooms,
-                SquareFeet = p.SquareFeet,
-                MonthlyRent = p.MonthlyRent.Amount,
-                RentCurrency = p.MonthlyRent.Currency,
-                AvailableDate = p.AvailableDate,
-                Status = p.Status,
-                ThumbnailImage = p.Images.FirstOrDefault(),
-                ApplicationFee = p.ApplicationFee != null ? p.ApplicationFee.Amount : null
-            })
+        // CRITICAL FIX: Materialize the Property entities FIRST (including owned entities)
+        // Then project to DTO in memory to avoid EF Core owned entity tracking issues
+        // Accessing p.Address.Street even in Select() requires EF Core to materialize the owned entity
+        // By materializing Property entities first, we avoid the tracking error
+        var propertyEntities = await query
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
             .ToListAsync(cancellationToken);
+
+        // Now project to DTO in memory (owned entities are already materialized)
+        var properties = propertyEntities.Select(p => new PropertyListDto
+        {
+            Id = p.Id,
+
+            // Construct FullAddress from owned entity (now in memory, safe to access)
+            Address = p.Address.Unit != null
+                ? $"{p.Address.Street}, {p.Address.Unit}, {p.Address.City}, {p.Address.State} {p.Address.ZipCode}, {p.Address.Country}"
+                : $"{p.Address.Street}, {p.Address.City}, {p.Address.State} {p.Address.ZipCode}, {p.Address.Country}",
+            PropertyType = p.PropertyType,
+            Bedrooms = p.Bedrooms,
+            Bathrooms = p.Bathrooms,
+            SquareFeet = p.SquareFeet,
+            MonthlyRent = p.MonthlyRent.Amount,
+            RentCurrency = p.MonthlyRent.Currency,
+            AvailableDate = p.AvailableDate,
+            Status = p.Status,
+
+            // Get first image from the collection (now in memory, safe to use LINQ)
+            ThumbnailImage = p.Images.FirstOrDefault(),
+            ApplicationFee = p.ApplicationFee != null ? p.ApplicationFee.Amount : null
+        }).ToList();
 
         return new PagedResult<PropertyListDto>
         {
             Items = properties,
             TotalCount = totalCount,
-            PageNumber = request.PageNumber,
-            PageSize = request.PageSize
+            PageNumber = pageNumber,
+            PageSize = pageSize
         };
     }
 }
-

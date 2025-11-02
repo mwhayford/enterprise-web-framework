@@ -1,10 +1,10 @@
 // Copyright (c) Core. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
-using RentalManager.Application.DTOs;
-using RentalManager.Application.Interfaces;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Nest;
+using RentalManager.Application.DTOs;
+using RentalManager.Application.Interfaces;
 
 namespace RentalManager.Infrastructure.Services;
 

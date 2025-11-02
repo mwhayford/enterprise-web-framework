@@ -1,13 +1,13 @@
 // Copyright (c) Core. All rights reserved.
 
 using AutoFixture;
+using FluentAssertions;
+using Moq;
 using RentalManager.Application.Commands;
 using RentalManager.Application.Handlers;
 using RentalManager.Application.Interfaces;
 using RentalManager.Domain.Entities;
 using RentalManager.Domain.ValueObjects;
-using FluentAssertions;
-using Moq;
 
 namespace RentalManager.UnitTests.Application.Commands;
 

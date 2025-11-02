@@ -1,11 +1,11 @@
 // Copyright (c) Core. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
+using MediatR;
+using Microsoft.EntityFrameworkCore;
 using RentalManager.Application.DTOs;
 using RentalManager.Application.Queries;
 using RentalManager.Infrastructure.Identity;
 using RentalManager.Infrastructure.Persistence;
-using MediatR;
-using Microsoft.EntityFrameworkCore;
 
 namespace RentalManager.Infrastructure.Services;
 

@@ -2,14 +2,11 @@
 // Copyright (c) Core. All rights reserved.
 // </copyright>
 
-using System;
-using System.Linq;
-using System.Threading.Tasks;
-using RentalManager.Domain.Entities;
-using RentalManager.Domain.ValueObjects;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
+using RentalManager.Domain.Entities;
+using RentalManager.Domain.ValueObjects;
 
 namespace RentalManager.IntegrationTests.Infrastructure;
 

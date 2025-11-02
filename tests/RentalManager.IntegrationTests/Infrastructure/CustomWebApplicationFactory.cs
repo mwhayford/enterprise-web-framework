@@ -16,11 +16,10 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
             // Configure test settings
             config.AddInMemoryCollection(new Dictionary<string, string?>
             {
-                ["ConnectionStrings:DefaultConnection"] = "Host=localhost;Database=rental_manager_test;Username=postgres;Password=postgres",
+                ["ConnectionStrings:DefaultConnection"] = "Host=localhost;Port=5433;Database=RentalManagerDb;Username=postgres;Password=password",
             });
         });
 
         builder.UseEnvironment("Testing");
     }
 }
-

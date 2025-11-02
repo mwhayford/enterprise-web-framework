@@ -138,5 +138,3 @@ public class PropertyConfiguration : IEntityTypeConfiguration<Property>
         builder.Ignore(p => p.DomainEvents);
     }
 }
-
-

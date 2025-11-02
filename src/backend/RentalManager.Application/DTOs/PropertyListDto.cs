@@ -30,4 +30,3 @@ public class PropertyListDto
 
     public decimal? ApplicationFee { get; set; }
 }
-

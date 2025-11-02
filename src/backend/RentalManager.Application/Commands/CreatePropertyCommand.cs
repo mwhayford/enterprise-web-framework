@@ -6,4 +6,3 @@ using RentalManager.Application.DTOs;
 namespace RentalManager.Application.Commands;
 
 public record CreatePropertyCommand(CreatePropertyDto PropertyData) : IRequest<PropertyDto>;
-

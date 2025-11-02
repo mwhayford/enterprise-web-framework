@@ -4,12 +4,12 @@ import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { Button } from '../components/ui/Button'
-import { Navigation } from '../components/landing/Navigation'
 import { PricingCard } from '../components/landing/PricingCard'
 import { TestimonialsSection } from '../components/landing/TestimonialsSection'
 import { FAQSection } from '../components/landing/FAQSection'
 import { ScreenshotGallery } from '../components/landing/ScreenshotGallery'
 import { NewsletterSignup } from '../components/landing/NewsletterSignup'
+import { PublicLayout } from '../components/layout/PublicLayout'
 
 const LandingPage: React.FC = () => {
   const navigate = useNavigate()
@@ -74,12 +74,10 @@ const LandingPage: React.FC = () => {
   ]
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
-      {/* Navigation */}
-      <Navigation onGetStarted={handleGetStarted} />
-
-      {/* Hero Section */}
-      <section className="relative pt-32 pb-20 sm:pt-40 sm:pb-24">
+    <PublicLayout>
+      <div className="bg-gradient-to-br from-blue-50 via-white to-purple-50">
+        {/* Hero Section */}
+        <section className="relative pt-12 pb-20 sm:pt-20 sm:pb-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <motion.h1
@@ -151,7 +149,7 @@ const LandingPage: React.FC = () => {
       <motion.section
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: "-100px" }}
+        viewport={{ once: true, margin: '-100px' }}
         transition={{ duration: 0.6 }}
         className="py-12 bg-white/50 backdrop-blur-sm"
       >
@@ -207,7 +205,7 @@ const LandingPage: React.FC = () => {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
+            viewport={{ once: true, margin: '-100px' }}
             transition={{ duration: 0.6 }}
             className="text-center"
           >
@@ -249,8 +247,8 @@ const LandingPage: React.FC = () => {
                   Property Management
                 </h3>
                 <p className="text-gray-600">
-                  Manage unlimited properties with detailed profiles, photos, and
-                  documents all in one place.
+                  Manage unlimited properties with detailed profiles, photos,
+                  and documents all in one place.
                 </p>
               </div>
             </motion.div>
@@ -284,8 +282,8 @@ const LandingPage: React.FC = () => {
                   Online Payments
                 </h3>
                 <p className="text-gray-600">
-                  Accept rent payments online with Stripe. Automated reminders and
-                  instant payment confirmations.
+                  Accept rent payments online with Stripe. Automated reminders
+                  and instant payment confirmations.
                 </p>
               </div>
             </motion.div>
@@ -319,8 +317,8 @@ const LandingPage: React.FC = () => {
                   Tenant Portal
                 </h3>
                 <p className="text-gray-600">
-                  Give tenants access to pay rent, submit maintenance requests, and
-                  view their lease information.
+                  Give tenants access to pay rent, submit maintenance requests,
+                  and view their lease information.
                 </p>
               </div>
             </motion.div>
@@ -389,8 +387,8 @@ const LandingPage: React.FC = () => {
                   Analytics & Reports
                 </h3>
                 <p className="text-gray-600">
-                  Get insights into your rental business with comprehensive reports
-                  and real-time analytics.
+                  Get insights into your rental business with comprehensive
+                  reports and real-time analytics.
                 </p>
               </div>
             </motion.div>
@@ -424,8 +422,8 @@ const LandingPage: React.FC = () => {
                   Smart Search
                 </h3>
                 <p className="text-gray-600">
-                  Powered by Elasticsearch, quickly find properties, tenants, and
-                  documents with lightning-fast search.
+                  Powered by Elasticsearch, quickly find properties, tenants,
+                  and documents with lightning-fast search.
                 </p>
               </div>
             </motion.div>
@@ -440,7 +438,7 @@ const LandingPage: React.FC = () => {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
+            viewport={{ once: true, margin: '-100px' }}
             transition={{ duration: 0.6 }}
             className="text-center mb-16"
           >
@@ -460,7 +458,6 @@ const LandingPage: React.FC = () => {
               >
                 Monthly
               </span>
-              {/* eslint-disable-next-line jsx-a11y/aria-props */}
               <button
                 onClick={() => setIsAnnual(!isAnnual)}
                 className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
@@ -499,16 +496,16 @@ const LandingPage: React.FC = () => {
                 transition={{ duration: 0.5, delay: index * 0.1 }}
               >
                 <PricingCard
-                key={index}
-                name={plan.name}
-                price={plan.price}
-                annualPrice={plan.annualPrice}
-                description={plan.description}
-                features={plan.features}
-                isPopular={plan.isPopular}
-                isAnnual={isAnnual}
-                onSelect={handleGetStarted}
-              />
+                  key={index}
+                  name={plan.name}
+                  price={plan.price}
+                  annualPrice={plan.annualPrice}
+                  description={plan.description}
+                  features={plan.features}
+                  isPopular={plan.isPopular}
+                  isAnnual={isAnnual}
+                  onSelect={handleGetStarted}
+                />
               </motion.div>
             ))}
           </div>
@@ -553,32 +550,9 @@ const LandingPage: React.FC = () => {
           </div>
         </div>
       </section>
-
-      {/* Footer */}
-      <footer className="bg-gray-900 text-gray-400 py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <h3 className="text-2xl font-bold text-white mb-4">RentalManager</h3>
-            <p className="text-sm">
-              © 2025 RentalManager. All rights reserved.
-            </p>
-            <div className="mt-6 flex justify-center gap-6">
-              <a href="#" className="hover:text-white transition-colors">
-                Privacy Policy
-              </a>
-              <a href="#" className="hover:text-white transition-colors">
-                Terms of Service
-              </a>
-              <a href="#" className="hover:text-white transition-colors">
-                Contact
-              </a>
-            </div>
-          </div>
-        </div>
-      </footer>
-    </div>
+      </div>
+    </PublicLayout>
   )
 }
 
 export default LandingPage
-

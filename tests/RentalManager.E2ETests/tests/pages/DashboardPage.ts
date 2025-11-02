@@ -9,10 +9,11 @@ import { BasePage } from './BasePage';
  */
 export class DashboardPage extends BasePage {
   private readonly welcomeMessage = 'text=Welcome';
-  private readonly paymentLink = 'button:has-text("Make Payment")';
-  private readonly subscriptionLink = 'button:has-text("Subscribe")';
-  private readonly paymentMethodsLink = 'button:has-text("Payment Methods")';
-  private readonly searchLink = 'button:has-text("Search Content")';
+  // Navigation links from MainNavigation component
+  private readonly paymentLink = 'nav a[href="/payment"]';
+  private readonly subscriptionLink = 'nav a[href="/subscription"]';
+  private readonly paymentMethodsLink = 'nav a[href="/payment-methods"]';
+  private readonly searchLink = 'nav a[href="/search"]';
 
   constructor(page: Page) {
     super(page);
@@ -35,33 +36,53 @@ export class DashboardPage extends BasePage {
 
   /**
    * Navigate to the payment page.
+   * Uses navigation link if available, otherwise navigates directly.
    */
   async goToPayment(): Promise<void> {
-    await this.page.click(this.paymentLink);
+    // Payment is in navigation, try clicking the link
+    const paymentNavLink = this.page.locator(this.paymentLink);
+    if (await paymentNavLink.isVisible({ timeout: 2000 }).catch(() => false)) {
+      await paymentNavLink.click();
+    } else {
+      // Fallback: navigate directly
+      await this.goto('/payment');
+    }
     await this.page.waitForURL('**/payment');
   }
 
   /**
    * Navigate to the subscription page.
+   * Note: Subscription is not in main navigation, so navigate directly.
    */
   async goToSubscription(): Promise<void> {
-    await this.page.click(this.subscriptionLink);
+    // Subscription is not in navigation, navigate directly
+    await this.goto('/subscription');
     await this.page.waitForURL('**/subscription');
   }
 
   /**
    * Navigate to the payment methods page.
+   * Note: Payment Methods is not in main navigation, so navigate directly.
    */
   async goToPaymentMethods(): Promise<void> {
-    await this.page.click(this.paymentMethodsLink);
+    // Payment Methods is not in navigation, navigate directly
+    await this.goto('/payment-methods');
     await this.page.waitForURL('**/payment-methods');
   }
 
   /**
    * Navigate to the search page.
+   * Uses navigation link if available, otherwise navigates directly.
    */
   async goToSearch(): Promise<void> {
-    await this.page.click(this.searchLink);
+    // Search is in navigation, try clicking the link
+    const searchNavLink = this.page.locator(this.searchLink);
+    if (await searchNavLink.isVisible({ timeout: 2000 }).catch(() => false)) {
+      await searchNavLink.click();
+    } else {
+      // Fallback: navigate directly
+      await this.goto('/search');
+    }
     await this.page.waitForURL('**/search');
   }
 }

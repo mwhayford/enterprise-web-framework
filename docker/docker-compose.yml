@@ -4,9 +4,9 @@ services:
   # PostgreSQL Database
   postgres:
     image: postgres:15-alpine
-    container_name: core-postgres
+    container_name: rentalmanager-postgres
     environment:
-      POSTGRES_DB: CoreDb_Dev
+      POSTGRES_DB: RentalManagerDb_Dev
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: password
     ports:
@@ -20,12 +20,12 @@ services:
       timeout: 5s
       retries: 5
     networks:
-      - core-network
+      - rentalmanager-network
 
   # Redis Cache
   redis:
     image: redis:7-alpine
-    container_name: core-redis
+    container_name: rentalmanager-redis
     ports:
       - "6379:6379"
     volumes:
@@ -36,12 +36,12 @@ services:
       timeout: 5s
       retries: 5
     networks:
-      - core-network
+      - rentalmanager-network
 
   # Elasticsearch
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.11.0
-    container_name: core-elasticsearch
+    container_name: rentalmanager-elasticsearch
     environment:
       - discovery.type=single-node
       - xpack.security.enabled=false
@@ -57,21 +57,21 @@ services:
       timeout: 10s
       retries: 5
     networks:
-      - core-network
+      - rentalmanager-network
 
   # Apache Kafka
   zookeeper:
     image: confluentinc/cp-zookeeper:7.4.0
-    container_name: core-zookeeper
+    container_name: rentalmanager-zookeeper
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
     networks:
-      - core-network
+      - rentalmanager-network
 
   kafka:
     image: confluentinc/cp-kafka:7.4.0
-    container_name: core-kafka
+    container_name: rentalmanager-kafka
     depends_on:
       - zookeeper
     ports:
@@ -90,14 +90,14 @@ services:
       timeout: 10s
       retries: 5
     networks:
-      - core-network
+      - rentalmanager-network
 
   # Backend API
   backend:
     build:
       context: ..
       dockerfile: docker/Dockerfile.backend
-    container_name: core-backend
+    container_name: rentalmanager-backend
     depends_on:
       postgres:
         condition: service_healthy
@@ -108,26 +108,28 @@ services:
       kafka:
         condition: service_healthy
     environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - ConnectionStrings__DefaultConnection=Host=postgres;Database=CoreDb_Dev;Username=postgres;Password=password
-      - Jwt__Key=YourSuperSecretKeyThatIsAtLeast32CharactersLong!
-      - Jwt__Issuer=RentalManager.API
-      - Jwt__Audience=RentalManager.API.Users
-      - Google__ClientId=your-google-client-id
-      - Google__ClientSecret=your-google-client-secret
-      - Stripe__SecretKey=sk_test_your_stripe_secret_key
-      - Stripe__PublishableKey=pk_test_your_stripe_publishable_key
+      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionStrings__DefaultConnection: Host=postgres;Database=RentalManagerDb_Dev;Username=postgres;Password=password
+      Jwt__Key: DevJwtSecretKeyForDockerAtLeast32CharsLongEnoughForSecurity123456789
+      Jwt__Issuer: RentalManager.API
+      Jwt__Audience: RentalManager.API.Users
+      Stripe__SecretKey: sk_test_your_stripe_secret_key
+      Stripe__PublishableKey: pk_test_your_stripe_publishable_key
+      DOTNET_RUNNING_IN_CONTAINER: "true"
+      Authentication__Google__ClientId: ${Authentication__Google__ClientId}
+      Authentication__Google__ClientSecret: ${Authentication__Google__ClientSecret}
     ports:
-      - "7001:8080"
-    volumes:
-      - ../src/backend:/app/src:ro
+      - "5111:8080"
+    # Volume mount commented out - using compiled DLLs from image instead of source
+    # volumes:
+    #   - ../src/backend:/app/src:ro
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
       interval: 30s
       timeout: 10s
       retries: 5
     networks:
-      - core-network
+      - rentalmanager-network
 
   # Frontend
   frontend:
@@ -138,10 +140,10 @@ services:
     depends_on:
       - backend
     environment:
-      - VITE_API_BASE_URL=http://localhost:7001/api
+      - VITE_API_BASE_URL=http://localhost:5111/api
       - VITE_STRIPE_PUBLISHABLE_KEY=pk_test_your_stripe_publishable_key
     ports:
-      - "3000:3000"
+      - "3001:3000"
     volumes:
       - ../src/frontend:/app/src:ro
     healthcheck:
@@ -150,18 +152,18 @@ services:
       timeout: 10s
       retries: 5
     networks:
-      - core-network
+      - rentalmanager-network
 
   # Adminer (Database Management)
   adminer:
     image: adminer:4.8.1
-    container_name: core-adminer
+    container_name: rentalmanager-adminer
     depends_on:
       - postgres
     ports:
       - "8080:8080"
     networks:
-      - core-network
+      - rentalmanager-network
 
 volumes:
   postgres_data:
@@ -170,5 +172,5 @@ volumes:
   kafka_data:
 
 networks:
-  core-network:
+  rentalmanager-network:
     driver: bridge

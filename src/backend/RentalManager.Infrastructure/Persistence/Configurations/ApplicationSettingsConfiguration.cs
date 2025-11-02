@@ -51,5 +51,3 @@ public class ApplicationSettingsConfiguration : IEntityTypeConfiguration<Applica
         builder.Ignore(s => s.DomainEvents);
     }
 }
-
-

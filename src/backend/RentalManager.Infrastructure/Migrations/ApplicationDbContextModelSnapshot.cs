@@ -187,6 +187,82 @@ namespace RentalManager.Infrastructure.Migrations
                     b.ToTable("ApplicationSettings", (string)null);
                 });
 
+            modelBuilder.Entity("RentalManager.Domain.Entities.Lease", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("ActivatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("LandlordId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("PaymentDayOfMonth")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("PaymentFrequency")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid?>("PropertyApplicationId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("PropertyId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("SpecialTerms")
+                        .HasMaxLength(5000)
+                        .HasColumnType("character varying(5000)");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("TerminatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("TerminationReason")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EndDate");
+
+                    b.HasIndex("LandlordId");
+
+                    b.HasIndex("PropertyApplicationId");
+
+                    b.HasIndex("PropertyId");
+
+                    b.HasIndex("StartDate");
+
+                    b.HasIndex("Status");
+
+                    b.HasIndex("TenantId");
+
+                    b.HasIndex("PropertyId", "Status");
+
+                    b.HasIndex("TenantId", "Status");
+
+                    b.ToTable("Leases", (string)null);
+                });
+
             modelBuilder.Entity("RentalManager.Domain.Entities.Payment", b =>
                 {
                     b.Property<Guid>("Id")
@@ -474,6 +550,104 @@ namespace RentalManager.Infrastructure.Migrations
                     b.ToTable("Subscriptions");
                 });
 
+            modelBuilder.Entity("RentalManager.Domain.Entities.WorkOrder", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<decimal?>("ActualCost")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)");
+
+                    b.Property<DateTime?>("ApprovedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("ApprovedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("AssignedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("AssignedTo")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Category")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("CompletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(5000)
+                        .HasColumnType("character varying(5000)");
+
+                    b.Property<decimal?>("EstimatedCost")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)");
+
+                    b.Property<Guid>("LeaseId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(5000)
+                        .HasColumnType("character varying(5000)");
+
+                    b.Property<int>("Priority")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("PropertyId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("RequestedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("StartedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<List<string>>("_images")
+                        .IsRequired()
+                        .HasColumnType("jsonb")
+                        .HasColumnName("Images");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AssignedTo");
+
+                    b.HasIndex("CreatedAt");
+
+                    b.HasIndex("LeaseId");
+
+                    b.HasIndex("PropertyId");
+
+                    b.HasIndex("RequestedBy");
+
+                    b.HasIndex("Status");
+
+                    b.HasIndex("AssignedTo", "Status");
+
+                    b.HasIndex("PropertyId", "Status");
+
+                    b.HasIndex("RequestedBy", "Status");
+
+                    b.ToTable("WorkOrders", (string)null);
+                });
+
             modelBuilder.Entity("RentalManager.Infrastructure.Identity.ApplicationUser", b =>
                 {
                     b.Property<string>("Id")
@@ -640,6 +814,63 @@ namespace RentalManager.Infrastructure.Migrations
                         });
 
                     b.Navigation("DefaultApplicationFee")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("RentalManager.Domain.Entities.Lease", b =>
+                {
+                    b.OwnsOne("RentalManager.Domain.ValueObjects.Money", "MonthlyRent", b1 =>
+                        {
+                            b1.Property<Guid>("LeaseId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<decimal>("Amount")
+                                .HasPrecision(18, 2)
+                                .HasColumnType("numeric(18,2)")
+                                .HasColumnName("MonthlyRent_Amount");
+
+                            b1.Property<string>("Currency")
+                                .IsRequired()
+                                .HasMaxLength(3)
+                                .HasColumnType("character varying(3)")
+                                .HasColumnName("MonthlyRent_Currency");
+
+                            b1.HasKey("LeaseId");
+
+                            b1.ToTable("Leases");
+
+                            b1.WithOwner()
+                                .HasForeignKey("LeaseId");
+                        });
+
+                    b.OwnsOne("RentalManager.Domain.ValueObjects.Money", "SecurityDeposit", b1 =>
+                        {
+                            b1.Property<Guid>("LeaseId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<decimal>("Amount")
+                                .HasPrecision(18, 2)
+                                .HasColumnType("numeric(18,2)")
+                                .HasColumnName("SecurityDeposit_Amount");
+
+                            b1.Property<string>("Currency")
+                                .IsRequired()
+                                .HasMaxLength(3)
+                                .HasColumnType("character varying(3)")
+                                .HasColumnName("SecurityDeposit_Currency");
+
+                            b1.HasKey("LeaseId");
+
+                            b1.ToTable("Leases");
+
+                            b1.WithOwner()
+                                .HasForeignKey("LeaseId");
+                        });
+
+                    b.Navigation("MonthlyRent")
+                        .IsRequired();
+
+                    b.Navigation("SecurityDeposit")
                         .IsRequired();
                 });
 

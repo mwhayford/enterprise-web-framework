@@ -24,5 +24,3 @@ public class RejectApplicationCommandValidator : AbstractValidator<RejectApplica
             .When(x => !string.IsNullOrWhiteSpace(x.DecisionNotes));
     }
 }
-
-
