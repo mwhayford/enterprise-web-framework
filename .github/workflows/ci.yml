@@ -214,6 +214,14 @@ jobs:
           echo ""
           echo "=== Backend Container Exit Code (after wait) ==="
           docker inspect rentalmanager-backend-ci --format='Exit Code: {{.State.ExitCode}}, Status: {{.State.Status}}' 2>/dev/null || echo "Container not found"
+          echo ""
+          
+          echo "=== Frontend Container Status (after wait) ==="
+          docker inspect rentalmanager-frontend-ci --format='Status: {{.State.Status}}, Exit Code: {{.State.ExitCode}}' 2>/dev/null || echo "Frontend container not found"
+          echo ""
+          
+          echo "=== Frontend Container Logs (after wait) ==="
+          docker logs --tail 50 rentalmanager-frontend-ci 2>&1 || echo "Could not retrieve frontend logs"
       
       - name: Wait for services to be healthy
         run: |
