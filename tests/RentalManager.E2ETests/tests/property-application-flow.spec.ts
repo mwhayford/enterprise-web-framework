@@ -442,17 +442,29 @@ test.describe('Property Application Flow', () => {
       throw new Error(`Unexpected navigation to: ${currentUrl}`);
     }
     await page.waitForLoadState('domcontentloaded');
-    await page.waitForTimeout(1000);
+    await page.waitForTimeout(2000); // Wait for form to fully render
+    
+    // Wait for the form to be visible (check for Step 1 heading)
+    await page.waitForSelector('h2:has-text("Personal Information")', { timeout: 10000 });
+    
+    // Verify we're on step 1
+    const stepIndicator = page.locator('text=Personal Info');
+    await expect(stepIndicator).toBeVisible({ timeout: 5000 });
 
     // Fill out application form - Step 1: Personal Info
+    // Note: Use exact aria-label values from ApplicationFormPage.tsx
     await page.fill('input[aria-label="First name"]', 'John');
     await page.fill('input[aria-label="Last name"]', 'Doe');
-    await page.fill('input[aria-label="Email"]', 'john.doe@example.com');
-    await page.fill('input[aria-label="Phone"]', '555-0100');
-    await page.fill('input[type="date"]', '1990-01-01');
+    await page.fill('input[aria-label="Email address"]', 'john.doe@example.com'); // Fixed: was "Email", should be "Email address"
+    await page.fill('input[aria-label="Phone number"]', '555-0100'); // Fixed: was "Phone", should be "Phone number"
+    await page.fill('input[aria-label="Date of birth"]', '1990-01-01'); // Use aria-label instead of type selector
     await page.click('text=Next');
 
     // Step 2: Employment Info
+    // Wait for step 2 to appear after clicking Next
+    await page.waitForSelector('h2:has-text("Employment Information")', { timeout: 10000 });
+    await page.waitForTimeout(1000); // Wait for form fields to render
+    
     await page.fill('input[aria-label="Employer name"]', 'Tech Corp');
     await page.fill('input[aria-label="Job title"]', 'Software Engineer');
     await page.fill('input[aria-label="Annual income"]', '75000');
@@ -460,6 +472,9 @@ test.describe('Property Application Flow', () => {
     await page.click('text=Next');
 
     // Step 3: Rental History
+    // Wait for step 3 to appear
+    await page.waitForSelector('h2:has-text("Rental History")', { timeout: 10000 });
+    await page.waitForTimeout(1000); // Wait for form to render
     await page.click('text=Next');
 
     // Step 4: References and submission
