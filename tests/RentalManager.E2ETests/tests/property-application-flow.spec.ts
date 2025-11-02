@@ -112,8 +112,8 @@ test.describe('Property Application Flow', () => {
 
     // Navigate to properties page
     await page.goto('/properties');
-    await page.waitForLoadState('networkidle');
-
+    // Skip networkidle - wait directly for property cards (mocked API responds immediately)
+    
     // Wait for at least one property card to be visible
     await expect(page.locator('[data-testid="property-card"]').first()).toBeVisible({ timeout: 15000 });
 
