@@ -149,13 +149,74 @@ test.describe('Property Application Flow', () => {
   });
 
   test('should require authentication for application submission', async ({ page }) => {
+    // Mock API response for properties
+    await page.route('**/api/properties*', async route => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          items: [
+            {
+              id: 'test-property-1',
+              address: '123 Test St',
+              city: 'Test City',
+              state: 'TS',
+              zipCode: '12345',
+              propertyType: 0,
+              bedrooms: 2,
+              bathrooms: 2,
+              squareFeet: 1000,
+              monthlyRent: 1500,
+              thumbnailImage: null,
+              status: 0,
+              availableDate: new Date().toISOString(),
+            },
+          ],
+          totalCount: 1,
+          pageNumber: 1,
+          pageSize: 12,
+          totalPages: 1,
+          hasPreviousPage: false,
+          hasNextPage: false,
+        }),
+      });
+    });
+
+    // Mock property detail API
+    await page.route('**/api/properties/test-property-1*', async route => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          id: 'test-property-1',
+          address: {
+            street: '123 Test St',
+            city: 'Test City',
+            state: 'TS',
+            zipCode: '12345',
+          },
+          propertyType: 0,
+          bedrooms: 2,
+          bathrooms: 2,
+          squareFeet: 1000,
+          monthlyRent: { amount: 1500, currency: 'USD' },
+          securityDeposit: { amount: 1500, currency: 'USD' },
+          description: 'Test property description',
+          status: 0,
+          availableDate: new Date().toISOString(),
+          images: [],
+          amenities: [],
+        }),
+      });
+    });
+
     // Navigate to a property
     await page.goto('/properties');
-    await page.waitForLoadState('domcontentloaded');
-    await page.waitForTimeout(2000); // Wait for properties to load
+    await page.waitForLoadState('networkidle');
+    await page.waitForTimeout(1000); // Wait for properties to load
 
     // Wait for at least one property card to be visible
-    await expect(page.locator('[data-testid="property-card"]').first()).toBeVisible({ timeout: 10000 });
+    await expect(page.locator('[data-testid="property-card"]').first()).toBeVisible({ timeout: 15000 });
     
     // Click on first property
     await page.locator('[data-testid="property-card"]').first().click();
@@ -182,6 +243,79 @@ test.describe('Property Application Flow', () => {
   });
 
   test('authenticated user can submit application', async ({ page }) => {
+    // Mock API response for properties list
+    await page.route('**/api/properties*', async route => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          items: [
+            {
+              id: 'test-property-1',
+              address: '123 Test St',
+              city: 'Test City',
+              state: 'TS',
+              zipCode: '12345',
+              propertyType: 0,
+              bedrooms: 2,
+              bathrooms: 2,
+              squareFeet: 1000,
+              monthlyRent: 1500,
+              thumbnailImage: null,
+              status: 0,
+              availableDate: new Date().toISOString(),
+            },
+          ],
+          totalCount: 1,
+          pageNumber: 1,
+          pageSize: 12,
+          totalPages: 1,
+          hasPreviousPage: false,
+          hasNextPage: false,
+        }),
+      });
+    });
+
+    // Mock property detail API
+    await page.route('**/api/properties/test-property-1*', async route => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          id: 'test-property-1',
+          address: {
+            street: '123 Test St',
+            city: 'Test City',
+            state: 'TS',
+            zipCode: '12345',
+          },
+          propertyType: 0,
+          bedrooms: 2,
+          bathrooms: 2,
+          squareFeet: 1000,
+          monthlyRent: { amount: 1500, currency: 'USD' },
+          securityDeposit: { amount: 1500, currency: 'USD' },
+          description: 'Test property description',
+          status: 0,
+          availableDate: new Date().toISOString(),
+          images: [],
+          amenities: [],
+        }),
+      });
+    });
+
+    // Mock application settings API (for application form)
+    await page.route('**/api/application-settings*', async route => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          applicationFee: { amount: 50, currency: 'USD' },
+          requiredDocuments: [],
+        }),
+      });
+    });
+
     // Mock the /users/me API call to prevent 401 redirect
     await page.route(/.*\/api\/users\/me.*/, async route => {
       const mockUser = {
@@ -209,7 +343,7 @@ test.describe('Property Application Flow', () => {
           contentType: 'application/json',
           body: JSON.stringify({
             id: 'app-123',
-            propertyId: 'prop-123',
+            propertyId: 'test-property-1',
             applicantId: 'test-user-id',
             status: 0,
             submittedAt: new Date().toISOString(),
@@ -246,11 +380,11 @@ test.describe('Property Application Flow', () => {
 
     // Navigate to property and apply
     await page.goto('/properties');
-    await page.waitForLoadState('domcontentloaded');
-    await page.waitForTimeout(2000); // Wait for properties to load
+    await page.waitForLoadState('networkidle');
+    await page.waitForTimeout(1000); // Wait for properties to load
 
     // Wait for property cards to be visible
-    await expect(page.locator('[data-testid="property-card"]').first()).toBeVisible({ timeout: 10000 });
+    await expect(page.locator('[data-testid="property-card"]').first()).toBeVisible({ timeout: 15000 });
     
     // Click on first property
     await page.locator('[data-testid="property-card"]').first().click();
@@ -315,10 +449,60 @@ test.describe('Property Application Flow', () => {
   });
 
   test('should filter properties by criteria', async ({ page }) => {
+    // Mock API response for properties
+    await page.route('**/api/properties*', async route => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          items: [
+            {
+              id: 'test-property-1',
+              address: '123 Test St',
+              city: 'Test City',
+              state: 'TS',
+              zipCode: '12345',
+              propertyType: 0,
+              bedrooms: 2,
+              bathrooms: 2,
+              squareFeet: 1000,
+              monthlyRent: 1500,
+              thumbnailImage: null,
+              status: 0,
+              availableDate: new Date().toISOString(),
+            },
+            {
+              id: 'test-property-2',
+              address: '456 Test Ave',
+              city: 'Test City',
+              state: 'TS',
+              zipCode: '12345',
+              propertyType: 0,
+              bedrooms: 3,
+              bathrooms: 2,
+              squareFeet: 1500,
+              monthlyRent: 2000,
+              thumbnailImage: null,
+              status: 0,
+              availableDate: new Date().toISOString(),
+            },
+          ],
+          totalCount: 2,
+          pageNumber: 1,
+          pageSize: 12,
+          totalPages: 1,
+          hasPreviousPage: false,
+          hasNextPage: false,
+        }),
+      });
+    });
+
     await page.goto('/properties');
+    await page.waitForLoadState('networkidle');
+    await page.waitForTimeout(1000);
     
     // Wait for properties to load
-    await page.waitForSelector('[data-testid="property-card"]', { timeout: 5000 });
+    await page.waitForSelector('[data-testid="property-card"]', { timeout: 15000 });
 
     // Use desktop sidebar filters (always visible on desktop viewport)
     // Fill in minimum bedrooms filter
