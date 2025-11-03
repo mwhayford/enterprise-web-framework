@@ -1,4 +1,4 @@
-﻿// Copyright (c) RentalManager. All rights reserved.
+// Copyright (c) RentalManager. All rights reserved.
 
 using System;
 using Microsoft.EntityFrameworkCore.Migrations;

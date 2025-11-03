@@ -98,7 +98,7 @@ public class PropertySeeder
                 try
                 {
                     // Ensure first property is always available for testing
-                    var isFirstProperty = (i == 0 && j == 0);
+                    var isFirstProperty = i == 0 && j == 0;
                     var property = GenerateProperty(defaultOwnerId, forceAvailable: isFirstProperty);
                     batch.Add(property);
                 }
@@ -133,7 +133,8 @@ public class PropertySeeder
         var metroAreas = MetroAreaData.GetAllMetroAreas();
         var totalProperties = metroAreas.Count * propertiesPerMetro;
 
-        _logger.LogInformation("Starting to seed {PropertiesPerMetro} properties across {MetroCount} metro areas (Total: {TotalProperties})", 
+        _logger.LogInformation(
+            "Starting to seed {PropertiesPerMetro} properties across {MetroCount} metro areas (Total: {TotalProperties})",
             propertiesPerMetro, metroAreas.Count, totalProperties);
 
         const int batchSize = 100;
@@ -143,7 +144,8 @@ public class PropertySeeder
         foreach (var metro in metroAreas)
         {
             metroIndex++;
-            _logger.LogInformation("Seeding metro area {Index}/{Total}: {MetroName}, {City}, {State} ({PropertiesPerMetro} properties)", 
+            _logger.LogInformation(
+                "Seeding metro area {Index}/{Total}: {MetroName}, {City}, {State} ({PropertiesPerMetro} properties)",
                 metroIndex, metroAreas.Count, metro.Name, metro.City, metro.State, propertiesPerMetro);
 
             var metroSeeded = 0;
@@ -158,7 +160,7 @@ public class PropertySeeder
                     try
                     {
                         // Ensure first property across all metros is always available for testing
-                        var isFirstProperty = (metroIndex == 1 && i == 0 && j == 0);
+                        var isFirstProperty = metroIndex == 1 && i == 0 && j == 0;
                         var property = GeneratePropertyForMetro(defaultOwnerId, metro, forceAvailable: isFirstProperty);
                         batch.Add(property);
                     }
@@ -177,7 +179,8 @@ public class PropertySeeder
 
                     if ((i + batchCount) % 500 == 0 || (i + batchCount) == propertiesPerMetro)
                     {
-                        _logger.LogInformation("  Seeded {MetroSeeded}/{PropertiesPerMetro} properties for {MetroName} ({TotalSeeded}/{TotalProperties} total)", 
+                        _logger.LogInformation(
+                            "  Seeded {MetroSeeded}/{PropertiesPerMetro} properties for {MetroName} ({TotalSeeded}/{TotalProperties} total)",
                             metroSeeded, propertiesPerMetro, metro.Name, totalSeeded, totalProperties);
                     }
                 }
@@ -200,7 +203,7 @@ public class PropertySeeder
         var city = Cities[_random.Next(Cities.Length)];
         var state = States[_random.Next(States.Length)];
         var zipCode = GenerateZipCode();
-        
+
         return GeneratePropertyWithLocation(ownerId, street, city, state, zipCode, null, null, forceAvailable);
     }
 
@@ -294,7 +297,7 @@ public class PropertySeeder
                 _ => 1.0m
             };
         }
-        
+
         var monthlyRent = Math.Round(baseRent * locationMultiplier, 2);
 
         // Security deposit: 1-2x monthly rent

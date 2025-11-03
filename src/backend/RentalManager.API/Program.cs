@@ -93,6 +93,7 @@ if (isDocker)
             // In non-testing environments, reject placeholder values
             missingSecrets.Add($"{description} ({configKey})");
         }
+
         // In CI/Testing, allow placeholder values for testing purposes
     }
 
@@ -343,6 +344,7 @@ builder.Services.Configure<KafkaSettings>(
 var kafkaBootstrapServers = builder.Configuration["Kafka:BootstrapServers"];
 var isTestEnvironment = builder.Environment.IsEnvironment("Testing") ||
                         builder.Environment.EnvironmentName == "Testing";
+
 // Also disable Kafka if explicitly disabled via environment variable (useful for CI/Docker)
 var kafkaDisabled = builder.Configuration["Kafka:Disabled"] == "true" ||
                     Environment.GetEnvironmentVariable("KAFKA_DISABLED") == "true" ||
@@ -555,6 +557,7 @@ else
 {
     builder.Services.AddScoped<IBackgroundJobService, NullBackgroundJobService>();
 }
+
 builder.Services.AddScoped<EmailService>();
 builder.Services.AddScoped<DataProcessingService>();
 builder.Services.AddScoped<RecurringJobsService>();
@@ -826,7 +829,8 @@ if (app.Environment.IsDevelopment())
                 }
                 else
                 {
-                    logger.LogWarning("Failed to create default seed user. Property seeding skipped. Errors: {Errors}",
+                    logger.LogWarning(
+                        "Failed to create default seed user. Property seeding skipped. Errors: {Errors}",
                         string.Join(", ", createResult.Errors.Select(e => e.Description)));
                     logger.LogWarning("Login with Google OAuth to create a user, then restart the backend for auto-seeding.");
                 }
