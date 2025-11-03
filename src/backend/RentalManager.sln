@@ -11,8 +11,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RentalManager.Infrastructur
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RentalManager.API", "RentalManager.API\RentalManager.API.csproj", "{E4028DEC-6DB7-4511-B81F-4EE4275DA3F8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RentalManager.Database", "RentalManager.Database\RentalManager.Database.csproj", "{F785C4D2-3674-415A-A651-C0DF3A839BF1}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RentalManager.UnitTests", "..\..\tests\RentalManager.UnitTests\RentalManager.UnitTests.csproj", "{F5141347-F701-4510-8EA7-325F0AB902BD}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RentalManager.IntegrationTests", "..\..\tests\RentalManager.IntegrationTests\RentalManager.IntegrationTests.csproj", "{7F9DAA93-DFFD-45C1-84AB-79320728F208}"
@@ -77,18 +75,6 @@ Global
 		{E4028DEC-6DB7-4511-B81F-4EE4275DA3F8}.Release|x64.Build.0 = Release|Any CPU
 		{E4028DEC-6DB7-4511-B81F-4EE4275DA3F8}.Release|x86.ActiveCfg = Release|Any CPU
 		{E4028DEC-6DB7-4511-B81F-4EE4275DA3F8}.Release|x86.Build.0 = Release|Any CPU
-		{F785C4D2-3674-415A-A651-C0DF3A839BF1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F785C4D2-3674-415A-A651-C0DF3A839BF1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F785C4D2-3674-415A-A651-C0DF3A839BF1}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{F785C4D2-3674-415A-A651-C0DF3A839BF1}.Debug|x64.Build.0 = Debug|Any CPU
-		{F785C4D2-3674-415A-A651-C0DF3A839BF1}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{F785C4D2-3674-415A-A651-C0DF3A839BF1}.Debug|x86.Build.0 = Debug|Any CPU
-		{F785C4D2-3674-415A-A651-C0DF3A839BF1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F785C4D2-3674-415A-A651-C0DF3A839BF1}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F785C4D2-3674-415A-A651-C0DF3A839BF1}.Release|x64.ActiveCfg = Release|Any CPU
-		{F785C4D2-3674-415A-A651-C0DF3A839BF1}.Release|x64.Build.0 = Release|Any CPU
-		{F785C4D2-3674-415A-A651-C0DF3A839BF1}.Release|x86.ActiveCfg = Release|Any CPU
-		{F785C4D2-3674-415A-A651-C0DF3A839BF1}.Release|x86.Build.0 = Release|Any CPU
 		{F5141347-F701-4510-8EA7-325F0AB902BD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F5141347-F701-4510-8EA7-325F0AB902BD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F5141347-F701-4510-8EA7-325F0AB902BD}.Debug|x64.ActiveCfg = Debug|Any CPU
