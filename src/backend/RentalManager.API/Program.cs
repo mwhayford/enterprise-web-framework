@@ -676,18 +676,18 @@ app.MapGet("/health", () => new { Status = "Healthy", Timestamp = DateTime.UtcNo
 app.MapGet("/metrics", async context =>
 {
     // Simple metrics response for testing
-    const string response = """# HELP http_requests_total Total number of HTTP requests
+    const string response = @"# HELP http_requests_total Total number of HTTP requests
 # TYPE http_requests_total counter
-http_requests_total{method="GET",status="200"} 1
+http_requests_total{method=""GET"",status=""200""} 1
 # HELP http_request_duration_seconds Duration of HTTP requests in seconds
 # TYPE http_request_duration_seconds histogram
-http_request_duration_seconds_bucket{le="0.1"} 1
-http_request_duration_seconds_bucket{le="0.5"} 1
-http_request_duration_seconds_bucket{le="1"} 1
-http_request_duration_seconds_bucket{le="+Inf"} 1
+http_request_duration_seconds_bucket{le=""0.1""} 1
+http_request_duration_seconds_bucket{le=""0.5""} 1
+http_request_duration_seconds_bucket{le=""1""} 1
+http_request_duration_seconds_bucket{le=""+Inf""} 1
 http_request_duration_seconds_sum 0.1
 http_request_duration_seconds_count 1
-""";
+";
 
     context.Response.ContentType = "text/plain; version=0.0.4; charset=utf-8";
     await context.Response.WriteAsync(response);
