@@ -99,11 +99,11 @@ if (isDocker)
 
     if (missingSecrets.Any())
     {
+        var secretsList = string.Join("\n", missingSecrets.Select(s => $"  - {s}"));
         throw new InvalidOperationException(
             $"When running in Docker, the following secrets must be provided via environment variables " +
-            $"and cannot use placeholder values from appsettings.json:\n" +
-            string.Join("\n", missingSecrets.Select(s => $"  - {s}")) +
-            "\n\nSet these environment variables in docker-compose.yml or docker-compose.override.yml");
+            $"and cannot use placeholder values from appsettings.json:\n{secretsList}\n\n" +
+            "Set these environment variables in docker-compose.yml or docker-compose.override.yml");
     }
 }
 
@@ -683,17 +683,18 @@ app.MapGet("/health", () => new { Status = "Healthy", Timestamp = DateTime.UtcNo
 app.MapGet("/metrics", async context =>
 {
     // Simple metrics response for testing
-    var response = "# HELP http_requests_total Total number of HTTP requests\n" +
-                   "# TYPE http_requests_total counter\n" +
-                   "http_requests_total{method=\"GET\",status=\"200\"} 1\n" +
-                   "# HELP http_request_duration_seconds Duration of HTTP requests in seconds\n" +
-                   "# TYPE http_request_duration_seconds histogram\n" +
-                   "http_request_duration_seconds_bucket{le=\"0.1\"} 1\n" +
-                   "http_request_duration_seconds_bucket{le=\"0.5\"} 1\n" +
-                   "http_request_duration_seconds_bucket{le=\"1\"} 1\n" +
-                   "http_request_duration_seconds_bucket{le=\"+Inf\"} 1\n" +
-                   "http_request_duration_seconds_sum 0.1\n" +
-                   "http_request_duration_seconds_count 1\n";
+    const string response = @"# HELP http_requests_total Total number of HTTP requests
+# TYPE http_requests_total counter
+http_requests_total{method=""GET"",status=""200""} 1
+# HELP http_request_duration_seconds Duration of HTTP requests in seconds
+# TYPE http_request_duration_seconds histogram
+http_request_duration_seconds_bucket{le=""0.1""} 1
+http_request_duration_seconds_bucket{le=""0.5""} 1
+http_request_duration_seconds_bucket{le=""1""} 1
+http_request_duration_seconds_bucket{le=""+Inf""} 1
+http_request_duration_seconds_sum 0.1
+http_request_duration_seconds_count 1
+";
 
     context.Response.ContentType = "text/plain; version=0.0.4; charset=utf-8";
     await context.Response.WriteAsync(response);
