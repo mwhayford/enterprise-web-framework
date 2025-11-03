@@ -50,7 +50,6 @@ public class NullSearchService : ISearchService
 
     public Task IndexDocumentsAsync<T>(IEnumerable<T> documents, string index)
         where T : class
-    {
         _logger.LogDebug("Search service is not available. Batch document indexing for index '{Index}' will be ignored.", index);
         return Task.CompletedTask;
     }
