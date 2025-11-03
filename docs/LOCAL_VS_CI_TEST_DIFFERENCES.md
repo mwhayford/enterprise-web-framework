@@ -1,4 +1,4 @@
-# Local vs CI Test Execution Differences
+z# Local vs CI Test Execution Differences
 
 This document explains why E2E tests may behave differently when run locally versus in GitHub Actions CI.
 
