@@ -179,8 +179,12 @@ var dataSourceBuilder = new Npgsql.NpgsqlDataSourceBuilder(dbConnectionString);
 dataSourceBuilder.EnableDynamicJson();
 var dataSource = dataSourceBuilder.Build();
 
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseNpgsql(dataSource));
+builder.Services.AddDbContext<ApplicationDbContext>((serviceProvider, options) =>
+{
+    options.UseNpgsql(dataSource);
+    // Configure DbContext to have access to IServiceProvider for domain event dispatching
+    // This is done via the CoreOptionsExtension.ApplicationServiceProvider
+});
 
 // Register IApplicationDbContext interface
 builder.Services.AddScoped<IApplicationDbContext>(provider =>
