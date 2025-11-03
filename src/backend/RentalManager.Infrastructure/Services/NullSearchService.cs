@@ -86,4 +86,3 @@ public class NullSearchService : ISearchService
         return Task.CompletedTask;
     }
 }
-

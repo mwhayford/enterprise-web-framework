@@ -17,13 +17,13 @@ public class MetroArea
     public string StateCode { get; set; } = string.Empty;
 
     /// <summary>
-    /// Rent multiplier for this metro area (1.0 = average US market rate).
+    /// Gets or sets rent multiplier for this metro area (1.0 = average US market rate).
     /// Higher values indicate more expensive markets.
     /// </summary>
     public decimal RentMultiplier { get; set; } = 1.0m;
 
     /// <summary>
-    /// Zip code prefix for generating realistic zip codes in this area.
+    /// Gets or sets zip code prefix for generating realistic zip codes in this area.
     /// </summary>
     public int ZipCodePrefix { get; set; }
 

@@ -93,6 +93,7 @@ if (isDocker)
             // In non-testing environments, reject placeholder values
             missingSecrets.Add($"{description} ({configKey})");
         }
+
         // In CI/Testing, allow placeholder values for testing purposes
     }
 
@@ -131,7 +132,7 @@ try
                 .AddAspNetCoreInstrumentation()
                 .AddEntityFrameworkCoreInstrumentation()
                 .AddHttpClientInstrumentation();
-            
+
             // Only add Jaeger if endpoint is configured
             var jaegerEndpoint = builder.Configuration["OpenTelemetry:JaegerEndpoint"];
             if (!string.IsNullOrWhiteSpace(jaegerEndpoint))
@@ -341,10 +342,11 @@ builder.Services.Configure<KafkaSettings>(
 // Check configuration directly (not from bound object) to avoid default values
 // Disable Kafka in test/CI environments or when explicitly set to empty
 var kafkaBootstrapServers = builder.Configuration["Kafka:BootstrapServers"];
-var isTestEnvironment = builder.Environment.IsEnvironment("Testing") || 
+var isTestEnvironment = builder.Environment.IsEnvironment("Testing") ||
                         builder.Environment.EnvironmentName == "Testing";
+
 // Also disable Kafka if explicitly disabled via environment variable (useful for CI/Docker)
-var kafkaDisabled = builder.Configuration["Kafka:Disabled"] == "true" || 
+var kafkaDisabled = builder.Configuration["Kafka:Disabled"] == "true" ||
                     Environment.GetEnvironmentVariable("KAFKA_DISABLED") == "true" ||
                     string.IsNullOrWhiteSpace(kafkaBootstrapServers); // Disable if bootstrap servers are empty
 var kafkaEnabled = !isTestEnvironment && !kafkaDisabled && !string.IsNullOrWhiteSpace(kafkaBootstrapServers);
@@ -366,7 +368,7 @@ if (kafkaEnabled)
         builder.Services.AddSingleton<IProducer<Null, string>>(provider =>
         {
             var settings = provider.GetRequiredService<IOptions<KafkaSettings>>().Value;
-            
+
             // Parse SecurityProtocol safely, defaulting to Plaintext
             var securityProtocol = SecurityProtocol.Plaintext;
             if (!string.IsNullOrWhiteSpace(settings.SecurityProtocol))
@@ -407,7 +409,7 @@ if (kafkaEnabled)
         builder.Services.AddSingleton<IConsumer<Null, string>>(provider =>
         {
             var settings = provider.GetRequiredService<IOptions<KafkaSettings>>().Value;
-            
+
             // Parse SecurityProtocol safely, defaulting to Plaintext
             var securityProtocol = SecurityProtocol.Plaintext;
             if (!string.IsNullOrWhiteSpace(settings.SecurityProtocol))
@@ -555,6 +557,7 @@ else
 {
     builder.Services.AddScoped<IBackgroundJobService, NullBackgroundJobService>();
 }
+
 builder.Services.AddScoped<EmailService>();
 builder.Services.AddScoped<DataProcessingService>();
 builder.Services.AddScoped<RecurringJobsService>();
@@ -826,7 +829,8 @@ if (app.Environment.IsDevelopment())
                 }
                 else
                 {
-                    logger.LogWarning("Failed to create default seed user. Property seeding skipped. Errors: {Errors}",
+                    logger.LogWarning(
+                        "Failed to create default seed user. Property seeding skipped. Errors: {Errors}",
                         string.Join(", ", createResult.Errors.Select(e => e.Description)));
                     logger.LogWarning("Login with Google OAuth to create a user, then restart the backend for auto-seeding.");
                 }
