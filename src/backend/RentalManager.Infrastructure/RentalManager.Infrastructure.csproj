@@ -26,6 +26,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.0" />
     <ProjectReference Include="..\RentalManager.Domain\RentalManager.Domain.csproj" />
     <ProjectReference Include="..\RentalManager.Application\RentalManager.Application.csproj" />
   </ItemGroup>
