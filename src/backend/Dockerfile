@@ -23,7 +23,7 @@ FROM build AS publish
 RUN dotnet publish "RentalManager.API.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
 # Use the official .NET 9 runtime image for running
-FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS final
+FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS final
 WORKDIR /app
 
 # Install curl for health checks
