@@ -14,7 +14,7 @@
     <PackageReference Include="MediatR" Version="13.1.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.1" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="9.0.10" />
-    <PackageReference Include="Stripe.net" Version="48.0.0" />
+    <PackageReference Include="Stripe.net" Version="50.1.0" />
   </ItemGroup>
 
   <ItemGroup>
